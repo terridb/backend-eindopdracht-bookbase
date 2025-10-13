@@ -16,7 +16,7 @@ public class Reservation {
     private LocalDate reservationDate;
 
     @Enumerated(EnumType.STRING)
-    private ReservationStatus reservationStatus;
+    private ReservationStatus reservationStatus = ReservationStatus.PENDING;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

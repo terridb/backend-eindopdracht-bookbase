@@ -16,7 +16,7 @@ public class Fine {
     private BigDecimal fineAmount;
 
     @Enumerated(EnumType.STRING)
-    private PaymentStatus paymentStatus;
+    private PaymentStatus paymentStatus = PaymentStatus.NOT_PAID;
 
     @OneToOne
     @JoinColumn(name = "loan_id", nullable = false)

@@ -14,10 +14,10 @@ public class Loan {
     private Long id;
 
     private LocalDate loanDate;
-    private Integer loanPeriodInDays;
+    private Integer loanPeriodInDays = 21;
 
     @Enumerated(EnumType.STRING)
-    private LoanStatus loanStatus;
+    private LoanStatus loanStatus = LoanStatus.ACTIVE;
 
     @OneToOne(mappedBy = "loan", cascade = CascadeType.ALL)
     private Fine fine;

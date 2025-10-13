@@ -20,7 +20,7 @@ public class User {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private Role role = Role.MEMBER;
 
     @OneToMany(mappedBy = "user")
     private List<Loan> loans;
