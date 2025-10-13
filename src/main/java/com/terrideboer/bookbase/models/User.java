@@ -1,5 +1,6 @@
 package com.terrideboer.bookbase.models;
 
+import com.terrideboer.bookbase.models.enums.Role;
 import jakarta.persistence.*;
 
 @Entity
@@ -15,6 +16,8 @@ public class User {
     private String email;
     private Long phoneNumber;
 //    todo password
-//    todo role
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
 }

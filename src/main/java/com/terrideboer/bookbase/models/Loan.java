@@ -1,5 +1,6 @@
 package com.terrideboer.bookbase.models;
 
+import com.terrideboer.bookbase.models.enums.LoanStatus;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -13,7 +14,10 @@ public class Loan {
     private Long id;
 
     //    todo bookcopy
-//    todo member
+    //    todo member
     private LocalDate loanDate;
     private Integer loanPeriodInDays;
+
+    @Enumerated(EnumType.STRING)
+    private LoanStatus loanStatus;
 }

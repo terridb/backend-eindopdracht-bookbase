@@ -1,5 +1,6 @@
 package com.terrideboer.bookbase.models;
 
+import com.terrideboer.bookbase.models.enums.ReservationStatus;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -15,5 +16,7 @@ public class Reservation {
 //    todo bookcopy
 //    todo member
     private LocalDate reservationDate;
-//    todo reservationstatus
+
+    @Enumerated(EnumType.STRING)
+    private ReservationStatus reservationStatus;
 }

@@ -1,5 +1,6 @@
 package com.terrideboer.bookbase.models;
 
+import com.terrideboer.bookbase.models.enums.PaymentStatus;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -14,5 +15,7 @@ public class Fine {
 
 //    todo loan
     private BigDecimal fineAmount;
-//    todo payment status
+
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
 }

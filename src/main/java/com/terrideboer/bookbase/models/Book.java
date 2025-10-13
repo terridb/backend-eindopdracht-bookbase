@@ -1,5 +1,6 @@
 package com.terrideboer.bookbase.models;
 
+import com.terrideboer.bookbase.models.enums.Genre;
 import jakarta.persistence.*;
 
 @Entity
@@ -15,5 +16,7 @@ public class Book {
 
 //    todo coverImage
 //    todo author
-//    todo genre
+
+    @Enumerated(EnumType.STRING)
+    private Genre genre;
 }
