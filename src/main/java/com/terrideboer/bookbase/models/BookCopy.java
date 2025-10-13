@@ -24,4 +24,39 @@ public class BookCopy {
     @OneToMany(mappedBy = "bookCopy")
     private List<Reservation> reservations;
 
+    public Long getId() {
+        return id;
+    }
+
+    public Integer getTrackingNumber() {
+        return trackingNumber;
+    }
+
+    public void setTrackingNumber(Integer trackingNumber) {
+        this.trackingNumber = trackingNumber;
+    }
+
+    public Book getBook() {
+        return book;
+    }
+
+    public void setBook(Book book) {
+        this.book = book;
+    }
+
+    public List<Loan> getLoans() {
+        return loans;
+    }
+
+    public void setLoans(List<Loan> loans) {
+        this.loans = loans;
+    }
+
+    public List<Reservation> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(List<Reservation> reservations) {
+        this.reservations = reservations;
+    }
 }

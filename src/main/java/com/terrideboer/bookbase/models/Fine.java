@@ -22,4 +22,31 @@ public class Fine {
     @JoinColumn(name = "loan_id", nullable = false)
     private Loan loan;
 
+    public Long getId() {
+        return id;
+    }
+
+    public BigDecimal getFineAmount() {
+        return fineAmount;
+    }
+
+    public void setFineAmount(BigDecimal fineAmount) {
+        this.fineAmount = fineAmount;
+    }
+
+    public PaymentStatus getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(PaymentStatus paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+
+    public Loan getLoan() {
+        return loan;
+    }
+
+    public void setLoan(Loan loan) {
+        this.loan = loan;
+    }
 }
