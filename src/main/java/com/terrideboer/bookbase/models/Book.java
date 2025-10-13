@@ -14,7 +14,10 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String title;
+
+    @Column(unique = true, nullable = false)
     private String isbn;
 
     private String imageUrl;

@@ -14,9 +14,14 @@ public class Author {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String firstName;
+
     private String middleNames;
+
+    @Column(nullable = false)
     private String lastName;
+
     private LocalDate dateOfBirth;
 
     @ManyToMany(mappedBy = "authors")

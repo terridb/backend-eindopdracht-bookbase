@@ -12,7 +12,8 @@ public class BookCopy {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer trackingNumber;
+    @Column(unique = true)
+    private String trackingNumber;
 
     @ManyToOne
     @JoinColumn(name = "book_id", nullable = false)
@@ -28,11 +29,11 @@ public class BookCopy {
         return id;
     }
 
-    public Integer getTrackingNumber() {
+    public String getTrackingNumber() {
         return trackingNumber;
     }
 
-    public void setTrackingNumber(Integer trackingNumber) {
+    public void setTrackingNumber(String trackingNumber) {
         this.trackingNumber = trackingNumber;
     }
 

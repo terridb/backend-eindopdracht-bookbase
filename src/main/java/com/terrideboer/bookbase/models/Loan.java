@@ -13,7 +13,9 @@ public class Loan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private LocalDate loanDate;
+
     private Integer loanPeriodInDays = 21;
 
     @Enumerated(EnumType.STRING)
