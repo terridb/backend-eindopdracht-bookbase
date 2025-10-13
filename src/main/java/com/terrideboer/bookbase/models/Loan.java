@@ -13,11 +13,20 @@ public class Loan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //    todo bookcopy
-    //    todo member
     private LocalDate loanDate;
     private Integer loanPeriodInDays;
 
     @Enumerated(EnumType.STRING)
     private LoanStatus loanStatus;
+
+    @OneToOne(mappedBy = "loan", cascade = CascadeType.ALL)
+    private Fine fine;
+
+    @ManyToOne
+    @JoinColumn(name = "book_copy_id", nullable = false)
+    private BookCopy bookCopy;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }

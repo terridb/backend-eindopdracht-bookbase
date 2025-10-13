@@ -13,10 +13,16 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    todo bookcopy
-//    todo member
     private LocalDate reservationDate;
 
     @Enumerated(EnumType.STRING)
     private ReservationStatus reservationStatus;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "book_copy_id", nullable = false)
+    private BookCopy bookCopy;
 }

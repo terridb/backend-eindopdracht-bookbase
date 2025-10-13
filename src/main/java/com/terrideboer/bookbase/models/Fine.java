@@ -13,9 +13,13 @@ public class Fine {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    todo loan
     private BigDecimal fineAmount;
 
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
+
+    @OneToOne
+    @JoinColumn(name = "loan_id", nullable = false)
+    private Loan loan;
+
 }

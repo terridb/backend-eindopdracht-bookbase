@@ -3,6 +3,8 @@ package com.terrideboer.bookbase.models;
 import com.terrideboer.bookbase.models.enums.Role;
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -14,10 +16,16 @@ public class User {
     private String firstName;
     private String lastName;
     private String email;
-    private Long phoneNumber;
-//    todo password
+    private String phoneNumber;
+    private String password;
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToMany(mappedBy = "user")
+    private List<Loan> loans;
+
+    @OneToMany(mappedBy = "user")
+    private List<Reservation> reservations;
 
 }
