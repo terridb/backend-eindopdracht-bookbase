@@ -19,8 +19,6 @@ public class AuthorInputDto {
     @Size(min = 2, max = 150, message = "Last name must be between 2 and 150 characters")
     public String lastName;
 
-    public String displayName;
-
     @Past(message = "Date of birth must be in the past")
     public LocalDate dateOfBirth;
 }
