@@ -27,22 +27,6 @@ public class AuthorMapper {
         authorDto.lastName = author.getLastName();
         authorDto.dateOfBirth = author.getDateOfBirth();
 
-        String displayName = author.getFirstName();
-
-        if (author.getMiddleNames() != null) {
-            String[] namesArray = author.getMiddleNames().trim().split(" ");
-            StringBuilder initials = new StringBuilder();
-
-            for (String name : namesArray) {
-                initials.append(name.charAt(0)).append(".");
-            }
-
-            displayName += " " + initials;
-        }
-
-        displayName += " " + author.getLastName();
-        authorDto.displayName = displayName;
-
         return authorDto;
     }
 }

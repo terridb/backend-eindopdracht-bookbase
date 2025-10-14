@@ -7,6 +7,5 @@ public class AuthorDto {
     public String firstName;
     public String middleNames;
     public String lastName;
-    public String displayName;
     public LocalDate dateOfBirth;
 }
