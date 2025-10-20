@@ -2,6 +2,7 @@ package com.terrideboer.bookbase.controllers;
 
 import com.terrideboer.bookbase.dtos.books.BookDto;
 import com.terrideboer.bookbase.dtos.books.BookInputDto;
+import com.terrideboer.bookbase.dtos.books.BookPatchDto;
 import com.terrideboer.bookbase.services.BookService;
 import jakarta.validation.Valid;
 import org.apache.coyote.Response;
@@ -45,6 +46,20 @@ public class BookController {
     @PutMapping("/{id}")
     public ResponseEntity<BookDto> putBook(@PathVariable Long id, @Valid @RequestBody BookInputDto bookInputDto) {
         BookDto bookDto = service.putBook(id, bookInputDto);
+
+        return ResponseEntity.ok(bookDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
+        service.deleteBook(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<BookDto> patchBook(@PathVariable Long id, @RequestBody BookPatchDto bookPatchDto) {
+        BookDto bookDto = service.patchBook(id, bookPatchDto);
 
         return ResponseEntity.ok(bookDto);
     }
