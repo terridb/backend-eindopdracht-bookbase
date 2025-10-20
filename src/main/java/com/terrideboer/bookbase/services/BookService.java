@@ -1,6 +1,7 @@
 package com.terrideboer.bookbase.services;
 
 import com.terrideboer.bookbase.dtos.books.BookDto;
+import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
 import com.terrideboer.bookbase.mappers.BookMapper;
 import com.terrideboer.bookbase.models.Book;
 import com.terrideboer.bookbase.repositories.BookRepository;
@@ -32,8 +33,8 @@ public class BookService {
     public BookDto getBookById(Long id) {
         return BookMapper.toDto(
                 bookRepository.findById(id)
-                        .orElseThrow(() -> new RecordNotFoundException("Book with id " + id + " not found"));
-        )
+                        .orElseThrow(() -> new RecordNotFoundException("Book with id " + id + " not found"))
+        );
     }
 
 }
