@@ -1,8 +1,13 @@
 package com.terrideboer.bookbase.mappers;
 
-import com.terrideboer.bookbase.dtos.BookDto;
-import com.terrideboer.bookbase.dtos.BookInputDto;
+import com.terrideboer.bookbase.dtos.authors.AuthorSummaryDto;
+import com.terrideboer.bookbase.dtos.books.BookDto;
+import com.terrideboer.bookbase.dtos.books.BookInputDto;
+import com.terrideboer.bookbase.models.Author;
 import com.terrideboer.bookbase.models.Book;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class BookMapper {
 
@@ -28,13 +33,18 @@ public class BookMapper {
         bookDto.imageUrl = book.getImageUrl();
         bookDto.genre = book.getGenre();
 
-//        if (book.getAuthors() != null) {
-////           todo authormapper maken
-//        }
-//
-//        if (book.getBookCopies() != null) {
-////           todo bookcopyid mapper maken
-//        }
+        if (book.getAuthors() != null) {
+            Set<AuthorSummaryDto> authorSummaryDtos = new HashSet<>();
+
+            for (Author author : book.getAuthors()) {
+                AuthorSummaryDto authorSummaryDto = new AuthorSummaryDto();
+                authorSummaryDto.id = author.getId();
+                authorSummaryDto.displayName = author.getDisplayName();
+                authorSummaryDtos.add(authorSummaryDto);
+            }
+
+            bookDto.authors = authorSummaryDtos;
+        }
 
         return bookDto;
     }

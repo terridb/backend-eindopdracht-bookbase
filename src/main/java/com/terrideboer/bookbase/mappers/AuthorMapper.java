@@ -1,7 +1,7 @@
 package com.terrideboer.bookbase.mappers;
 
-import com.terrideboer.bookbase.dtos.AuthorDto;
-import com.terrideboer.bookbase.dtos.AuthorInputDto;
+import com.terrideboer.bookbase.dtos.authors.AuthorDto;
+import com.terrideboer.bookbase.dtos.authors.AuthorInputDto;
 import com.terrideboer.bookbase.models.Author;
 
 public class AuthorMapper {

@@ -1,4 +1,4 @@
-package com.terrideboer.bookbase.dtos;
+package com.terrideboer.bookbase.dtos.users;
 
 import com.terrideboer.bookbase.models.enums.Role;
 import jakarta.validation.constraints.Email;

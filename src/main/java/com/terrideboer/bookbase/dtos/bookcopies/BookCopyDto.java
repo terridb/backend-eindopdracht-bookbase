@@ -1,4 +1,4 @@
-package com.terrideboer.bookbase.dtos;
+package com.terrideboer.bookbase.dtos.bookcopies;
 
 public class BookCopyDto {
     public Long id;

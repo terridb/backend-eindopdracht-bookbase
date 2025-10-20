@@ -1,4 +1,4 @@
-package com.terrideboer.bookbase.dtos;
+package com.terrideboer.bookbase.dtos.books;
 
 import com.terrideboer.bookbase.models.enums.Genre;
 import jakarta.validation.constraints.NotBlank;

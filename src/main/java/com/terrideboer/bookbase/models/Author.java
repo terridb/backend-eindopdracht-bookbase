@@ -22,6 +22,9 @@ public class Author {
     @Column(nullable = false)
     private String lastName;
 
+    @Column(nullable = false)
+    private String displayName;
+
     private LocalDate dateOfBirth;
 
     @ManyToMany(mappedBy = "authors")
@@ -73,5 +76,13 @@ public class Author {
 
     public void setBooks(Set<Book> books) {
         this.books = books;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 }

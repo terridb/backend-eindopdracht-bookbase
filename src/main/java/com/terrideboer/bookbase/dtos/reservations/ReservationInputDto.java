@@ -1,4 +1,4 @@
-package com.terrideboer.bookbase.dtos;
+package com.terrideboer.bookbase.dtos.reservations;
 
 import com.terrideboer.bookbase.models.enums.ReservationStatus;
 import jakarta.validation.constraints.NotNull;

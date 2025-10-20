@@ -1,4 +1,4 @@
-package com.terrideboer.bookbase.dtos;
+package com.terrideboer.bookbase.dtos.authors;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
@@ -18,6 +18,9 @@ public class AuthorInputDto {
     @NotBlank(message = "Last name is required")
     @Size(min = 2, max = 150, message = "Last name must be between 2 and 150 characters")
     public String lastName;
+
+    @Size(min = 2, max = 150, message = "Display name must be between 2 and 150 characters")
+    public String displayName;
 
     @Past(message = "Date of birth must be in the past")
     public LocalDate dateOfBirth;

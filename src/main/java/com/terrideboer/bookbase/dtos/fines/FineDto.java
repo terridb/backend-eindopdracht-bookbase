@@ -1,4 +1,4 @@
-package com.terrideboer.bookbase.dtos;
+package com.terrideboer.bookbase.dtos.fines;
 
 import com.terrideboer.bookbase.models.enums.PaymentStatus;
 

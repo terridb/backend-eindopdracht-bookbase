@@ -1,8 +1,8 @@
-package com.terrideboer.bookbase.dtos;
+package com.terrideboer.bookbase.dtos.books;
 
+import com.terrideboer.bookbase.dtos.authors.AuthorSummaryDto;
 import com.terrideboer.bookbase.models.enums.Genre;
 
-import java.util.List;
 import java.util.Set;
 
 public class BookDto {
@@ -11,8 +11,5 @@ public class BookDto {
     public String isbn;
     public String imageUrl;
     public Genre genre;
-//    todo mapper ids
-    public Set<Long> authorIds;
-//    todo mapper ids
-    public List<Long> bookCopyIds;
+    public Set<AuthorSummaryDto> authors;
 }
