@@ -13,6 +13,7 @@ public class AuthorMapper {
         author.setFirstName(authorInputDto.firstName);
         author.setMiddleNames(authorInputDto.middleNames);
         author.setLastName(authorInputDto.lastName);
+        author.setDisplayName(authorInputDto.displayName);
         author.setDateOfBirth(authorInputDto.dateOfBirth);
 
         return author;
@@ -25,6 +26,7 @@ public class AuthorMapper {
         authorDto.firstName = author.getFirstName();
         authorDto.middleNames = author.getMiddleNames();
         authorDto.lastName = author.getLastName();
+        authorDto.displayName = author.getDisplayName();
         authorDto.dateOfBirth = author.getDateOfBirth();
 
         return authorDto;

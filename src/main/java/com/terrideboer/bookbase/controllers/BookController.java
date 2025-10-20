@@ -5,7 +5,6 @@ import com.terrideboer.bookbase.dtos.books.BookInputDto;
 import com.terrideboer.bookbase.dtos.books.BookPatchDto;
 import com.terrideboer.bookbase.services.BookService;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
