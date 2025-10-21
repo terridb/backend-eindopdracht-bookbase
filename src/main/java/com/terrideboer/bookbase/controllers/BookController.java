@@ -1,8 +1,11 @@
 package com.terrideboer.bookbase.controllers;
 
+import com.terrideboer.bookbase.dtos.bookcopies.BookCopyDto;
+import com.terrideboer.bookbase.dtos.bookcopies.BookCopyInputDto;
 import com.terrideboer.bookbase.dtos.books.BookDto;
 import com.terrideboer.bookbase.dtos.books.BookInputDto;
 import com.terrideboer.bookbase.dtos.books.BookPatchDto;
+import com.terrideboer.bookbase.services.BookCopyService;
 import com.terrideboer.bookbase.services.BookService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -15,27 +18,29 @@ import java.util.List;
 @RequestMapping("/books")
 public class BookController {
 
-    private final BookService service;
+    private final BookService bookService;
+    private final BookCopyService bookCopyService;
 
-    public BookController(BookService service) {
-        this.service = service;
+    public BookController(BookService bookService, BookCopyService bookCopyService) {
+        this.bookService = bookService;
+        this.bookCopyService = bookCopyService;
     }
 
     @GetMapping
     public ResponseEntity<List<BookDto>> getAllBooks() {
 
-        return ResponseEntity.ok(service.getAllBooks());
+        return ResponseEntity.ok(bookService.getAllBooks());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<BookDto> getBookById(@PathVariable Long id) {
 
-        return ResponseEntity.ok(service.getBookById(id));
+        return ResponseEntity.ok(bookService.getBookById(id));
     }
 
     @PostMapping
     public ResponseEntity<BookDto> postBook(@Valid @RequestBody BookInputDto bookInputDto) {
-        BookDto bookDto = service.postBook(bookInputDto);
+        BookDto bookDto = bookService.postBook(bookInputDto);
 
         URI uri = URI.create("/books/" + bookDto.id);
 
@@ -44,22 +49,31 @@ public class BookController {
 
     @PutMapping("/{id}")
     public ResponseEntity<BookDto> putBook(@PathVariable Long id, @Valid @RequestBody BookInputDto bookInputDto) {
-        BookDto bookDto = service.putBook(id, bookInputDto);
+        BookDto bookDto = bookService.putBook(id, bookInputDto);
 
         return ResponseEntity.ok(bookDto);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
-        service.deleteBook(id);
+        bookService.deleteBook(id);
 
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<BookDto> patchBook(@PathVariable Long id, @RequestBody BookPatchDto bookPatchDto) {
-        BookDto bookDto = service.patchBook(id, bookPatchDto);
+        BookDto bookDto = bookService.patchBook(id, bookPatchDto);
 
         return ResponseEntity.ok(bookDto);
+    }
+
+    @PostMapping("/{id}/book-copies")
+    public ResponseEntity<BookCopyDto> postBookCopy(@PathVariable Long id, @Valid @RequestBody BookCopyInputDto bookCopyInputDto) {
+        BookCopyDto bookCopyDto = bookCopyService.postBookCopy(bookCopyInputDto, id);
+
+        URI uri = URI.create("/book-copies/" + bookCopyDto.id);
+
+        return ResponseEntity.created(uri).body(bookCopyDto);
     }
 }

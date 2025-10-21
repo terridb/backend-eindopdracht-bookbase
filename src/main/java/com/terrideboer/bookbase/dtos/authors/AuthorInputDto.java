@@ -1,6 +1,5 @@
 package com.terrideboer.bookbase.dtos.authors;
 
-import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
