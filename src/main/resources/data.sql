@@ -34,21 +34,21 @@ VALUES (1, 1),
 
 INSERT INTO book_copies (book_id, tracking_number)
 VALUES
-    (1, 'BB-1-01'),
-    (1, 'BB-1-02'),
-    (2, 'BB-2-01'),
-    (3, 'BB-3-01'),
-    (3, 'BB-3-02'),
-    (4, 'BB-4-01'),
-    (5, 'BB-5-01'),
-    (5, 'BB-5-02'),
-    (6, 'BB-6-01'),
-    (6, 'BB-6-02'),
-    (7, 'BB-7-01'),
-    (8, 'BB-8-01'),
-    (8, 'BB-8-02'),
-    (9, 'BB-9-01'),
-    (10, 'BB-10-01');
+    (1, 'BB-1-1'),
+    (1, 'BB-1-2'),
+    (2, 'BB-2-1'),
+    (3, 'BB-3-1'),
+    (3, 'BB-3-2'),
+    (4, 'BB-4-1'),
+    (5, 'BB-5-1'),
+    (5, 'BB-5-2'),
+    (6, 'BB-6-1'),
+    (6, 'BB-6-2'),
+    (7, 'BB-7-1'),
+    (8, 'BB-8-1'),
+    (8, 'BB-8-2'),
+    (9, 'BB-9-1'),
+    (10, 'BB-10-1');
 
 -- INSERT INTO users (first_name, last_name, email, phone_number, password, role)
 -- VALUES ('Karel', 'Kiwi', 'karel.kiwi@test.nl', '0612345678', 'test123', 'MEMBER'),

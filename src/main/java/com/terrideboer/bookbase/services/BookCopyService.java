@@ -2,6 +2,7 @@ package com.terrideboer.bookbase.services;
 
 import com.terrideboer.bookbase.dtos.bookcopies.BookCopyDto;
 import com.terrideboer.bookbase.dtos.bookcopies.BookCopyInputDto;
+import com.terrideboer.bookbase.exceptions.InvalidInputException;
 import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
 import com.terrideboer.bookbase.mappers.BookCopyMapper;
 import com.terrideboer.bookbase.models.Book;
@@ -52,6 +53,10 @@ public class BookCopyService {
             bookCopy.setTrackingNumber(buildTrackingNumber(bookCopy, bookId));
         }
 
+        if (bookCopyRepository.existsByTrackingNumber(bookCopy.getTrackingNumber())) {
+            throw new InvalidInputException("Tracking number already exists");
+        }
+
         existingBook.getBookCopies().add(bookCopy);
 
         BookCopy savedBookCopy = bookCopyRepository.save(bookCopy);
@@ -60,8 +65,14 @@ public class BookCopyService {
 
     private String buildTrackingNumber(BookCopy bookCopy, Long bookId) {
         int copyCode = bookCopy.getBook().getBookCopies().size() + 1;
+        String generatedNumber = "BB-" + bookId + "-" + copyCode;
 
-        return "BB-" + bookId + "-" + copyCode;
+        while (bookCopyRepository.existsByTrackingNumber(generatedNumber)) {
+            copyCode += 1;
+            generatedNumber = "BB-" + bookId + "-" + copyCode;
+        }
+
+        return generatedNumber;
     }
 
 }
