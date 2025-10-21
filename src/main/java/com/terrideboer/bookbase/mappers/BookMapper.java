@@ -3,8 +3,10 @@ package com.terrideboer.bookbase.mappers;
 import com.terrideboer.bookbase.dtos.authors.AuthorSummaryDto;
 import com.terrideboer.bookbase.dtos.books.BookDto;
 import com.terrideboer.bookbase.dtos.books.BookInputDto;
+import com.terrideboer.bookbase.dtos.books.BookSummaryDto;
 import com.terrideboer.bookbase.models.Author;
 import com.terrideboer.bookbase.models.Book;
+import com.terrideboer.bookbase.services.BookService;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -24,6 +26,7 @@ public class BookMapper {
         return book;
     }
 
+    //    todo duplicate code
     public static BookDto toDto(Book book) {
         BookDto bookDto = new BookDto();
 
@@ -47,5 +50,29 @@ public class BookMapper {
         }
 
         return bookDto;
+    }
+
+    public static BookSummaryDto toSummaryDto(Book book) {
+        BookSummaryDto bookSummaryDto = new BookSummaryDto();
+
+        bookSummaryDto.id = book.getId();
+        bookSummaryDto.title = book.getTitle();
+        bookSummaryDto.isbn = book.getIsbn();
+        bookSummaryDto.genre = book.getGenre();
+
+        if (book.getAuthors() != null) {
+            Set<AuthorSummaryDto> authorSummaryDtos = new HashSet<>();
+
+            for (Author author : book.getAuthors()) {
+                AuthorSummaryDto authorSummaryDto = new AuthorSummaryDto();
+                authorSummaryDto.id = author.getId();
+                authorSummaryDto.displayName = author.getDisplayName();
+                authorSummaryDtos.add(authorSummaryDto);
+            }
+
+            bookSummaryDto.authors = authorSummaryDtos;
+        }
+
+        return bookSummaryDto;
     }
 }

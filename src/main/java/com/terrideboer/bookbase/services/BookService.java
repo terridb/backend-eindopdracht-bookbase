@@ -103,7 +103,6 @@ public class BookService {
 
         Book savedBook = bookRepository.save(existingBook);
         return BookMapper.toDto(savedBook);
-
     }
 
 }

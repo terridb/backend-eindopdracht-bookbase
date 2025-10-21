@@ -55,4 +55,6 @@ public class AuthorController {
         return ResponseEntity.noContent().build();
     }
 
+//    todo get request alle boeken van 1 auteur
+
 }

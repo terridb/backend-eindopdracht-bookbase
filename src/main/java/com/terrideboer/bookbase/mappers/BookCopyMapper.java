@@ -23,7 +23,7 @@ public class BookCopyMapper {
         bookCopyDto.trackingNumber = bookCopy.getTrackingNumber();
 
         if (bookCopy.getBook() != null) {
-            bookCopyDto.bookId = bookCopy.getBook().getId();
+            bookCopyDto.book = BookMapper.toSummaryDto(bookCopy.getBook());
         }
 
         return bookCopyDto;
