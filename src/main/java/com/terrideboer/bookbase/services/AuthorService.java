@@ -5,7 +5,9 @@ import com.terrideboer.bookbase.dtos.authors.AuthorInputDto;
 import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
 import com.terrideboer.bookbase.mappers.AuthorMapper;
 import com.terrideboer.bookbase.models.Author;
+import com.terrideboer.bookbase.models.Book;
 import com.terrideboer.bookbase.repositories.AuthorRepository;
+import com.terrideboer.bookbase.repositories.BookRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,9 +17,11 @@ import java.util.List;
 public class AuthorService {
 
     private final AuthorRepository authorRepository;
+    private final BookRepository bookRepository;
 
-    public AuthorService(AuthorRepository authorRepository) {
+    public AuthorService(AuthorRepository authorRepository, BookRepository bookRepository) {
         this.authorRepository = authorRepository;
+        this.bookRepository = bookRepository;
     }
 
     public List<AuthorDto> getAllAuthors() {
@@ -60,6 +64,19 @@ public class AuthorService {
 
         Author savedAuthor = authorRepository.save(updatedAuthor);
         return AuthorMapper.toDto(savedAuthor);
+    }
+
+    public void deleteAuthor(Long id) {
+        Author author = authorRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException(("Author with id " + id + " not found")));
+
+            for (Book book : author.getBooks()) {
+                book.getAuthors().remove(author);
+                bookRepository.save(book);
+            }
+            author.getBooks().clear();
+
+        authorRepository.delete(author);
     }
 
     private String buildDisplayName(Author author) {

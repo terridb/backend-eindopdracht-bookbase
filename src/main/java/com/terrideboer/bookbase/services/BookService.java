@@ -6,7 +6,9 @@ import com.terrideboer.bookbase.dtos.books.BookPatchDto;
 import com.terrideboer.bookbase.exceptions.InvalidInputException;
 import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
 import com.terrideboer.bookbase.mappers.BookMapper;
+import com.terrideboer.bookbase.models.Author;
 import com.terrideboer.bookbase.models.Book;
+import com.terrideboer.bookbase.repositories.AuthorRepository;
 import com.terrideboer.bookbase.repositories.BookRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +19,11 @@ import java.util.List;
 public class BookService {
 
     private final BookRepository bookRepository;
+    private final AuthorRepository authorRepository;
 
-    public BookService(BookRepository bookRepository) {
+    public BookService(BookRepository bookRepository, AuthorRepository authorRepository) {
         this.bookRepository = bookRepository;
+        this.authorRepository = authorRepository;
     }
 
     public List<BookDto> getAllBooks() {
@@ -59,6 +63,12 @@ public class BookService {
     public void deleteBook(Long id) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(("Book with id " + id + " not found")));
+
+        for (Author author : book.getAuthors()) {
+            author.getBooks().remove(book);
+            authorRepository.save(author);
+        }
+        book.getAuthors().clear();
 
         bookRepository.delete(book);
     }
