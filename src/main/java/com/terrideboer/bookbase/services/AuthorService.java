@@ -39,14 +39,27 @@ public class AuthorService {
 
     public AuthorDto postAuthor(AuthorInputDto authorInputDto) {
         Author author = AuthorMapper.toEntity(authorInputDto, null);
-        Author savedAuthor = authorRepository.save(author);
 
-        AuthorDto authorDto = AuthorMapper.toDto(savedAuthor);
         if (authorInputDto.displayName == null) {
-            authorDto.displayName = buildDisplayName(savedAuthor);
+            author.setDisplayName(buildDisplayName(author));
         }
 
-        return authorDto;
+        Author savedAuthor = authorRepository.save(author);
+        return AuthorMapper.toDto(savedAuthor);
+    }
+
+    public AuthorDto putAuthor(Long id, AuthorInputDto authorInputDto) {
+        Author existingAuthor =  authorRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("Author with id " + id + " not found"));
+
+        Author updatedAuthor = AuthorMapper.toEntity(authorInputDto, existingAuthor);
+
+        if (authorInputDto.displayName == null) {
+            updatedAuthor.setDisplayName(buildDisplayName(updatedAuthor));
+        }
+
+        Author savedAuthor = authorRepository.save(updatedAuthor);
+        return AuthorMapper.toDto(savedAuthor);
     }
 
     private String buildDisplayName(Author author) {

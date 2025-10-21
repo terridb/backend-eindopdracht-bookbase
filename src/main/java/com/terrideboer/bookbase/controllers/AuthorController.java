@@ -41,4 +41,11 @@ public class AuthorController {
         return ResponseEntity.created(uri).body(authorDto);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<AuthorDto> putAuthor(@PathVariable Long id, @Valid @RequestBody AuthorInputDto authorInputDto) {
+        AuthorDto authorDto = service.putAuthor(id, authorInputDto);
+
+        return ResponseEntity.ok(authorDto);
+    }
+
 }
