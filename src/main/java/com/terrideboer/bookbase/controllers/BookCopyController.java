@@ -1,7 +1,11 @@
 package com.terrideboer.bookbase.controllers;
 
+import com.terrideboer.bookbase.dtos.authors.AuthorDto;
+import com.terrideboer.bookbase.dtos.authors.AuthorInputDto;
 import com.terrideboer.bookbase.dtos.bookcopies.BookCopyDto;
+import com.terrideboer.bookbase.dtos.bookcopies.BookCopyInputDto;
 import com.terrideboer.bookbase.services.BookCopyService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,5 +33,17 @@ public class BookCopyController {
         return ResponseEntity.ok(service.getBookCopyById(id));
     }
 
-//    todo add endpoint for all bookcopies for one book
+    @PutMapping("/{id}")
+    public ResponseEntity<BookCopyDto> putBookCopy(@PathVariable Long id, @Valid @RequestBody BookCopyInputDto bookCopyInputDto) {
+        BookCopyDto bookCopyDto = service.putBookCopy(id, bookCopyInputDto);
+
+        return ResponseEntity.ok(bookCopyDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBookCopy(@PathVariable Long id) {
+        service.deleteBookCopy(id);
+
+        return ResponseEntity.noContent().build();
+    }
 }

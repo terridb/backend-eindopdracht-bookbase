@@ -26,6 +26,8 @@ public class BookController {
         this.bookCopyService = bookCopyService;
     }
 
+//    todo add endpoint for all bookcopies for one book
+
     @GetMapping
     public ResponseEntity<List<BookDto>> getAllBooks() {
 
