@@ -6,7 +6,6 @@ import com.terrideboer.bookbase.dtos.books.BookInputDto;
 import com.terrideboer.bookbase.dtos.books.BookSummaryDto;
 import com.terrideboer.bookbase.models.Author;
 import com.terrideboer.bookbase.models.Book;
-import com.terrideboer.bookbase.services.BookService;
 
 import java.util.HashSet;
 import java.util.Set;

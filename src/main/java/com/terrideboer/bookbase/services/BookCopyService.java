@@ -1,14 +1,10 @@
 package com.terrideboer.bookbase.services;
 
-import com.terrideboer.bookbase.dtos.authors.AuthorDto;
-import com.terrideboer.bookbase.dtos.authors.AuthorInputDto;
 import com.terrideboer.bookbase.dtos.bookcopies.BookCopyDto;
 import com.terrideboer.bookbase.dtos.bookcopies.BookCopyInputDto;
 import com.terrideboer.bookbase.exceptions.InvalidInputException;
 import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
-import com.terrideboer.bookbase.mappers.AuthorMapper;
 import com.terrideboer.bookbase.mappers.BookCopyMapper;
-import com.terrideboer.bookbase.models.Author;
 import com.terrideboer.bookbase.models.Book;
 import com.terrideboer.bookbase.models.BookCopy;
 import com.terrideboer.bookbase.repositories.BookCopyRepository;

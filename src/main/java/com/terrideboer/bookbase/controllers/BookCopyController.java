@@ -1,7 +1,5 @@
 package com.terrideboer.bookbase.controllers;
 
-import com.terrideboer.bookbase.dtos.authors.AuthorDto;
-import com.terrideboer.bookbase.dtos.authors.AuthorInputDto;
 import com.terrideboer.bookbase.dtos.bookcopies.BookCopyDto;
 import com.terrideboer.bookbase.dtos.bookcopies.BookCopyInputDto;
 import com.terrideboer.bookbase.services.BookCopyService;

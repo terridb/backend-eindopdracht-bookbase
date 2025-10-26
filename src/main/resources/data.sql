@@ -50,15 +50,15 @@ VALUES
     (9, 'BB-9-1'),
     (10, 'BB-10-1');
 
--- INSERT INTO users (first_name, last_name, email, phone_number, password, role)
--- VALUES ('Karel', 'Kiwi', 'karel.kiwi@test.nl', '0612345678', 'test123', 'MEMBER'),
---        ('Mara', 'Mango', 'mara.mango@test.nl', '0687654321', 'test123', 'MEMBER'),
---        ('Barrie', 'Bosbes', 'barrie.bosbes@test.nl', '0658468953', 'test123', 'LIBRARIAN'),
---        ('Pino', 'Pruim', 'pino.pruim@test.nl', '0626497852', 'test123', 'EMPLOYEE'),
---        ('Ella', 'Eland', 'ella.eland@test.nl', '0665432198', 'test123', 'MEMBER'),
---        ('Noah', 'Noten', 'noah.noten@test.nl', '0676543219', 'test123', 'MEMBER'),
---        ('Lisa', 'Langpootmug', 'lisa.langpootmug@test.nl', '0611223344', 'test123', 'LIBRARIAN');
---
+INSERT INTO users (first_name, last_name, email, phone_number, password, role)
+VALUES ('Karel', 'Kiwi', 'karel.kiwi@test.nl', '0612345678', 'test123', 'MEMBER'),
+       ('Mara', 'Mango', 'mara.mango@test.nl', '0687654321', 'test123', 'MEMBER'),
+       ('Barrie', 'Bosbes', 'barrie.bosbes@test.nl', '0658468953', 'test123', 'LIBRARIAN'),
+       ('Pino', 'Pruim', 'pino.pruim@test.nl', '0626497852', 'test123', 'EMPLOYEE'),
+       ('Ella', 'Eland', 'ella.eland@test.nl', '0665432198', 'test123', 'MEMBER'),
+       ('Noah', 'Noten', 'noah.noten@test.nl', '0676543219', 'test123', 'MEMBER'),
+       ('Lisa', 'Langpootmug', 'lisa.langpootmug@test.nl', '0611223344', 'test123', 'LIBRARIAN');
+
 -- INSERT INTO reservations (reservation_date, reservation_status, user_id, book_copy_id)
 -- VALUES ('2025-10-20', 'READY_FOR_PICKUP', 1, 1),
 --        ('2025-10-19', 'COLLECTED', 2, 3),

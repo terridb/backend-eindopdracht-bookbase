@@ -16,8 +16,9 @@ public class LoanInputDto {
 
     public LoanStatus loanStatus;
 
-    @NotNull(message = "Book copy id is required")
     public Long bookCopyId;
+//    todo logica in service om te checken welke van de twee is ingevuld
+    public String trackingNumber;
 
     @NotNull(message = "User id is required")
     public Long userId;
