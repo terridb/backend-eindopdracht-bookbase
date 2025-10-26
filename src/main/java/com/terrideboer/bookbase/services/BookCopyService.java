@@ -57,8 +57,6 @@ public class BookCopyService {
             throw new InvalidInputException("Tracking number already exists");
         }
 
-        existingBook.getBookCopies().add(bookCopy);
-
         BookCopy savedBookCopy = bookCopyRepository.save(bookCopy);
         return BookCopyMapper.toDto(savedBookCopy);
     }

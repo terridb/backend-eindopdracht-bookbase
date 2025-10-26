@@ -2,6 +2,7 @@ package com.terrideboer.bookbase.mappers;
 
 import com.terrideboer.bookbase.dtos.users.UserDto;
 import com.terrideboer.bookbase.dtos.users.UserInputDto;
+import com.terrideboer.bookbase.dtos.users.UserSummaryDto;
 import com.terrideboer.bookbase.models.User;
 
 public class UserMapper {
@@ -32,6 +33,16 @@ public class UserMapper {
         userDto.role = user.getRole();
 
         return userDto;
+    }
+
+    public static UserSummaryDto toSummaryDto(User user) {
+        UserSummaryDto userSummaryDto = new UserSummaryDto();
+
+        userSummaryDto.id = user.getId();
+        userSummaryDto.firstName = user.getFirstName();
+        userSummaryDto.lastName = user.getLastName();
+
+        return userSummaryDto;
     }
 
 }

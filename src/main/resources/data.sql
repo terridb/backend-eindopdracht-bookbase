@@ -67,14 +67,14 @@ VALUES ('Karel', 'Kiwi', 'karel.kiwi@test.nl', '0612345678', 'test123', 'MEMBER'
 --        ('2025-10-18', 'EXPIRED', 1, 11),
 --        ('2025-10-17', 'COLLECTED', 2, 5);
 --
--- INSERT INTO loans (loan_date, loan_period_in_days, loan_status, book_copy_id, user_id)
--- VALUES ('2025-09-01', 21, 'OVERDUE', 4, 1),
---        ('2025-10-01', 21, 'ACTIVE', 3, 2),
---        ('2025-09-10', 21, 'RETURNED', 5, 3),
---        ('2025-09-25', 21, 'ACTIVE', 10, 5),
---        ('2025-09-30', 21, 'ACTIVE', 13, 6),
---        ('2025-09-18', 21, 'OVERDUE', 15, 1);
---
+INSERT INTO loans (loan_date, loan_period_in_days, loan_status, book_copy_id, user_id)
+VALUES ('2025-09-01', 21, 'OVERDUE', 4, 1),
+       ('2025-10-01', 21, 'ACTIVE', 3, 2),
+       ('2025-09-10', 21, 'RETURNED', 5, 3),
+       ('2025-09-25', 21, 'ACTIVE', 10, 5),
+       ('2025-09-30', 21, 'ACTIVE', 13, 6),
+       ('2025-09-18', 21, 'OVERDUE', 15, 1);
+
 -- INSERT INTO fines (fine_amount, payment_status, loan_id)
 -- VALUES (9.80, 'PAID', 1),
 --        (5.50, 'PAID', 3),
