@@ -76,7 +76,7 @@ public class BookCopyService {
     }
 
     public void deleteBookCopy(Long id) {
-        BookCopy bookCopy = bookCopyRepository.findById(id)
+        bookCopyRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Book-copy with id " + id + " not found"));
         bookCopyRepository.deleteById(id);
     }

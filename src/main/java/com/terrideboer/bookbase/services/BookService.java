@@ -85,7 +85,7 @@ public class BookService {
         }
 
         if (bookPatchDto.isbn != null) {
-            if (bookPatchDto.isbn.matches("^[0-9]{10,13}$")) {
+            if (!bookPatchDto.isbn.matches("^[0-9]{10,13}$")) {
                 throw new InvalidInputException("ISBN must contain 10 to 13 digits");
             }
             existingBook.setIsbn(bookPatchDto.isbn.trim());

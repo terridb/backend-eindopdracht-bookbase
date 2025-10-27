@@ -4,8 +4,10 @@ import com.terrideboer.bookbase.dtos.books.BookDto;
 import com.terrideboer.bookbase.dtos.books.BookInputDto;
 import com.terrideboer.bookbase.dtos.loans.LoanDto;
 import com.terrideboer.bookbase.dtos.loans.LoanInputDto;
+import com.terrideboer.bookbase.dtos.loans.LoanPatchDto;
 import com.terrideboer.bookbase.services.LoanService;
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,5 +43,26 @@ public class LoanController {
         URI uri = URI.create("/loans/" + loanDto.id);
 
         return ResponseEntity.created(uri).body(loanDto);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<LoanDto> putLoan(@PathVariable Long id, @Valid @RequestBody LoanInputDto loanInputDto) {
+        LoanDto loanDto = loanService.putLoan(id, loanInputDto);
+
+        return ResponseEntity.ok(loanDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteLoan(@PathVariable Long id) {
+        loanService.deleteLoan(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<LoanDto> patchLoan (@PathVariable Long id, @RequestBody LoanPatchDto loanPatchDto) {
+        LoanDto loanDto = loanService.patchLoan(id, loanPatchDto);
+
+        return ResponseEntity.ok(loanDto);
     }
 }
