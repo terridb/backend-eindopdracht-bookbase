@@ -1,8 +1,10 @@
 package com.terrideboer.bookbase.controllers;
 
+import com.terrideboer.bookbase.dtos.loans.LoanDto;
 import com.terrideboer.bookbase.dtos.users.UserDto;
 import com.terrideboer.bookbase.dtos.users.UserInputDto;
 import com.terrideboer.bookbase.dtos.users.UserPatchDto;
+import com.terrideboer.bookbase.services.LoanService;
 import com.terrideboer.bookbase.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +18,11 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final LoanService loanService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, LoanService loanService) {
         this.userService = userService;
+        this.loanService = loanService;
     }
 
     @GetMapping
@@ -61,5 +65,11 @@ public class UserController {
         UserDto userDto = userService.patchUser(id, userPatchDto);
 
         return ResponseEntity.ok(userDto);
+    }
+
+    @GetMapping("{id}/loans")
+    public ResponseEntity<List<LoanDto>> getLoansByUserId(@PathVariable Long id) {
+
+        return ResponseEntity.ok(loanService.getLoansByUserId(id));
     }
 }

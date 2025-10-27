@@ -42,6 +42,20 @@ public class BookCopyService {
                         .orElseThrow(() -> new RecordNotFoundException("Book-copy with id " + id + " not found")));
     }
 
+    public List<BookCopyDto> getBookCopiesByBookId(Long id) {
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException(("Book with id " + id + " not found")));
+
+        List<BookCopy> bookCopies = bookCopyRepository.findByBook(book);
+        List<BookCopyDto> dtoBookCopies = new ArrayList<>();
+
+        for (BookCopy bookCopy : bookCopies) {
+            dtoBookCopies.add(BookCopyMapper.toDto(bookCopy));
+        }
+
+        return dtoBookCopies;
+    }
+
     public BookCopyDto postBookCopy(BookCopyInputDto bookCopyInputDto, Long bookId) {
         BookCopy bookCopy = BookCopyMapper.toEntity(bookCopyInputDto, null);
         Book existingBook = bookRepository.findById(bookId)

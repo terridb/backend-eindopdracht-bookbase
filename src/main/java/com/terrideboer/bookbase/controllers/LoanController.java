@@ -1,13 +1,10 @@
 package com.terrideboer.bookbase.controllers;
 
-import com.terrideboer.bookbase.dtos.books.BookDto;
-import com.terrideboer.bookbase.dtos.books.BookInputDto;
 import com.terrideboer.bookbase.dtos.loans.LoanDto;
 import com.terrideboer.bookbase.dtos.loans.LoanInputDto;
 import com.terrideboer.bookbase.dtos.loans.LoanPatchDto;
 import com.terrideboer.bookbase.services.LoanService;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

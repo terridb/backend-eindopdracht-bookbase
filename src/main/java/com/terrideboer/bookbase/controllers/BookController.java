@@ -26,6 +26,8 @@ public class BookController {
         this.bookCopyService = bookCopyService;
     }
 
+
+
 //    todo add endpoint for all bookcopies for one book
 
     @GetMapping
@@ -68,6 +70,12 @@ public class BookController {
         BookDto bookDto = bookService.patchBook(id, bookPatchDto);
 
         return ResponseEntity.ok(bookDto);
+    }
+
+    @GetMapping("/{id}/book-copies")
+    public ResponseEntity<List<BookCopyDto>> getBookCopiesByBookId(@PathVariable Long id) {
+
+        return ResponseEntity.ok(bookCopyService.getBookCopiesByBookId(id));
     }
 
     @PostMapping("/{id}/book-copies")

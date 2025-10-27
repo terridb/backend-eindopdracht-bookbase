@@ -5,7 +5,6 @@ import com.terrideboer.bookbase.dtos.loans.LoanInputDto;
 import com.terrideboer.bookbase.dtos.loans.LoanPatchDto;
 import com.terrideboer.bookbase.exceptions.InvalidInputException;
 import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
-import com.terrideboer.bookbase.mappers.BookCopyMapper;
 import com.terrideboer.bookbase.mappers.LoanMapper;
 import com.terrideboer.bookbase.models.BookCopy;
 import com.terrideboer.bookbase.models.Loan;
@@ -43,11 +42,24 @@ public class LoanService {
         return dtoLoans;
     }
 
-    //    todo toevoegen dat alle loans van 1 user opgevraagd kunnen worden
     public LoanDto getLoanById(Long id) {
         return LoanMapper.toDto(
                 loanRepository.findById(id)
                         .orElseThrow(() -> new RecordNotFoundException("Loan with id " + id + " not found")));
+    }
+
+    public List<LoanDto> getLoansByUserId(Long id) {
+        User user =   userRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("User with id " + id + " not found"));
+
+        List<Loan> loans = loanRepository.findByUser(user);
+        List<LoanDto> dtoLoans = new ArrayList<>();
+
+        for (Loan loan : loans) {
+            dtoLoans.add(LoanMapper.toDto(loan));
+        }
+
+        return dtoLoans;
     }
 
     public LoanDto postLoan(LoanInputDto loanInputDto) {
