@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 
 public class FineInputDto {
 
-    @NotNull(message = "Fine amount is required")
     @Positive(message = "Fine amount must be a positive number")
     public BigDecimal fineAmount;
 

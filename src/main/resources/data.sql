@@ -33,22 +33,21 @@ VALUES (1, 1),
        (10, 8);
 
 INSERT INTO book_copies (book_id, tracking_number)
-VALUES
-    (1, 'BB-1-1'),
-    (1, 'BB-1-2'),
-    (2, 'BB-2-1'),
-    (3, 'BB-3-1'),
-    (3, 'BB-3-2'),
-    (4, 'BB-4-1'),
-    (5, 'BB-5-1'),
-    (5, 'BB-5-2'),
-    (6, 'BB-6-1'),
-    (6, 'BB-6-2'),
-    (7, 'BB-7-1'),
-    (8, 'BB-8-1'),
-    (8, 'BB-8-2'),
-    (9, 'BB-9-1'),
-    (10, 'BB-10-1');
+VALUES (1, 'BB-1-1'),
+       (1, 'BB-1-2'),
+       (2, 'BB-2-1'),
+       (3, 'BB-3-1'),
+       (3, 'BB-3-2'),
+       (4, 'BB-4-1'),
+       (5, 'BB-5-1'),
+       (5, 'BB-5-2'),
+       (6, 'BB-6-1'),
+       (6, 'BB-6-2'),
+       (7, 'BB-7-1'),
+       (8, 'BB-8-1'),
+       (8, 'BB-8-2'),
+       (9, 'BB-9-1'),
+       (10, 'BB-10-1');
 
 INSERT INTO users (first_name, last_name, email, phone_number, password, role)
 VALUES ('Karel', 'Kiwi', 'karel.kiwi@test.nl', '0612345678', 'test123', 'MEMBER'),
@@ -67,15 +66,18 @@ VALUES ('Karel', 'Kiwi', 'karel.kiwi@test.nl', '0612345678', 'test123', 'MEMBER'
 --        ('2025-10-18', 'EXPIRED', 1, 11),
 --        ('2025-10-17', 'COLLECTED', 2, 5);
 --
-INSERT INTO loans (loan_date, loan_period_in_days, loan_status, book_copy_id, user_id)
-VALUES ('2025-09-01', 21, 'OVERDUE', 4, 1),
-       ('2025-10-01', 21, 'ACTIVE', 3, 2),
-       ('2025-09-10', 21, 'RETURNED', 5, 3),
-       ('2025-09-25', 21, 'ACTIVE', 10, 5),
-       ('2025-09-30', 21, 'ACTIVE', 13, 6),
-       ('2025-09-18', 21, 'OVERDUE', 15, 1);
+INSERT INTO loans (loan_date, return_date, loan_period_in_days, loan_status, book_copy_id, user_id)
+VALUES ('2025-09-01', '2025-09-30', 21, 'RETURNED', 4, 1),
+       ('2025-10-01', NULL, 21, 'OVERDUE', 3, 2),
+       ('2025-09-10', '2025-09-25', 21, 'RETURNED', 5, 3),
+       ('2025-09-25', '2025-10-22', 21, 'RETURNED', 10, 5),
+       ('2025-09-30', NULL, 21, 'OVERDUE', 13, 6),
+       ('2025-09-18', '2025-10-22', 21, 'RETURNED', 15, 1),
+       ('2025-10-27', NULL, 21, 'ACTIVE', 9, 1);
 
--- INSERT INTO fines (fine_amount, payment_status, loan_id)
--- VALUES (9.80, 'PAID', 1),
---        (5.50, 'PAID', 3),
---        (8.25, 'OVERDUE', 4);
+
+INSERT INTO fines (fine_amount, payment_status, loan_id)
+VALUES (10.00, 'PAID', 1),
+       (5.50, 'PAID', 3),
+       (8.50, 'NOT_PAID', 4),
+       (9.00, 'NOT_PAID', 6);

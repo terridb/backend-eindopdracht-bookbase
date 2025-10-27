@@ -1,13 +1,11 @@
 package com.terrideboer.bookbase.dtos.fines;
 
-import com.terrideboer.bookbase.dtos.loans.LoanSummaryDto;
 import com.terrideboer.bookbase.models.enums.PaymentStatus;
 
 import java.math.BigDecimal;
 
-public class FineDto {
+public class FineSummaryDto {
     public Long id;
     public BigDecimal fineAmount;
     public PaymentStatus paymentStatus;
-    public LoanSummaryDto loan;
 }

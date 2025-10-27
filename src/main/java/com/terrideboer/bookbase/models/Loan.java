@@ -16,6 +16,8 @@ public class Loan {
     @Column(nullable = false)
     private LocalDate loanDate;
 
+    private LocalDate returnDate;
+
     private Integer loanPeriodInDays = 21;
 
     @Enumerated(EnumType.STRING)
@@ -82,5 +84,13 @@ public class Loan {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public LocalDate getReturnDate() {
+        return returnDate;
+    }
+
+    public void setReturnDate(LocalDate returnDate) {
+        this.returnDate = returnDate;
     }
 }

@@ -1,6 +1,7 @@
 package com.terrideboer.bookbase.controllers;
 
 import com.terrideboer.bookbase.dtos.loans.LoanDto;
+import com.terrideboer.bookbase.dtos.loans.LoanWithFineDto;
 import com.terrideboer.bookbase.dtos.users.UserDto;
 import com.terrideboer.bookbase.dtos.users.UserInputDto;
 import com.terrideboer.bookbase.dtos.users.UserPatchDto;
@@ -68,7 +69,7 @@ public class UserController {
     }
 
     @GetMapping("{id}/loans")
-    public ResponseEntity<List<LoanDto>> getLoansByUserId(@PathVariable Long id) {
+    public ResponseEntity<List<LoanWithFineDto>> getLoansByUserId(@PathVariable Long id) {
 
         return ResponseEntity.ok(loanService.getLoansByUserId(id));
     }
