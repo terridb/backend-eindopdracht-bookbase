@@ -76,8 +76,8 @@ VALUES ('2025-09-01', '2025-09-30', 21, 'RETURNED', 4, 1),
        ('2025-10-27', NULL, 21, 'ACTIVE', 9, 1);
 
 
-INSERT INTO fines (fine_amount, payment_status, loan_id)
-VALUES (10.00, 'PAID', 1),
-       (5.50, 'PAID', 3),
-       (8.50, 'NOT_PAID', 4),
-       (9.00, 'NOT_PAID', 6);
+INSERT INTO fines (fine_amount, payment_status, loan_id, payment_date)
+VALUES (10.00, 'PAID', 1, '2025-10-28'),
+       (5.50, 'PAID', 3, '2025-10-22'),
+       (8.50, 'NOT_PAID', 4, NULL),
+       (9.00, 'NOT_PAID', 6, NULL);

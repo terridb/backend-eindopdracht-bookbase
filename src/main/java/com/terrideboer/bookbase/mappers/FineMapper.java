@@ -28,6 +28,7 @@ public class FineMapper {
 
         fineDto.id = fine.getId();
         fineDto.fineAmount = fine.getFineAmount();
+        fineDto.paymentDate = fine.getPaymentDate();
         fineDto.paymentStatus = fine.getPaymentStatus();
 
         if (fine.getLoan() != null) {

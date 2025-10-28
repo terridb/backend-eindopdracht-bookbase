@@ -13,6 +13,7 @@ import com.terrideboer.bookbase.repositories.LoanRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +83,21 @@ public class FineService {
         loan.setFine(null);
 
         fineRepository.deleteById(id);
+    }
+
+    public FineDto payFine(Long id) {
+        Fine fine = fineRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException(("Fine with id " + id + " not found")));
+
+        if (fine.getPaymentStatus() == PaymentStatus.PAID) {
+            throw new AlreadyExistsException("This fine has already been paid");
+        }
+
+        fine.setPaymentStatus(PaymentStatus.PAID);
+        fine.setPaymentDate(LocalDate.now());
+        fineRepository.save(fine);
+
+        return FineMapper.toDto(fine);
     }
 
     public Fine generateFine(Loan loan) {

@@ -2,6 +2,7 @@ package com.terrideboer.bookbase.controllers;
 
 import com.terrideboer.bookbase.dtos.fines.FineDto;
 import com.terrideboer.bookbase.dtos.fines.FineInputDto;
+import com.terrideboer.bookbase.models.Fine;
 import com.terrideboer.bookbase.services.FineService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +34,13 @@ public class FineController {
     @PutMapping("/{id}")
     public ResponseEntity<FineDto> putFine(@PathVariable Long id, @RequestBody FineInputDto fineInputDto) {
         FineDto fineDto = fineService.putFine(id, fineInputDto);
+
+        return ResponseEntity.ok(fineDto);
+    }
+
+    @PatchMapping("/{id}/pay")
+    public ResponseEntity<FineDto> payFine(@PathVariable Long id) {
+        FineDto fineDto = fineService.payFine(id);
 
         return ResponseEntity.ok(fineDto);
     }
