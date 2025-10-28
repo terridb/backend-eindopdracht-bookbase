@@ -86,10 +86,10 @@ public class LoanController {
     }
 
     //    Endpoint to adjust a loan for a book
-    @PatchMapping("/{id}")
-    public ResponseEntity<LoanDto> patchLoan(@PathVariable Long id, @RequestBody LoanPatchDto loanPatchDto) {
-        LoanDto loanDto = loanService.patchLoan(id, loanPatchDto);
-
-        return ResponseEntity.ok(loanDto);
-    }
+//    @PatchMapping("/{id}")
+//    public ResponseEntity<LoanDto> patchLoan(@PathVariable Long id, @RequestBody LoanPatchDto loanPatchDto) {
+//        LoanDto loanDto = loanService.patchLoan(id, loanPatchDto);
+//
+//        return ResponseEntity.ok(loanDto);
+//    }
 }

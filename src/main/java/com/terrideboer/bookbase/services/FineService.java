@@ -7,9 +7,11 @@ import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
 import com.terrideboer.bookbase.mappers.FineMapper;
 import com.terrideboer.bookbase.models.Fine;
 import com.terrideboer.bookbase.models.Loan;
+import com.terrideboer.bookbase.models.enums.LoanStatus;
 import com.terrideboer.bookbase.models.enums.PaymentStatus;
 import com.terrideboer.bookbase.repositories.FineRepository;
 import com.terrideboer.bookbase.repositories.LoanRepository;
+import com.terrideboer.bookbase.utils.LoanUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -95,14 +97,13 @@ public class FineService {
 
         fine.setPaymentStatus(PaymentStatus.PAID);
         fine.setPaymentDate(LocalDate.now());
-        fineRepository.save(fine);
+        Fine savedFine = fineRepository.save(fine);
 
-        return FineMapper.toDto(fine);
+        return FineMapper.toDto(savedFine);
     }
 
     public Fine generateFine(Loan loan) {
-        long daysLate = ChronoUnit.DAYS.between(loan.getLoanDate().plusDays(loan.getLoanPeriodInDays()),
-                loan.getReturnDate());
+        long daysLate = LoanUtils.getDaysLateFromLoan(loan);
 
         double fineAmount = daysLate * 0.5;
 
@@ -115,7 +116,8 @@ public class FineService {
         fine.setFineAmount(BigDecimal.valueOf(fineAmount));
         fine.setPaymentStatus(PaymentStatus.NOT_PAID);
 
-        fineRepository.save(fine);
-        return fine;
+        return fineRepository.save(fine);
     }
+
+//    todo optioneel: get all unpaid fines
 }

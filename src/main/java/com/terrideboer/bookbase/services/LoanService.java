@@ -15,6 +15,7 @@ import com.terrideboer.bookbase.models.enums.LoanStatus;
 import com.terrideboer.bookbase.repositories.BookCopyRepository;
 import com.terrideboer.bookbase.repositories.LoanRepository;
 import com.terrideboer.bookbase.repositories.UserRepository;
+import com.terrideboer.bookbase.utils.LoanUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -41,6 +42,10 @@ public class LoanService {
         List<LoanDto> dtoLoans = new ArrayList<>();
 
         for (Loan loan : loans) {
+            if (LoanUtils.checkIfLoanIsExpired(loan)) {
+                setLoanAsOverdue(loan);
+            }
+
             dtoLoans.add(LoanMapper.toDto(loan));
         }
 
@@ -48,9 +53,14 @@ public class LoanService {
     }
 
     public LoanWithFineDto getLoanById(Long id) {
-        return LoanMapper.toLoanWithFineDto(
-                loanRepository.findById(id)
-                        .orElseThrow(() -> new RecordNotFoundException("Loan with id " + id + " not found")));
+        Loan loan = loanRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("Loan with id " + id + " not found"));
+
+        if (LoanUtils.checkIfLoanIsExpired(loan)) {
+            setLoanAsOverdue(loan);
+        }
+
+        return LoanMapper.toLoanWithFineDto(loan);
     }
 
     public List<LoanWithFineDto> getLoansByUserId(Long id) {
@@ -61,6 +71,10 @@ public class LoanService {
         List<LoanWithFineDto> dtoLoans = new ArrayList<>();
 
         for (Loan loan : loans) {
+            if (LoanUtils.checkIfLoanIsExpired(loan)) {
+                setLoanAsOverdue(loan);
+            }
+
             dtoLoans.add(LoanMapper.toLoanWithFineDto(loan));
         }
 
@@ -102,47 +116,50 @@ public class LoanService {
         loanRepository.deleteById(id);
     }
 
-    public LoanDto patchLoan(Long id, LoanPatchDto loanPatchDto) {
-        Loan existingLoan = loanRepository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException("Loan with id " + id + " not found"));
+//    todo patch evt verwijderen (heeft momenteel geen nut met automatische updates tov put)
+//    public LoanDto patchLoan(Long id, LoanPatchDto loanPatchDto) {
+//        Loan existingLoan = loanRepository.findById(id)
+//                .orElseThrow(() -> new RecordNotFoundException("Loan with id " + id + " not found"));
+//
+//        if (loanPatchDto.loanPeriodInDays != null) {
+//            if (loanPatchDto.loanPeriodInDays <= 0) {
+//                throw new InvalidInputException("Loan period in days must be a positive number");
+//            }
+//            existingLoan.setLoanPeriodInDays(loanPatchDto.loanPeriodInDays);
+//        }
+//
+////        todo validatie enum
+//        if (loanPatchDto.loanStatus != null) {
+//            existingLoan.setLoanStatus(loanPatchDto.loanStatus);
+//        }
+//
+//        if (loanPatchDto.loanDate != null) {
+//            if (loanPatchDto.loanDate.isAfter(LocalDate.now())) {
+//                throw new InvalidInputException("Loan date cannot be in the future");
+//            }
+//            existingLoan.setLoanPeriodInDays(loanPatchDto.loanPeriodInDays);
+//        }
+//
+//        if (loanPatchDto.bookCopyId != null) {
+//            BookCopy bookCopy = bookCopyRepository.findById(loanPatchDto.bookCopyId)
+//                    .orElseThrow(() -> new RecordNotFoundException(("Book-copy with id " + loanPatchDto.bookCopyId + " not found")));
+//
+//            existingLoan.setBookCopy(bookCopy);
+//        }
+//
+//        if (loanPatchDto.userId != null) {
+//            User user = userRepository.findById(loanPatchDto.userId)
+//                    .orElseThrow(() -> new RecordNotFoundException(("User with id " + loanPatchDto.userId + " not found")));
+//
+//            existingLoan.setUser(user);
+//        }
+//
+//        Loan savedLoan = loanRepository.save(existingLoan);
+//        return LoanMapper.toDto(savedLoan);
+//
+//    }
 
-        if (loanPatchDto.loanPeriodInDays != null) {
-            if (loanPatchDto.loanPeriodInDays <= 0) {
-                throw new InvalidInputException("Loan period in days must be a positive number");
-            }
-            existingLoan.setLoanPeriodInDays(loanPatchDto.loanPeriodInDays);
-        }
-
-//        todo validatie enum
-        if (loanPatchDto.loanStatus != null) {
-            existingLoan.setLoanStatus(loanPatchDto.loanStatus);
-        }
-
-        if (loanPatchDto.loanDate != null) {
-            if (loanPatchDto.loanDate.isAfter(LocalDate.now())) {
-                throw new InvalidInputException("Loan date cannot be in the future");
-            }
-            existingLoan.setLoanPeriodInDays(loanPatchDto.loanPeriodInDays);
-        }
-
-        if (loanPatchDto.bookCopyId != null) {
-            BookCopy bookCopy = bookCopyRepository.findById(loanPatchDto.bookCopyId)
-                    .orElseThrow(() -> new RecordNotFoundException(("Book-copy with id " + loanPatchDto.bookCopyId + " not found")));
-
-            existingLoan.setBookCopy(bookCopy);
-        }
-
-        if (loanPatchDto.userId != null) {
-            User user = userRepository.findById(loanPatchDto.userId)
-                    .orElseThrow(() -> new RecordNotFoundException(("User with id " + loanPatchDto.userId + " not found")));
-
-            existingLoan.setUser(user);
-        }
-
-        Loan savedLoan = loanRepository.save(existingLoan);
-        return LoanMapper.toDto(savedLoan);
-//        todo overal trim toevoegen
-    }
+    //        todo overal trim toevoegen
 
     public LoanWithFineDto returnBook(Long id) {
         Loan loan = loanRepository.findById(id)
@@ -152,7 +169,7 @@ public class LoanService {
         loan.setLoanStatus(LoanStatus.RETURNED);
 //        todo is er een manier om bijv dagelijks te checken op datum om de status bij te werken?
 
-        if (loan.getReturnDate().isAfter(loan.getLoanDate().plusDays(loan.getLoanPeriodInDays()))) {
+        if (LoanUtils.checkIfLoanIsExpired(loan)) {
             Fine fine = fineService.generateFine(loan);
             loan.setFine(fine);
         }
@@ -161,4 +178,8 @@ public class LoanService {
         return LoanMapper.toLoanWithFineDto(loan);
     }
 
+    private void setLoanAsOverdue(Loan loan) {
+        loan.setLoanStatus(LoanStatus.OVERDUE);
+        loanRepository.save(loan);
+    }
 }

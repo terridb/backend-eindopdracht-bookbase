@@ -68,7 +68,7 @@ VALUES ('Karel', 'Kiwi', 'karel.kiwi@test.nl', '0612345678', 'test123', 'MEMBER'
 --
 INSERT INTO loans (loan_date, return_date, loan_period_in_days, loan_status, book_copy_id, user_id)
 VALUES ('2025-09-01', '2025-09-30', 21, 'RETURNED', 4, 1),
-       ('2025-10-01', NULL, 21, 'OVERDUE', 3, 2),
+       ('2025-10-01', NULL, 21, 'ACTIVE', 3, 2),
        ('2025-09-10', '2025-09-25', 21, 'RETURNED', 5, 3),
        ('2025-09-25', '2025-10-22', 21, 'RETURNED', 10, 5),
        ('2025-09-30', NULL, 21, 'OVERDUE', 13, 6),

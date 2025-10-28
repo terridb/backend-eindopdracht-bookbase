@@ -2,7 +2,6 @@ package com.terrideboer.bookbase.controllers;
 
 import com.terrideboer.bookbase.dtos.fines.FineDto;
 import com.terrideboer.bookbase.dtos.fines.FineInputDto;
-import com.terrideboer.bookbase.models.Fine;
 import com.terrideboer.bookbase.services.FineService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
