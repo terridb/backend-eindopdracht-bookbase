@@ -1,12 +1,10 @@
 package com.terrideboer.bookbase.controllers;
 
 import com.terrideboer.bookbase.dtos.fines.FineDto;
+import com.terrideboer.bookbase.dtos.fines.FineInputDto;
 import com.terrideboer.bookbase.services.FineService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,5 +28,19 @@ public class FineController {
     public ResponseEntity<FineDto> getFineById(@PathVariable Long id) {
 
         return ResponseEntity.ok(fineService.getFineById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<FineDto> putFine(@PathVariable Long id, @RequestBody FineInputDto fineInputDto) {
+        FineDto fineDto = fineService.putFine(id, fineInputDto);
+
+        return ResponseEntity.ok(fineDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteFine(@PathVariable Long id) {
+        fineService.deleteFine(id);
+
+        return ResponseEntity.noContent().build();
     }
 }

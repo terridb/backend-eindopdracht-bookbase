@@ -12,8 +12,5 @@ public class FineInputDto {
     public BigDecimal fineAmount;
 
     public PaymentStatus paymentStatus;
-
-    @NotNull(message = "Loan id is required")
-    public Long loanId;
 }
 

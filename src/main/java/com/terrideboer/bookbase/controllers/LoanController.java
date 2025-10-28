@@ -1,9 +1,12 @@
 package com.terrideboer.bookbase.controllers;
 
+import com.terrideboer.bookbase.dtos.fines.FineDto;
+import com.terrideboer.bookbase.dtos.fines.FineInputDto;
 import com.terrideboer.bookbase.dtos.loans.LoanDto;
 import com.terrideboer.bookbase.dtos.loans.LoanInputDto;
 import com.terrideboer.bookbase.dtos.loans.LoanPatchDto;
 import com.terrideboer.bookbase.dtos.loans.LoanWithFineDto;
+import com.terrideboer.bookbase.services.FineService;
 import com.terrideboer.bookbase.services.LoanService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +20,11 @@ import java.util.List;
 public class LoanController {
 
     private final LoanService loanService;
+    private final FineService fineService;
 
-    public LoanController(LoanService loanService) {
+    public LoanController(LoanService loanService, FineService fineService) {
         this.loanService = loanService;
+        this.fineService = fineService;
     }
 
     //    Endpoint to get all loans
@@ -44,6 +49,16 @@ public class LoanController {
         URI uri = URI.create("/loans/" + loanDto.id);
 
         return ResponseEntity.created(uri).body(loanDto);
+    }
+
+    //    Endpoint to manually create a fine for an existing loan
+    @PostMapping("/{id}/fines")
+    public ResponseEntity<FineDto> postManualFine(@PathVariable Long id, @Valid @RequestBody FineInputDto fineInputDto) {
+        FineDto fineDto = fineService.postManualFine(fineInputDto, id);
+
+        URI uri = URI.create("/fines/" + fineDto.id);
+
+        return ResponseEntity.created(uri).body(fineDto);
     }
 
     //    Endpoint to adjust a loan for a book

@@ -6,4 +6,7 @@ public enum ReservationStatus {
     COLLECTED,
     CANCELLED,
     EXPIRED
+
+//    todo: als 7 dagen verstreken zijn, veranderen naar expired.
+//    todo: endpoint om reservering te kunnen cancelen
 }

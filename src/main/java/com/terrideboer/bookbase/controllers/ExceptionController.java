@@ -1,5 +1,6 @@
 package com.terrideboer.bookbase.controllers;
 
+import com.terrideboer.bookbase.exceptions.AlreadyExistsException;
 import com.terrideboer.bookbase.exceptions.InvalidInputException;
 import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,11 @@ public class ExceptionController {
     @ExceptionHandler(value = InvalidInputException.class)
     public ResponseEntity<Object> exception(InvalidInputException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = AlreadyExistsException.class)
+    public ResponseEntity<Object> exception(AlreadyExistsException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)

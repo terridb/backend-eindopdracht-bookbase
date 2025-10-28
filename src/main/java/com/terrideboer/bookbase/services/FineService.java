@@ -2,6 +2,7 @@ package com.terrideboer.bookbase.services;
 
 import com.terrideboer.bookbase.dtos.fines.FineDto;
 import com.terrideboer.bookbase.dtos.fines.FineInputDto;
+import com.terrideboer.bookbase.exceptions.AlreadyExistsException;
 import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
 import com.terrideboer.bookbase.mappers.FineMapper;
 import com.terrideboer.bookbase.models.Fine;
@@ -20,9 +21,11 @@ import java.util.List;
 public class FineService {
 
     private final FineRepository fineRepository;
+    private final LoanRepository loanRepository;
 
-    public FineService(FineRepository fineRepository) {
+    public FineService(FineRepository fineRepository, LoanRepository loanRepository) {
         this.fineRepository = fineRepository;
+        this.loanRepository = loanRepository;
     }
 
     public List<FineDto> getAllFines() {
@@ -42,15 +45,44 @@ public class FineService {
                         .orElseThrow(() -> new RecordNotFoundException("Fine with id " + id + " not found")));
     }
 
-//    public FineDto postManualFine(FineInputDto fineInputDto, Long loanId) {
-//        Fine fine = FineMapper.toEntity(fineInputDto, null);
-//        Loan existingLoan = loanRepository.findById(loanId)
-//                .orElseThrow(() -> new RecordNotFoundException(("Loan with id " + loanId + " not found")));
-//
-//        fine.setLoan(existingLoan);
-//
-//
-//    }
+    public FineDto postManualFine(FineInputDto fineInputDto, Long loanId) {
+        Loan existingLoan = loanRepository.findById(loanId)
+                .orElseThrow(() -> new RecordNotFoundException(("Loan with id " + loanId + " not found")));
+
+        if (existingLoan.getFine() != null) {
+            throw new AlreadyExistsException("This loan already has an existing fine. Manual fine could not be added");
+        }
+
+        Fine fine = FineMapper.toEntity(fineInputDto, null);
+        fine.setLoan(existingLoan);
+
+        if (fine.getPaymentStatus() == null) {
+            fine.setPaymentStatus(PaymentStatus.NOT_PAID);
+        }
+
+        Fine savedFine = fineRepository.save(fine);
+        return FineMapper.toDto(savedFine);
+    }
+
+    public FineDto putFine(Long id, FineInputDto fineInputDto) {
+        Fine existingFine = fineRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException(("Fine with id " + id + " not found")));
+
+        Fine updatedFine = FineMapper.toEntity(fineInputDto, existingFine);
+
+        Fine savedFine = fineRepository.save(updatedFine);
+        return FineMapper.toDto(savedFine);
+    }
+
+    public void deleteFine(Long id) {
+        Fine fine = fineRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException(("Fine with id " + id + " not found")));
+
+        Loan loan = fine.getLoan();
+        loan.setFine(null);
+
+        fineRepository.deleteById(id);
+    }
 
     public Fine generateFine(Loan loan) {
         long daysLate = ChronoUnit.DAYS.between(loan.getLoanDate().plusDays(loan.getLoanPeriodInDays()),
