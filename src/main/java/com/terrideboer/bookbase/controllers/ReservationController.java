@@ -1,14 +1,17 @@
 package com.terrideboer.bookbase.controllers;
 
+import com.terrideboer.bookbase.dtos.loans.LoanDto;
+import com.terrideboer.bookbase.dtos.loans.LoanInputDto;
 import com.terrideboer.bookbase.dtos.loans.LoanWithFineDto;
 import com.terrideboer.bookbase.dtos.reservations.ReservationDto;
+import com.terrideboer.bookbase.dtos.reservations.ReservationInputDto;
+import com.terrideboer.bookbase.dtos.reservations.ReservationPatchDto;
 import com.terrideboer.bookbase.services.ReservationService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -35,5 +38,22 @@ public class ReservationController {
     public ResponseEntity<ReservationDto> getReservationById(@PathVariable Long id) {
 
         return ResponseEntity.ok(reservationService.getReservationById(id));
+    }
+
+    //    Endpoint to create a new reservation
+    @PostMapping
+    public ResponseEntity<ReservationDto> postReservation(@Valid @RequestBody ReservationInputDto reservationInputDto) {
+        ReservationDto reservationDto = reservationService.postReservation(reservationInputDto);
+
+        URI uri = URI.create("/reservations/" + reservationDto.id);
+
+        return ResponseEntity.created(uri).body(reservationDto);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<ReservationDto> patchReservation(@PathVariable Long id, @RequestBody ReservationPatchDto reservationPatchDto) {
+        ReservationDto reservationDto = reservationService.patchReservation(id, reservationPatchDto);
+
+        return ResponseEntity.ok(reservationDto);
     }
 }
