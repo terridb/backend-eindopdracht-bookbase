@@ -1,6 +1,5 @@
 package com.terrideboer.bookbase.controllers;
 
-import com.terrideboer.bookbase.dtos.loans.LoanDto;
 import com.terrideboer.bookbase.dtos.loans.LoanWithFineDto;
 import com.terrideboer.bookbase.dtos.users.UserDto;
 import com.terrideboer.bookbase.dtos.users.UserInputDto;
@@ -25,6 +24,8 @@ public class UserController {
         this.userService = userService;
         this.loanService = loanService;
     }
+
+//    todo needs to be adjusted when implementing authentication
 
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers() {

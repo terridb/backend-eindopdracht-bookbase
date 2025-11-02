@@ -116,49 +116,6 @@ public class LoanService {
         loanRepository.deleteById(id);
     }
 
-//    todo patch evt verwijderen (heeft momenteel geen nut met automatische updates tov put)
-//    public LoanDto patchLoan(Long id, LoanPatchDto loanPatchDto) {
-//        Loan existingLoan = loanRepository.findById(id)
-//                .orElseThrow(() -> new RecordNotFoundException("Loan with id " + id + " not found"));
-//
-//        if (loanPatchDto.loanPeriodInDays != null) {
-//            if (loanPatchDto.loanPeriodInDays <= 0) {
-//                throw new InvalidInputException("Loan period in days must be a positive number");
-//            }
-//            existingLoan.setLoanPeriodInDays(loanPatchDto.loanPeriodInDays);
-//        }
-//
-////        todo validatie enum
-//        if (loanPatchDto.loanStatus != null) {
-//            existingLoan.setLoanStatus(loanPatchDto.loanStatus);
-//        }
-//
-//        if (loanPatchDto.loanDate != null) {
-//            if (loanPatchDto.loanDate.isAfter(LocalDate.now())) {
-//                throw new InvalidInputException("Loan date cannot be in the future");
-//            }
-//            existingLoan.setLoanPeriodInDays(loanPatchDto.loanPeriodInDays);
-//        }
-//
-//        if (loanPatchDto.bookCopyId != null) {
-//            BookCopy bookCopy = bookCopyRepository.findById(loanPatchDto.bookCopyId)
-//                    .orElseThrow(() -> new RecordNotFoundException(("Book-copy with id " + loanPatchDto.bookCopyId + " not found")));
-//
-//            existingLoan.setBookCopy(bookCopy);
-//        }
-//
-//        if (loanPatchDto.userId != null) {
-//            User user = userRepository.findById(loanPatchDto.userId)
-//                    .orElseThrow(() -> new RecordNotFoundException(("User with id " + loanPatchDto.userId + " not found")));
-//
-//            existingLoan.setUser(user);
-//        }
-//
-//        Loan savedLoan = loanRepository.save(existingLoan);
-//        return LoanMapper.toDto(savedLoan);
-//
-//    }
-
     //        todo overal trim toevoegen
 
     public LoanWithFineDto returnBook(Long id) {

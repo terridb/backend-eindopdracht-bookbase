@@ -20,18 +20,21 @@ public class AuthorController {
         this.service = service;
     }
 
+    //       Endpoint to get all authors
     @GetMapping
     public ResponseEntity<List<AuthorDto>> getAllAuthors() {
 
         return ResponseEntity.ok(service.getAllAuthors());
     }
 
+    //       Endpoint to get an author by author-id
     @GetMapping("/{id}")
     public ResponseEntity<AuthorDto> getAuthorById(@PathVariable Long id) {
 
         return ResponseEntity.ok(service.getAuthorById(id));
     }
 
+    //       Endpoint to create an author
     @PostMapping
     public ResponseEntity<AuthorDto> postAuthor(@Valid @RequestBody AuthorInputDto authorInputDto) {
         AuthorDto authorDto = service.postAuthor(authorInputDto);
@@ -41,6 +44,7 @@ public class AuthorController {
         return ResponseEntity.created(uri).body(authorDto);
     }
 
+    //       Endpoint to adjust an author by author-id (put)
     @PutMapping("/{id}")
     public ResponseEntity<AuthorDto> putAuthor(@PathVariable Long id, @Valid @RequestBody AuthorInputDto authorInputDto) {
         AuthorDto authorDto = service.putAuthor(id, authorInputDto);
@@ -48,6 +52,7 @@ public class AuthorController {
         return ResponseEntity.ok(authorDto);
     }
 
+    //       Endpoint to delete an author by author-id
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAuthor(@PathVariable Long id) {
         service.deleteAuthor(id);

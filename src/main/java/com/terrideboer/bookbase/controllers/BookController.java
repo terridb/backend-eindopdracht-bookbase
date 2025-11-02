@@ -26,22 +26,21 @@ public class BookController {
         this.bookCopyService = bookCopyService;
     }
 
-
-
-//    todo add endpoint for all bookcopies for one book
-
+    //       Endpoint to get all books
     @GetMapping
     public ResponseEntity<List<BookDto>> getAllBooks() {
 
         return ResponseEntity.ok(bookService.getAllBooks());
     }
 
+    //       Endpoint to get a book by book-id
     @GetMapping("/{id}")
     public ResponseEntity<BookDto> getBookById(@PathVariable Long id) {
 
         return ResponseEntity.ok(bookService.getBookById(id));
     }
 
+    //       Endpoint to create a book
     @PostMapping
     public ResponseEntity<BookDto> postBook(@Valid @RequestBody BookInputDto bookInputDto) {
         BookDto bookDto = bookService.postBook(bookInputDto);
@@ -51,6 +50,7 @@ public class BookController {
         return ResponseEntity.created(uri).body(bookDto);
     }
 
+    //       Endpoint to adjust a book by book-id (put)
     @PutMapping("/{id}")
     public ResponseEntity<BookDto> putBook(@PathVariable Long id, @Valid @RequestBody BookInputDto bookInputDto) {
         BookDto bookDto = bookService.putBook(id, bookInputDto);
@@ -58,6 +58,7 @@ public class BookController {
         return ResponseEntity.ok(bookDto);
     }
 
+    //       Endpoint to delete a book by book-id
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
         bookService.deleteBook(id);
@@ -65,6 +66,7 @@ public class BookController {
         return ResponseEntity.noContent().build();
     }
 
+    //       Endpoint to adjust a book by book-id (patch)
     @PatchMapping("/{id}")
     public ResponseEntity<BookDto> patchBook(@PathVariable Long id, @RequestBody BookPatchDto bookPatchDto) {
         BookDto bookDto = bookService.patchBook(id, bookPatchDto);
@@ -72,12 +74,14 @@ public class BookController {
         return ResponseEntity.ok(bookDto);
     }
 
+    //       Endpoint to get all book-copies from one book by book-id
     @GetMapping("/{id}/book-copies")
     public ResponseEntity<List<BookCopyDto>> getBookCopiesByBookId(@PathVariable Long id) {
 
         return ResponseEntity.ok(bookCopyService.getBookCopiesByBookId(id));
     }
 
+    //       Endpoint to create a new book-copy by book-id
     @PostMapping("/{id}/book-copies")
     public ResponseEntity<BookCopyDto> postBookCopy(@PathVariable Long id, @Valid @RequestBody BookCopyInputDto bookCopyInputDto) {
         BookCopyDto bookCopyDto = bookCopyService.postBookCopy(bookCopyInputDto, id);
