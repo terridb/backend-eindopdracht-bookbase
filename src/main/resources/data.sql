@@ -58,14 +58,15 @@ VALUES ('Karel', 'Kiwi', 'karel.kiwi@test.nl', '0612345678', 'test123', 'MEMBER'
        ('Noah', 'Noten', 'noah.noten@test.nl', '0676543219', 'test123', 'MEMBER'),
        ('Lisa', 'Langpootmug', 'lisa.langpootmug@test.nl', '0611223344', 'test123', 'LIBRARIAN');
 
--- INSERT INTO reservations (reservation_date, reservation_status, user_id, book_copy_id)
--- VALUES ('2025-10-20', 'READY_FOR_PICKUP', 1, 1),
---        ('2025-10-19', 'COLLECTED', 2, 3),
---        ('2025-10-21', 'PENDING', 5, 9),
---        ('2025-10-21', 'READY_FOR_PICKUP', 6, 13),
---        ('2025-10-18', 'EXPIRED', 1, 11),
---        ('2025-10-17', 'COLLECTED', 2, 5);
---
+INSERT INTO reservations (reservation_date, ready_for_pickup_date, collected_date, reservation_status, user_id, book_copy_id)
+VALUES
+    ('2025-10-20', '2025-10-25', NULL, 'READY_FOR_PICKUP', 1, 1),
+    ('2025-10-19', '2025-10-20', '2025-10-21', 'COLLECTED', 2, 3),
+    ('2025-10-21', NULL, NULL, 'PENDING', 5, 9),
+    ('2025-10-21', '2025-10-26', NULL, 'READY_FOR_PICKUP', 6, 13),
+    ('2025-10-10', '2025-10-15', NULL, 'EXPIRED', 1, 11),
+    ('2025-10-17', '2025-10-18', '2025-10-19', 'COLLECTED', 2, 5);
+
 INSERT INTO loans (loan_date, return_date, loan_period_in_days, loan_status, book_copy_id, user_id)
 VALUES ('2025-09-01', '2025-09-30', 21, 'RETURNED', 4, 1),
        ('2025-10-01', NULL, 21, 'ACTIVE', 3, 2),

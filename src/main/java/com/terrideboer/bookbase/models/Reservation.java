@@ -13,7 +13,9 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDate reservationDate;
+    private LocalDate reservationDate = LocalDate.now();
+    private LocalDate readyForPickupDate;
+    private LocalDate collectedDate;
 
     @Enumerated(EnumType.STRING)
     private ReservationStatus reservationStatus = ReservationStatus.PENDING;
@@ -60,5 +62,21 @@ public class Reservation {
 
     public void setBookCopy(BookCopy bookCopy) {
         this.bookCopy = bookCopy;
+    }
+
+    public LocalDate getReadyForPickupDate() {
+        return readyForPickupDate;
+    }
+
+    public void setReadyForPickupDate(LocalDate readyForPickupDate) {
+        this.readyForPickupDate = readyForPickupDate;
+    }
+
+    public LocalDate getCollectedDate() {
+        return collectedDate;
+    }
+
+    public void setCollectedDate(LocalDate collectedDate) {
+        this.collectedDate = collectedDate;
     }
 }
