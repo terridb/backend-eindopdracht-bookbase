@@ -1,23 +1,24 @@
 package com.terrideboer.bookbase.services;
 
-import com.terrideboer.bookbase.dtos.loans.LoanWithFineDto;
+import com.terrideboer.bookbase.dtos.loans.LoanDto;
+import com.terrideboer.bookbase.dtos.loans.LoanInputDto;
 import com.terrideboer.bookbase.dtos.reservations.ReservationDto;
 import com.terrideboer.bookbase.dtos.reservations.ReservationInputDto;
 import com.terrideboer.bookbase.dtos.reservations.ReservationPatchDto;
+import com.terrideboer.bookbase.exceptions.InvalidInputException;
 import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
 import com.terrideboer.bookbase.mappers.LoanMapper;
 import com.terrideboer.bookbase.mappers.ReservationMapper;
 import com.terrideboer.bookbase.models.BookCopy;
-import com.terrideboer.bookbase.models.Loan;
 import com.terrideboer.bookbase.models.Reservation;
 import com.terrideboer.bookbase.models.User;
 import com.terrideboer.bookbase.models.enums.ReservationStatus;
 import com.terrideboer.bookbase.repositories.BookCopyRepository;
 import com.terrideboer.bookbase.repositories.ReservationRepository;
 import com.terrideboer.bookbase.repositories.UserRepository;
-import com.terrideboer.bookbase.utils.LoanUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,11 +28,13 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final BookCopyRepository bookCopyRepository;
     private final UserRepository userRepository;
+    private final LoanService loanService;
 
-    public ReservationService(ReservationRepository reservationRepository, BookCopyRepository bookCopyRepository, UserRepository userRepository) {
+    public ReservationService(ReservationRepository reservationRepository, BookCopyRepository bookCopyRepository, UserRepository userRepository, LoanService loanService) {
         this.reservationRepository = reservationRepository;
         this.bookCopyRepository = bookCopyRepository;
         this.userRepository = userRepository;
+        this.loanService = loanService;
     }
 
     public List<ReservationDto> getAllReservations() {
@@ -89,4 +92,62 @@ public class ReservationService {
         return ReservationMapper.toDto(savedReservation);
     }
 
+    public void deleteReservation(Long id) {
+        reservationRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("Reservation with id " + id + " not found"));
+        reservationRepository.deleteById(id);
+    }
+
+    public ReservationDto markReservationReadyForPickup(Long id) {
+        Reservation reservation = reservationRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("Reservation with id " + id + " not found"));
+
+        if (reservation.getReservationStatus() != ReservationStatus.PENDING) {
+            throw new InvalidInputException("Only pending reservations can be marked as ready for pickup");
+        }
+
+        reservation.setReservationStatus(ReservationStatus.READY_FOR_PICKUP);
+        reservation.setReadyForPickupDate(LocalDate.now());
+
+        reservationRepository.save(reservation);
+        return ReservationMapper.toDto(reservation);
+    }
+
+    public ReservationDto markReservationAsCollected(Long id) {
+        Reservation reservation = reservationRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("Reservation with id " + id + " not found"));
+
+        if (reservation.getReservationStatus() != ReservationStatus.READY_FOR_PICKUP) {
+            throw new InvalidInputException("Only reservations that are ready for pickup can be marked as collected");
+        }
+
+        LoanInputDto loanInput = new LoanInputDto();
+        loanInput.userId = reservation.getUser().getId();
+        loanInput.bookCopyId = reservation.getBookCopy().getId();
+
+        loanService.postLoan(loanInput);
+
+        reservation.setReservationStatus(ReservationStatus.COLLECTED);
+        reservation.setCollectedDate(LocalDate.now());
+
+        reservationRepository.save(reservation);
+        return ReservationMapper.toDto(reservation);
+    }
+
+    public ReservationDto cancelReservation(Long id) {
+        Reservation reservation = reservationRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("Reservation with id " + id + " not found"));
+
+        if (reservation.getReservationStatus() == ReservationStatus.COLLECTED) {
+            throw new InvalidInputException("Collected reservations cannot be cancelled");
+        }
+
+        reservation.setReservationStatus(ReservationStatus.CANCELLED);
+
+        reservationRepository.save(reservation);
+        return ReservationMapper.toDto(reservation);
+    }
+
+//    todo als tijd over: expired reservations
+//todo relatie loans en reservations
 }

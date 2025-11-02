@@ -84,7 +84,7 @@ public class LoanService {
         BookCopy bookCopy = bookCopyRepository.findById(loanInputDto.bookCopyId)
                 .orElseThrow(() -> new RecordNotFoundException(("Book-copy with id " + loanInputDto.bookCopyId + " not found")));
         User user = userRepository.findById(loanInputDto.userId)
-                .orElseThrow(() -> new RecordNotFoundException(("User with id " + loanInputDto.bookCopyId + " not found")));
+                .orElseThrow(() -> new RecordNotFoundException(("User with id " + loanInputDto.userId + " not found")));
 
         if (loanInputDto.loanDate == null) {
             loan.setLoanDate(LocalDate.now());

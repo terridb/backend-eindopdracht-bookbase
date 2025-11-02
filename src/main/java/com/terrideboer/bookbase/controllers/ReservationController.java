@@ -1,8 +1,5 @@
 package com.terrideboer.bookbase.controllers;
 
-import com.terrideboer.bookbase.dtos.loans.LoanDto;
-import com.terrideboer.bookbase.dtos.loans.LoanInputDto;
-import com.terrideboer.bookbase.dtos.loans.LoanWithFineDto;
 import com.terrideboer.bookbase.dtos.reservations.ReservationDto;
 import com.terrideboer.bookbase.dtos.reservations.ReservationInputDto;
 import com.terrideboer.bookbase.dtos.reservations.ReservationPatchDto;
@@ -50,9 +47,42 @@ public class ReservationController {
         return ResponseEntity.created(uri).body(reservationDto);
     }
 
+    //    Endpoint to adjust certain fields of a reservation by reservation-id (patch)
     @PatchMapping("/{id}")
     public ResponseEntity<ReservationDto> patchReservation(@PathVariable Long id, @RequestBody ReservationPatchDto reservationPatchDto) {
         ReservationDto reservationDto = reservationService.patchReservation(id, reservationPatchDto);
+
+        return ResponseEntity.ok(reservationDto);
+    }
+
+    //    Endpoint to delete a reservation by reservation-id
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteReservation(@PathVariable Long id) {
+        reservationService.deleteReservation(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    //    Endpoint to mark a reservation as ready for pickup by reservation-id (patch)
+    @PatchMapping("/{id}/ready-for-pickup")
+    public ResponseEntity<ReservationDto> markReservationReadyForPickup(@PathVariable Long id) {
+        ReservationDto reservationDto = reservationService.markReservationReadyForPickup(id);
+
+        return ResponseEntity.ok(reservationDto);
+    }
+
+    //    Endpoint to mark a reservation collected and create a new loan by reservation-id (patch)
+    @PatchMapping("/{id}/collect")
+    public ResponseEntity<ReservationDto> markReservationAsCollected(@PathVariable Long id) {
+        ReservationDto reservationDto = reservationService.markReservationAsCollected(id);
+
+        return ResponseEntity.ok(reservationDto);
+    }
+
+    //    Endpoint to cancel a reservation by reservation-id (patch)
+    @PatchMapping("/{id}/cancel")
+    public ResponseEntity<ReservationDto> cancelReservation(@PathVariable Long id) {
+        ReservationDto reservationDto = reservationService.cancelReservation(id);
 
         return ResponseEntity.ok(reservationDto);
     }

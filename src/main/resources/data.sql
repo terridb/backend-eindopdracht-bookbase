@@ -64,7 +64,6 @@ VALUES
     ('2025-10-19', '2025-10-20', '2025-10-21', 'COLLECTED', 2, 3),
     ('2025-10-21', NULL, NULL, 'PENDING', 5, 9),
     ('2025-10-21', '2025-10-26', NULL, 'READY_FOR_PICKUP', 6, 13),
-    ('2025-10-10', '2025-10-15', NULL, 'EXPIRED', 1, 11),
     ('2025-10-17', '2025-10-18', '2025-10-19', 'COLLECTED', 2, 5);
 
 INSERT INTO loans (loan_date, return_date, loan_period_in_days, loan_status, book_copy_id, user_id)
