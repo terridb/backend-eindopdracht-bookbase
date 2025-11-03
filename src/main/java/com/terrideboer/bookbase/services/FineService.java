@@ -7,7 +7,6 @@ import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
 import com.terrideboer.bookbase.mappers.FineMapper;
 import com.terrideboer.bookbase.models.Fine;
 import com.terrideboer.bookbase.models.Loan;
-import com.terrideboer.bookbase.models.enums.LoanStatus;
 import com.terrideboer.bookbase.models.enums.PaymentStatus;
 import com.terrideboer.bookbase.repositories.FineRepository;
 import com.terrideboer.bookbase.repositories.LoanRepository;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 

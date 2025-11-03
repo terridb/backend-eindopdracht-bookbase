@@ -8,6 +8,7 @@ import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
 import com.terrideboer.bookbase.mappers.BookMapper;
 import com.terrideboer.bookbase.models.Author;
 import com.terrideboer.bookbase.models.Book;
+import com.terrideboer.bookbase.models.BookCopy;
 import com.terrideboer.bookbase.repositories.AuthorRepository;
 import com.terrideboer.bookbase.repositories.BookRepository;
 import org.springframework.stereotype.Service;
@@ -20,10 +21,12 @@ public class BookService {
 
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
+    private final BookCopyService bookCopyService;
 
-    public BookService(BookRepository bookRepository, AuthorRepository authorRepository) {
+    public BookService(BookRepository bookRepository, AuthorRepository authorRepository, BookCopyService bookCopyService) {
         this.bookRepository = bookRepository;
         this.authorRepository = authorRepository;
+        this.bookCopyService = bookCopyService;
     }
 
     public List<BookDto> getAllBooks() {
@@ -63,6 +66,12 @@ public class BookService {
     public void deleteBook(Long id) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(("Book with id " + id + " not found")));
+
+        if (book.getBookCopies() != null && !book.getBookCopies().isEmpty()) {
+            for (BookCopy bookCopy : book.getBookCopies()) {
+                bookCopyService.deleteBookCopy(bookCopy.getId());
+            }
+        }
 
         for (Author author : book.getAuthors()) {
             author.getBooks().remove(book);

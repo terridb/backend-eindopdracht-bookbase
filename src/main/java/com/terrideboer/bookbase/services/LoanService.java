@@ -5,10 +5,7 @@ import com.terrideboer.bookbase.dtos.loans.LoanInputDto;
 import com.terrideboer.bookbase.dtos.loans.LoanWithFineDto;
 import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
 import com.terrideboer.bookbase.mappers.LoanMapper;
-import com.terrideboer.bookbase.models.BookCopy;
-import com.terrideboer.bookbase.models.Fine;
-import com.terrideboer.bookbase.models.Loan;
-import com.terrideboer.bookbase.models.User;
+import com.terrideboer.bookbase.models.*;
 import com.terrideboer.bookbase.models.enums.LoanStatus;
 import com.terrideboer.bookbase.repositories.BookCopyRepository;
 import com.terrideboer.bookbase.repositories.LoanRepository;
@@ -109,9 +106,16 @@ public class LoanService {
     }
 
     public void deleteLoan(Long id) {
-        loanRepository.findById(id)
+        Loan loan = loanRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Loan with id " + id + " not found"));
-        loanRepository.deleteById(id);
+
+        if (loan.getReservation() != null) {
+            Reservation reservation = loan.getReservation();
+            loan.setReservation(null);
+            reservation.setLoan(null);
+        }
+
+        loanRepository.delete(loan);
     }
 
     //        todo overal trim toevoegen

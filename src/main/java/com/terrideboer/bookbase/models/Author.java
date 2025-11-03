@@ -1,6 +1,5 @@
 package com.terrideboer.bookbase.models;
 
-
 import jakarta.persistence.*;
 
 import java.time.LocalDate;

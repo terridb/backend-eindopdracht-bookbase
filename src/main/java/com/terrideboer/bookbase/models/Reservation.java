@@ -25,7 +25,7 @@ public class Reservation {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "book_copy_id", nullable = false)
+    @JoinColumn(name = "book_copy_id")
     private BookCopy bookCopy;
 
     @OneToOne

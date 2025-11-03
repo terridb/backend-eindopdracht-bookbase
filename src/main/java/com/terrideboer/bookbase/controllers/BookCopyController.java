@@ -13,30 +13,30 @@ import java.util.List;
 @RequestMapping("/book-copies")
 public class BookCopyController {
 
-    private final BookCopyService service;
+    private final BookCopyService bookCopyService;
 
-    public BookCopyController(BookCopyService service) {
-        this.service = service;
+    public BookCopyController(BookCopyService bookCopyService) {
+        this.bookCopyService = bookCopyService;
     }
 
     //       Endpoint to get all book-copies
     @GetMapping
     public ResponseEntity<List<BookCopyDto>> getAllBookCopies() {
 
-        return ResponseEntity.ok(service.getAllBookCopies());
+        return ResponseEntity.ok(bookCopyService.getAllBookCopies());
     }
 
     //       Endpoint to get a book-copy by id
     @GetMapping("/{id}")
     public ResponseEntity<BookCopyDto> getBookCopyById(@PathVariable Long id) {
 
-        return ResponseEntity.ok(service.getBookCopyById(id));
+        return ResponseEntity.ok(bookCopyService.getBookCopyById(id));
     }
 
     //       Endpoint to adjust a book-copy by id (put)
     @PutMapping("/{id}")
     public ResponseEntity<BookCopyDto> putBookCopy(@PathVariable Long id, @Valid @RequestBody BookCopyInputDto bookCopyInputDto) {
-        BookCopyDto bookCopyDto = service.putBookCopy(id, bookCopyInputDto);
+        BookCopyDto bookCopyDto = bookCopyService.putBookCopy(id, bookCopyInputDto);
 
         return ResponseEntity.ok(bookCopyDto);
     }
@@ -44,7 +44,7 @@ public class BookCopyController {
     //       Endpoint to delete a book-copy by id
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBookCopy(@PathVariable Long id) {
-        service.deleteBookCopy(id);
+        bookCopyService.deleteBookCopy(id);
 
         return ResponseEntity.noContent().build();
     }

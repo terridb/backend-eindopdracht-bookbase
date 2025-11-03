@@ -27,7 +27,7 @@ public class Loan {
     private Fine fine;
 
     @ManyToOne
-    @JoinColumn(name = "book_copy_id", nullable = false)
+    @JoinColumn(name = "book_copy_id")
     private BookCopy bookCopy;
 
     @ManyToOne

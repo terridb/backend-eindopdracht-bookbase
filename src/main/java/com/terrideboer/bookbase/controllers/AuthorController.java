@@ -2,6 +2,7 @@ package com.terrideboer.bookbase.controllers;
 
 import com.terrideboer.bookbase.dtos.authors.AuthorDto;
 import com.terrideboer.bookbase.dtos.authors.AuthorInputDto;
+import com.terrideboer.bookbase.dtos.books.BookDto;
 import com.terrideboer.bookbase.services.AuthorService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -14,30 +15,37 @@ import java.util.List;
 @RequestMapping("/authors")
 public class AuthorController {
 
-    private final AuthorService service;
+    private final AuthorService authorService;
 
-    public AuthorController(AuthorService service) {
-        this.service = service;
+    public AuthorController(AuthorService authorService) {
+        this.authorService = authorService;
     }
 
     //       Endpoint to get all authors
     @GetMapping
     public ResponseEntity<List<AuthorDto>> getAllAuthors() {
 
-        return ResponseEntity.ok(service.getAllAuthors());
+        return ResponseEntity.ok(authorService.getAllAuthors());
     }
 
     //       Endpoint to get an author by author-id
     @GetMapping("/{id}")
     public ResponseEntity<AuthorDto> getAuthorById(@PathVariable Long id) {
 
-        return ResponseEntity.ok(service.getAuthorById(id));
+        return ResponseEntity.ok(authorService.getAuthorById(id));
+    }
+
+    //       Endpoint to get all books from one author by author-id
+    @GetMapping("/{id}/books")
+    public ResponseEntity<List<BookDto>> getAllBooksFromAuthor(@PathVariable Long id) {
+
+        return ResponseEntity.ok(authorService.getAllBooksFromAuthor(id));
     }
 
     //       Endpoint to create an author
     @PostMapping
     public ResponseEntity<AuthorDto> postAuthor(@Valid @RequestBody AuthorInputDto authorInputDto) {
-        AuthorDto authorDto = service.postAuthor(authorInputDto);
+        AuthorDto authorDto = authorService.postAuthor(authorInputDto);
 
         URI uri = URI.create("/authors/" + authorDto.id);
 
@@ -47,7 +55,7 @@ public class AuthorController {
     //       Endpoint to adjust an author by author-id (put)
     @PutMapping("/{id}")
     public ResponseEntity<AuthorDto> putAuthor(@PathVariable Long id, @Valid @RequestBody AuthorInputDto authorInputDto) {
-        AuthorDto authorDto = service.putAuthor(id, authorInputDto);
+        AuthorDto authorDto = authorService.putAuthor(id, authorInputDto);
 
         return ResponseEntity.ok(authorDto);
     }
@@ -55,11 +63,8 @@ public class AuthorController {
     //       Endpoint to delete an author by author-id
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAuthor(@PathVariable Long id) {
-        service.deleteAuthor(id);
+        authorService.deleteAuthor(id);
 
         return ResponseEntity.noContent().build();
     }
-
-//    todo get request alle boeken van 1 auteur
-
 }

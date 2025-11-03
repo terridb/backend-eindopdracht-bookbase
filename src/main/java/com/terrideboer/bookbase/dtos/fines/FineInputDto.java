@@ -1,7 +1,6 @@
 package com.terrideboer.bookbase.dtos.fines;
 
 import com.terrideboer.bookbase.models.enums.PaymentStatus;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;

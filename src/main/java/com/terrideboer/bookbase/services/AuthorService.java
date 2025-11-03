@@ -2,8 +2,10 @@ package com.terrideboer.bookbase.services;
 
 import com.terrideboer.bookbase.dtos.authors.AuthorDto;
 import com.terrideboer.bookbase.dtos.authors.AuthorInputDto;
+import com.terrideboer.bookbase.dtos.books.BookDto;
 import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
 import com.terrideboer.bookbase.mappers.AuthorMapper;
+import com.terrideboer.bookbase.mappers.BookMapper;
 import com.terrideboer.bookbase.models.Author;
 import com.terrideboer.bookbase.models.Book;
 import com.terrideboer.bookbase.repositories.AuthorRepository;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class AuthorService {
@@ -39,6 +42,20 @@ public class AuthorService {
         return AuthorMapper.toDto(
                 authorRepository.findById(id)
                         .orElseThrow(() -> new RecordNotFoundException("Author with id " + id + " not found")));
+    }
+
+    public List<BookDto> getAllBooksFromAuthor(Long id) {
+        Author author = authorRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("Author with id " + id + " not found"));
+
+        List<Book> books = bookRepository.findByAuthors(Set.of(author));
+        List<BookDto> dtoBooks = new ArrayList<>();
+
+        for (Book book : books) {
+            dtoBooks.add(BookMapper.toDto(book));
+        }
+
+        return dtoBooks;
     }
 
     public AuthorDto postAuthor(AuthorInputDto authorInputDto) {

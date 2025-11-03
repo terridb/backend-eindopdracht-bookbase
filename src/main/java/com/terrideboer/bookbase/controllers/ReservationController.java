@@ -21,8 +21,6 @@ public class ReservationController {
         this.reservationService = reservationService;
     }
 
-//    todo add endpoint om alle reserveringen voor één dag op te halen of die ready zijn qua status
-
     //    Endpoint to get all reservations
     @GetMapping
     public ResponseEntity<List<ReservationDto>> getAllReservations() {
@@ -30,11 +28,18 @@ public class ReservationController {
         return ResponseEntity.ok(reservationService.getAllReservations());
     }
 
-    //    Endpoint to get a loan by loan-id
+    //    Endpoint to get a reservation by reservation-id
     @GetMapping("/{id}")
     public ResponseEntity<ReservationDto> getReservationById(@PathVariable Long id) {
 
         return ResponseEntity.ok(reservationService.getReservationById(id));
+    }
+
+    //    Endpoint to get all reservations that need to be prepared
+    @GetMapping("/to-prepare")
+    public ResponseEntity<List<ReservationDto>> getAllToDePreparedReservations() {
+
+        return ResponseEntity.ok(reservationService.getAllToDePreparedReservations());
     }
 
     //    Endpoint to create a new reservation

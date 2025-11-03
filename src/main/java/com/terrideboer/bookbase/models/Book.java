@@ -33,7 +33,7 @@ public class Book {
     )
     private Set<Author> authors;
 
-    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BookCopy> bookCopies;
 
     public Long getId() {

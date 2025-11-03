@@ -17,6 +17,7 @@ import com.terrideboer.bookbase.repositories.BookCopyRepository;
 import com.terrideboer.bookbase.repositories.LoanRepository;
 import com.terrideboer.bookbase.repositories.ReservationRepository;
 import com.terrideboer.bookbase.repositories.UserRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -59,6 +60,18 @@ public class ReservationService {
         return ReservationMapper.toDto(reservation);
     }
 
+    public List<ReservationDto> getAllToDePreparedReservations() {
+        List<Reservation> reservations = reservationRepository.findReservationsByReservationStatus(ReservationStatus.PENDING,
+                Sort.by(Sort.Direction.ASC, "reservationDate"));
+        List<ReservationDto> dtoReservations = new ArrayList<>();
+
+        for (Reservation reservation : reservations) {
+            dtoReservations.add(ReservationMapper.toDto(reservation));
+        }
+
+        return dtoReservations;
+    }
+
     public ReservationDto postReservation(ReservationInputDto reservationInputDto) {
         BookCopy bookCopy = bookCopyRepository.findById(reservationInputDto.bookCopyId)
                 .orElseThrow(() -> new RecordNotFoundException(("Book-copy with id " + reservationInputDto.bookCopyId + " not found")));
@@ -73,7 +86,6 @@ public class ReservationService {
         Reservation savedReservation = reservationRepository.save(reservation);
         return ReservationMapper.toDto(savedReservation);
     }
-//    todo indien tijd over: relatie met book zodat iemand een book reserveert ipv copy. Backend kijkt vervolgens welke bookcopy available is.
 
     public ReservationDto patchReservation(Long id, ReservationPatchDto reservationPatchDto) {
         Reservation existingReservation = reservationRepository.findById(id)
@@ -163,4 +175,5 @@ public class ReservationService {
     }
 
 //    todo als tijd over: expired reservations
+    //    todo indien tijd over: relatie met book zodat iemand een book reserveert ipv copy. Backend kijkt vervolgens welke bookcopy available is.
 }

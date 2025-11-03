@@ -7,8 +7,12 @@ import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
 import com.terrideboer.bookbase.mappers.BookCopyMapper;
 import com.terrideboer.bookbase.models.Book;
 import com.terrideboer.bookbase.models.BookCopy;
+import com.terrideboer.bookbase.models.Loan;
+import com.terrideboer.bookbase.models.Reservation;
 import com.terrideboer.bookbase.repositories.BookCopyRepository;
 import com.terrideboer.bookbase.repositories.BookRepository;
+import com.terrideboer.bookbase.repositories.LoanRepository;
+import com.terrideboer.bookbase.repositories.ReservationRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,10 +23,14 @@ public class BookCopyService {
 
     private final BookCopyRepository bookCopyRepository;
     private final BookRepository bookRepository;
+    private final ReservationRepository reservationRepository;
+    private final LoanRepository loanRepository;
 
-    public BookCopyService(BookCopyRepository bookCopyRepository, BookRepository bookRepository) {
+    public BookCopyService(BookCopyRepository bookCopyRepository, BookRepository bookRepository, ReservationRepository reservationRepository, LoanRepository loanRepository) {
         this.bookCopyRepository = bookCopyRepository;
         this.bookRepository = bookRepository;
+        this.reservationRepository = reservationRepository;
+        this.loanRepository = loanRepository;
     }
 
     public List<BookCopyDto> getAllBookCopies() {
@@ -90,9 +98,28 @@ public class BookCopyService {
     }
 
     public void deleteBookCopy(Long id) {
-        bookCopyRepository.findById(id)
+        BookCopy bookCopy = bookCopyRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Book-copy with id " + id + " not found"));
-        bookCopyRepository.deleteById(id);
+
+        if (bookCopy.getReservations() != null && !bookCopy.getReservations().isEmpty()) {
+            for (Reservation reservation : bookCopy.getReservations()) {
+                reservation.setBookCopy(null);
+                reservationRepository.save(reservation);
+            }
+
+            bookCopy.getReservations().clear();
+        }
+
+        if (bookCopy.getLoans() != null && !bookCopy.getLoans().isEmpty()) {
+            for (Loan loan : bookCopy.getLoans()) {
+                loan.setBookCopy(null);
+                loanRepository.save(loan);
+            }
+
+            bookCopy.getLoans().clear();
+        }
+
+        bookCopyRepository.delete(bookCopy);
     }
 
     private String buildTrackingNumber(BookCopy bookCopy, Long bookId) {
