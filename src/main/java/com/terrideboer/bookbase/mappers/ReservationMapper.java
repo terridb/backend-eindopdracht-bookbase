@@ -22,6 +22,10 @@ public class ReservationMapper {
            reservationDto.user = UserMapper.toSummaryDto(reservation.getUser());
        }
 
+       if (reservation.getLoan() != null) {
+           reservationDto.loan = LoanMapper.toSummaryDto(reservation.getLoan());
+       }
+
        return reservationDto;
    }
 }

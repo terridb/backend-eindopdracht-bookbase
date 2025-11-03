@@ -1,6 +1,7 @@
 package com.terrideboer.bookbase.dtos.reservations;
 
 import com.terrideboer.bookbase.dtos.bookcopies.BookCopyDto;
+import com.terrideboer.bookbase.dtos.loans.LoanSummaryDto;
 import com.terrideboer.bookbase.dtos.users.UserSummaryDto;
 import com.terrideboer.bookbase.models.enums.ReservationStatus;
 
@@ -14,5 +15,6 @@ public class ReservationDto {
     public ReservationStatus reservationStatus;
     public UserSummaryDto user;
     public BookCopyDto bookCopy;
+    public LoanSummaryDto loan;
 //    todo losse dto's voor medewerkers vs leden
 }

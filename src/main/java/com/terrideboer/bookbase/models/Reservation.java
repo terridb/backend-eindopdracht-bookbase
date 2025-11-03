@@ -28,6 +28,10 @@ public class Reservation {
     @JoinColumn(name = "book_copy_id", nullable = false)
     private BookCopy bookCopy;
 
+    @OneToOne
+    @JoinColumn(name = "loan_id")
+    private Loan loan;
+
     public Long getId() {
         return id;
     }
@@ -78,5 +82,13 @@ public class Reservation {
 
     public void setCollectedDate(LocalDate collectedDate) {
         this.collectedDate = collectedDate;
+    }
+
+    public Loan getLoan() {
+        return loan;
+    }
+
+    public void setLoan(Loan loan) {
+        this.loan = loan;
     }
 }

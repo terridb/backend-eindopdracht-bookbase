@@ -7,13 +7,14 @@ import com.terrideboer.bookbase.dtos.reservations.ReservationInputDto;
 import com.terrideboer.bookbase.dtos.reservations.ReservationPatchDto;
 import com.terrideboer.bookbase.exceptions.InvalidInputException;
 import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
-import com.terrideboer.bookbase.mappers.LoanMapper;
 import com.terrideboer.bookbase.mappers.ReservationMapper;
 import com.terrideboer.bookbase.models.BookCopy;
+import com.terrideboer.bookbase.models.Loan;
 import com.terrideboer.bookbase.models.Reservation;
 import com.terrideboer.bookbase.models.User;
 import com.terrideboer.bookbase.models.enums.ReservationStatus;
 import com.terrideboer.bookbase.repositories.BookCopyRepository;
+import com.terrideboer.bookbase.repositories.LoanRepository;
 import com.terrideboer.bookbase.repositories.ReservationRepository;
 import com.terrideboer.bookbase.repositories.UserRepository;
 import org.springframework.stereotype.Service;
@@ -29,12 +30,14 @@ public class ReservationService {
     private final BookCopyRepository bookCopyRepository;
     private final UserRepository userRepository;
     private final LoanService loanService;
+    private final LoanRepository loanRepository;
 
-    public ReservationService(ReservationRepository reservationRepository, BookCopyRepository bookCopyRepository, UserRepository userRepository, LoanService loanService) {
+    public ReservationService(ReservationRepository reservationRepository, BookCopyRepository bookCopyRepository, UserRepository userRepository, LoanService loanService, LoanRepository loanRepository) {
         this.reservationRepository = reservationRepository;
         this.bookCopyRepository = bookCopyRepository;
         this.userRepository = userRepository;
         this.loanService = loanService;
+        this.loanRepository = loanRepository;
     }
 
     public List<ReservationDto> getAllReservations() {
@@ -93,9 +96,16 @@ public class ReservationService {
     }
 
     public void deleteReservation(Long id) {
-        reservationRepository.findById(id)
+        Reservation reservation = reservationRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Reservation with id " + id + " not found"));
-        reservationRepository.deleteById(id);
+
+        if (reservation.getLoan() != null) {
+            Loan loan = reservation.getLoan();
+            loan.setReservation(null);
+            reservation.setLoan(null);
+        }
+
+        reservationRepository.delete(reservation);
     }
 
     public ReservationDto markReservationReadyForPickup(Long id) {
@@ -125,10 +135,14 @@ public class ReservationService {
         loanInput.userId = reservation.getUser().getId();
         loanInput.bookCopyId = reservation.getBookCopy().getId();
 
-        loanService.postLoan(loanInput);
+        LoanDto createdLoan = loanService.postLoan(loanInput);
 
         reservation.setReservationStatus(ReservationStatus.COLLECTED);
         reservation.setCollectedDate(LocalDate.now());
+
+        Loan databaseLoan = loanRepository.findById(createdLoan.id)
+                .orElseThrow(() -> new RecordNotFoundException("Loan not found after creation"));
+        reservation.setLoan(databaseLoan);
 
         reservationRepository.save(reservation);
         return ReservationMapper.toDto(reservation);
@@ -149,5 +163,4 @@ public class ReservationService {
     }
 
 //    todo als tijd over: expired reservations
-//todo relatie loans en reservations
 }
