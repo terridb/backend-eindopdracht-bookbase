@@ -4,11 +4,15 @@ import com.terrideboer.bookbase.dtos.reservations.ReservationDto;
 import com.terrideboer.bookbase.dtos.reservations.ReservationInputDto;
 import com.terrideboer.bookbase.dtos.reservations.ReservationPatchDto;
 import com.terrideboer.bookbase.services.ReservationService;
+import com.terrideboer.bookbase.utils.DateUtils;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -37,9 +41,20 @@ public class ReservationController {
 
     //    Endpoint to get all reservations that need to be prepared
     @GetMapping("/to-prepare")
-    public ResponseEntity<List<ReservationDto>> getAllToDePreparedReservations() {
+    public ResponseEntity<List<ReservationDto>> getAllToBePreparedReservations() {
 
-        return ResponseEntity.ok(reservationService.getAllToDePreparedReservations());
+        return ResponseEntity.ok(reservationService.getAllToBePreparedReservations());
+    }
+
+    //    Endpoint to download a pdf file with all to prepare reservations
+    @GetMapping("/to-prepare/pdf")
+    public ResponseEntity<byte[]> downloadReservationsPdf() {
+        byte[] pdf = reservationService.generateReservationsPdf();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=reservations_" + DateUtils.formatDateTime(LocalDateTime.now()) + ".pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
     }
 
     //    Endpoint to create a new reservation
