@@ -7,15 +7,18 @@ import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
 import com.terrideboer.bookbase.mappers.FineMapper;
 import com.terrideboer.bookbase.models.Fine;
 import com.terrideboer.bookbase.models.Loan;
+import com.terrideboer.bookbase.models.User;
 import com.terrideboer.bookbase.models.enums.PaymentStatus;
 import com.terrideboer.bookbase.repositories.FineRepository;
 import com.terrideboer.bookbase.repositories.LoanRepository;
+import com.terrideboer.bookbase.repositories.UserRepository;
 import com.terrideboer.bookbase.utils.LoanUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -23,10 +26,12 @@ public class FineService {
 
     private final FineRepository fineRepository;
     private final LoanRepository loanRepository;
+    private final UserRepository userRepository;
 
-    public FineService(FineRepository fineRepository, LoanRepository loanRepository) {
+    public FineService(FineRepository fineRepository, LoanRepository loanRepository, UserRepository userRepository) {
         this.fineRepository = fineRepository;
         this.loanRepository = loanRepository;
+        this.userRepository = userRepository;
     }
 
     public List<FineDto> getAllFines() {
@@ -98,6 +103,27 @@ public class FineService {
         Fine savedFine = fineRepository.save(fine);
 
         return FineMapper.toDto(savedFine);
+    }
+
+    public List<FineDto> getFinesByUserId(Long userId) {
+        User existingUser = userRepository.findById(userId)
+                .orElseThrow(() -> new RecordNotFoundException("User with id " + userId + " not found"));
+
+        List<Loan> userLoans = existingUser.getLoans();
+
+        if (userLoans == null || userLoans.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<FineDto> dtoFines = new ArrayList<>();
+
+        for (Loan loan : userLoans) {
+            if (loan.getFine() != null) {
+                dtoFines.add(FineMapper.toDto(loan.getFine()));
+            }
+        }
+
+        return dtoFines;
     }
 
     public Fine generateFine(Loan loan) {

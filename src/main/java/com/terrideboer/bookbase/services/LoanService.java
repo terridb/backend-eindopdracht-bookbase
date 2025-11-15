@@ -62,6 +62,7 @@ public class LoanService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("User with id " + id + " not found"));
 
+//        todo kan dit niet simpeler met getloans
         List<Loan> loans = loanRepository.findByUser(user);
         List<LoanWithFineDto> dtoLoans = new ArrayList<>();
 

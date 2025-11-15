@@ -1,9 +1,11 @@
 package com.terrideboer.bookbase.controllers;
 
+import com.terrideboer.bookbase.dtos.fines.FineDto;
 import com.terrideboer.bookbase.dtos.loans.LoanWithFineDto;
 import com.terrideboer.bookbase.dtos.users.UserDto;
 import com.terrideboer.bookbase.dtos.users.UserInputDto;
 import com.terrideboer.bookbase.dtos.users.UserPatchDto;
+import com.terrideboer.bookbase.services.FineService;
 import com.terrideboer.bookbase.services.LoanService;
 import com.terrideboer.bookbase.services.UserService;
 import jakarta.validation.Valid;
@@ -19,10 +21,12 @@ public class UserController {
 
     private final UserService userService;
     private final LoanService loanService;
+    private final FineService fineService;
 
-    public UserController(UserService userService, LoanService loanService) {
+    public UserController(UserService userService, LoanService loanService, FineService fineService) {
         this.userService = userService;
         this.loanService = loanService;
+        this.fineService = fineService;
     }
 
 //    todo needs to be adjusted when implementing authentication
@@ -73,5 +77,11 @@ public class UserController {
     public ResponseEntity<List<LoanWithFineDto>> getLoansByUserId(@PathVariable Long id) {
 
         return ResponseEntity.ok(loanService.getLoansByUserId(id));
+    }
+
+    @GetMapping("{id}/fines")
+    public ResponseEntity<List<FineDto>> getFinesByUserId(@PathVariable Long id) {
+
+        return ResponseEntity.ok(fineService.getFinesByUserId(id));
     }
 }
