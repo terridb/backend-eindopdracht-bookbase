@@ -114,6 +114,18 @@ public class BookService {
         return BookMapper.toDto(savedBook);
     }
 
+    public BookDto assignAuthorToBook(Long bookId, Long authorId) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new RecordNotFoundException(("Book with id " + bookId + " not found")));
+        Author author = authorRepository.findById(authorId)
+                .orElseThrow(() -> new RecordNotFoundException(("Author with id " + authorId + " not found")));
 
+        book.getAuthors().add(author);
+        author.getBooks().add(book);
+
+        Book savedBook = bookRepository.save(book);
+
+        return BookMapper.toDto(savedBook);
+    }
 
 }

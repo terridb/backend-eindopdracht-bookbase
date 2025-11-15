@@ -18,12 +18,8 @@ public class LoanInputDto {
     public LoanStatus loanStatus;
 
     public Long bookCopyId;
-    //    todo logica in service om te checken welke van de twee is ingevuld
-    public String trackingNumber;
 
     @NotNull(message = "User id is required")
     public Long userId;
 
-//    Todo check of loandate en loanstatus hier nog in horen.
-//     Bij reservations eruit gelaten en alles automatisch gemaakt
 }

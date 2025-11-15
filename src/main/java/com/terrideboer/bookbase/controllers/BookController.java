@@ -1,5 +1,6 @@
 package com.terrideboer.bookbase.controllers;
 
+import com.terrideboer.bookbase.dtos.IdInputDto;
 import com.terrideboer.bookbase.dtos.bookcopies.BookCopyDto;
 import com.terrideboer.bookbase.dtos.bookcopies.BookCopyInputDto;
 import com.terrideboer.bookbase.dtos.books.BookDto;
@@ -89,5 +90,13 @@ public class BookController {
         URI uri = URI.create("/book-copies/" + bookCopyDto.id);
 
         return ResponseEntity.created(uri).body(bookCopyDto);
+    }
+
+    //    Endpoint to assign an author to a book
+    @PatchMapping("/{id}/author")
+    public ResponseEntity<BookDto> assignAuthorToBook(@PathVariable Long id, @RequestBody IdInputDto authorId) {
+
+        BookDto bookDto = bookService.assignAuthorToBook(id, authorId.id);
+        return ResponseEntity.ok(bookDto);
     }
 }

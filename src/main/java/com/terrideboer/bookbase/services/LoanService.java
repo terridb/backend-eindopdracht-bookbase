@@ -37,7 +37,7 @@ public class LoanService {
         List<LoanDto> dtoLoans = new ArrayList<>();
 
         for (Loan loan : loans) {
-            if (LoanUtils.checkIfLoanIsExpired(loan)) {
+            if (LoanUtils.checkIfLoanIsExpired(loan) && loan.getLoanStatus() != LoanStatus.RETURNED) {
                 setLoanAsOverdue(loan);
             }
 
@@ -51,7 +51,7 @@ public class LoanService {
         Loan loan = loanRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Loan with id " + id + " not found"));
 
-        if (LoanUtils.checkIfLoanIsExpired(loan)) {
+        if (LoanUtils.checkIfLoanIsExpired(loan) && loan.getLoanStatus() != LoanStatus.RETURNED) {
             setLoanAsOverdue(loan);
         }
 
@@ -66,7 +66,7 @@ public class LoanService {
         List<LoanWithFineDto> dtoLoans = new ArrayList<>();
 
         for (Loan loan : loans) {
-            if (LoanUtils.checkIfLoanIsExpired(loan)) {
+            if (LoanUtils.checkIfLoanIsExpired(loan) && loan.getLoanStatus() != LoanStatus.RETURNED) {
                 setLoanAsOverdue(loan);
             }
 
@@ -89,8 +89,6 @@ public class LoanService {
 
         loan.setBookCopy(bookCopy);
         loan.setUser(user);
-//        todo check tracking nr
-//        todo relaties user en bookcopy bij verwijderen
 
         Loan savedLoan = loanRepository.save(loan);
         return LoanMapper.toDto(savedLoan);
@@ -118,15 +116,12 @@ public class LoanService {
         loanRepository.delete(loan);
     }
 
-    //        todo overal trim toevoegen
-
     public LoanWithFineDto returnBook(Long id) {
         Loan loan = loanRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Loan with id " + id + " not found"));
 
         loan.setReturnDate(LocalDate.now());
         loan.setLoanStatus(LoanStatus.RETURNED);
-//        todo is er een manier om bijv dagelijks te checken op datum om de status bij te werken?
 
         if (LoanUtils.checkIfLoanIsExpired(loan)) {
             Fine fine = fineService.generateFine(loan);
