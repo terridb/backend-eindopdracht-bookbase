@@ -11,10 +11,19 @@ import com.terrideboer.bookbase.models.Book;
 import com.terrideboer.bookbase.models.BookCopy;
 import com.terrideboer.bookbase.repositories.AuthorRepository;
 import com.terrideboer.bookbase.repositories.BookRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class BookService {
@@ -23,10 +32,20 @@ public class BookService {
     private final AuthorRepository authorRepository;
     private final BookCopyService bookCopyService;
 
-    public BookService(BookRepository bookRepository, AuthorRepository authorRepository, BookCopyService bookCopyService) {
+    private final Path fileStoragePath;
+
+    public BookService(
+            BookRepository bookRepository,
+            AuthorRepository authorRepository,
+            BookCopyService bookCopyService,
+            @Value("${my.upload_location}") String fileStorageLocation
+    ) throws IOException {
         this.bookRepository = bookRepository;
         this.authorRepository = authorRepository;
         this.bookCopyService = bookCopyService;
+
+        this.fileStoragePath = Paths.get(fileStorageLocation).toAbsolutePath().normalize();
+        Files.createDirectories(this.fileStoragePath);
     }
 
     public List<BookDto> getAllBooks() {
@@ -53,6 +72,28 @@ public class BookService {
 
         return BookMapper.toDto(savedBook);
     }
+
+    public BookDto uploadImageToBook(Long id, MultipartFile file) throws IOException {
+        Book existingBook = bookRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException(("Book with id " + id + " not found")));
+
+        if (existingBook.getImageUrl() != null) {
+            Path oldFilePath = fileStoragePath.resolve(existingBook.getImageUrl());
+            Files.delete(oldFilePath);
+        }
+
+        String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+        Path filePath = fileStoragePath.resolve(fileName);
+
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+        existingBook.setImageUrl(fileName);
+        Book savedBook = bookRepository.save(existingBook);
+
+        return BookMapper.toDto(savedBook);
+    }
+
+//    todo kan ik de uploads map automatisch verwijderen bij heropstarten van de applicatie?
 
     public BookDto putBook(Long id, BookInputDto bookInputDto) {
         Book existingBook = bookRepository.findById(id)

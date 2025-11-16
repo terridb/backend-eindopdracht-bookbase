@@ -6,12 +6,15 @@ import com.terrideboer.bookbase.dtos.bookcopies.BookCopyInputDto;
 import com.terrideboer.bookbase.dtos.books.BookDto;
 import com.terrideboer.bookbase.dtos.books.BookInputDto;
 import com.terrideboer.bookbase.dtos.books.BookPatchDto;
+import com.terrideboer.bookbase.models.Book;
 import com.terrideboer.bookbase.services.BookCopyService;
 import com.terrideboer.bookbase.services.BookService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
@@ -49,6 +52,16 @@ public class BookController {
         URI uri = URI.create("/books/" + bookDto.id);
 
         return ResponseEntity.created(uri).body(bookDto);
+    }
+
+    //    Endpoint to upload a book-cover (image) to a book
+    @PatchMapping("/{id}/image")
+    public ResponseEntity<BookDto> uploadImageToBook(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file) throws IOException {
+
+        BookDto bookDto = bookService.uploadImageToBook(id, file);
+        return ResponseEntity.ok(bookDto);
     }
 
     //       Endpoint to adjust a book by book-id (put)

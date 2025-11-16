@@ -32,7 +32,7 @@ public class BookMapper {
         bookDto.id = book.getId();
         bookDto.title = book.getTitle();
         bookDto.isbn = book.getIsbn();
-        bookDto.imageUrl = book.getImageUrl();
+        bookDto.imageUrl = "/uploads/" + book.getImageUrl();
         bookDto.genre = book.getGenre();
 
         if (book.getAuthors() != null) {
