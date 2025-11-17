@@ -10,6 +10,7 @@ import com.terrideboer.bookbase.models.Author;
 import com.terrideboer.bookbase.models.Book;
 import com.terrideboer.bookbase.repositories.AuthorRepository;
 import com.terrideboer.bookbase.repositories.BookRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class AuthorService {
     }
 
     public List<AuthorDto> getAllAuthors() {
-        List<Author> authors = authorRepository.findAll();
+        List<Author> authors = authorRepository.findAll(Sort.by("id").ascending());
         List<AuthorDto> dtoAuthors = new ArrayList<>();
 
         for (Author author : authors) {
@@ -48,7 +49,7 @@ public class AuthorService {
         Author author = authorRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Author with id " + id + " not found"));
 
-        List<Book> books = bookRepository.findByAuthors(Set.of(author));
+        List<Book> books = bookRepository.findByAuthorsOrderByIdAsc(Set.of(author));
         List<BookDto> dtoBooks = new ArrayList<>();
 
         for (Book book : books) {

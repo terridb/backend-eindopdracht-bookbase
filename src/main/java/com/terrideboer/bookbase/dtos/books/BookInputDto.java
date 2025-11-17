@@ -16,8 +16,6 @@ public class BookInputDto {
     @Pattern(regexp = "^[0-9]{10,13}$", message = "ISBN must contain 10 to 13 digits")
     public String isbn;
 
-    public String imageUrl;
-
     @NotNull(message = "Genre is required")
     public Genre genre;
 }

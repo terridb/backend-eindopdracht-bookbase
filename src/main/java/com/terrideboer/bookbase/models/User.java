@@ -30,6 +30,7 @@ public class User {
     private Role role = Role.MEMBER;
 
     @OneToMany(mappedBy = "user")
+    @OrderBy("id asc")
     private List<Loan> loans;
 
     @OneToMany(mappedBy = "user")

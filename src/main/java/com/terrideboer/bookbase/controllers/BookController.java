@@ -6,7 +6,6 @@ import com.terrideboer.bookbase.dtos.bookcopies.BookCopyInputDto;
 import com.terrideboer.bookbase.dtos.books.BookDto;
 import com.terrideboer.bookbase.dtos.books.BookInputDto;
 import com.terrideboer.bookbase.dtos.books.BookPatchDto;
-import com.terrideboer.bookbase.models.Book;
 import com.terrideboer.bookbase.services.BookCopyService;
 import com.terrideboer.bookbase.services.BookService;
 import jakarta.validation.Valid;
@@ -92,7 +91,7 @@ public class BookController {
     @GetMapping("/{id}/book-copies")
     public ResponseEntity<List<BookCopyDto>> getBookCopiesByBookId(@PathVariable Long id) {
 
-        return ResponseEntity.ok(bookCopyService.getBookCopiesByBookId(id));
+        return ResponseEntity.ok(bookService.getBookCopiesByBookId(id));
     }
 
     //       Endpoint to create a new book-copy by book-id

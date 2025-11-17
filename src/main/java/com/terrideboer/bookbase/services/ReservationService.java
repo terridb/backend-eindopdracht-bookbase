@@ -1,6 +1,5 @@
 package com.terrideboer.bookbase.services;
 
-import com.terrideboer.bookbase.dtos.loans.LoanDto;
 import com.terrideboer.bookbase.dtos.loans.LoanInputDto;
 import com.terrideboer.bookbase.dtos.reservations.ReservationDto;
 import com.terrideboer.bookbase.dtos.reservations.ReservationInputDto;
@@ -11,7 +10,6 @@ import com.terrideboer.bookbase.mappers.ReservationMapper;
 import com.terrideboer.bookbase.models.*;
 import com.terrideboer.bookbase.models.enums.ReservationStatus;
 import com.terrideboer.bookbase.repositories.BookCopyRepository;
-import com.terrideboer.bookbase.repositories.LoanRepository;
 import com.terrideboer.bookbase.repositories.ReservationRepository;
 import com.terrideboer.bookbase.repositories.UserRepository;
 import com.terrideboer.bookbase.utils.DateUtils;
@@ -33,18 +31,19 @@ public class ReservationService {
     private final BookCopyRepository bookCopyRepository;
     private final UserRepository userRepository;
     private final LoanService loanService;
-    private final LoanRepository loanRepository;
 
-    public ReservationService(ReservationRepository reservationRepository, BookCopyRepository bookCopyRepository, UserRepository userRepository, LoanService loanService, LoanRepository loanRepository) {
+    public ReservationService(ReservationRepository reservationRepository,
+                              BookCopyRepository bookCopyRepository,
+                              UserRepository userRepository,
+                              LoanService loanService) {
         this.reservationRepository = reservationRepository;
         this.bookCopyRepository = bookCopyRepository;
         this.userRepository = userRepository;
         this.loanService = loanService;
-        this.loanRepository = loanRepository;
     }
 
     public List<ReservationDto> getAllReservations() {
-        List<Reservation> reservations = reservationRepository.findAll();
+        List<Reservation> reservations = reservationRepository.findAll(Sort.by("id").ascending());
         List<ReservationDto> dtoReservations = new ArrayList<>();
 
         for (Reservation reservation : reservations) {
@@ -148,15 +147,10 @@ public class ReservationService {
         LoanInputDto loanInput = new LoanInputDto();
         loanInput.userId = reservation.getUser().getId();
         loanInput.bookCopyId = reservation.getBookCopy().getId();
-
-        LoanDto createdLoan = loanService.postLoan(loanInput);
+        reservation.setLoan(loanService.createLoanEntity(loanInput));
 
         reservation.setReservationStatus(ReservationStatus.COLLECTED);
         reservation.setCollectedDate(LocalDate.now());
-
-        Loan databaseLoan = loanRepository.findById(createdLoan.id)
-                .orElseThrow(() -> new RecordNotFoundException("Loan not found after creation"));
-        reservation.setLoan(databaseLoan);
 
         reservationRepository.save(reservation);
         return ReservationMapper.toDto(reservation);

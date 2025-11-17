@@ -19,7 +19,6 @@ public class BookMapper {
 
         book.setTitle(bookInputDto.title);
         book.setIsbn(bookInputDto.isbn);
-        book.setImageUrl(bookInputDto.imageUrl);
         book.setGenre(bookInputDto.genre);
 
         return book;
@@ -32,7 +31,13 @@ public class BookMapper {
         bookDto.id = book.getId();
         bookDto.title = book.getTitle();
         bookDto.isbn = book.getIsbn();
-        bookDto.imageUrl = "/uploads/" + book.getImageUrl();
+
+        if (book.getImageUrl() != null) {
+            bookDto.imageUrl = "/uploads/" + book.getImageUrl();
+        } else {
+            bookDto.imageUrl = book.getImageUrl();
+        }
+
         bookDto.genre = book.getGenre();
 
         if (book.getAuthors() != null) {

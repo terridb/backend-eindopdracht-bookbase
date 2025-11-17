@@ -1,10 +1,12 @@
 package com.terrideboer.bookbase.services;
 
+import com.terrideboer.bookbase.dtos.bookcopies.BookCopyDto;
 import com.terrideboer.bookbase.dtos.books.BookDto;
 import com.terrideboer.bookbase.dtos.books.BookInputDto;
 import com.terrideboer.bookbase.dtos.books.BookPatchDto;
 import com.terrideboer.bookbase.exceptions.InvalidInputException;
 import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
+import com.terrideboer.bookbase.mappers.BookCopyMapper;
 import com.terrideboer.bookbase.mappers.BookMapper;
 import com.terrideboer.bookbase.models.Author;
 import com.terrideboer.bookbase.models.Book;
@@ -12,6 +14,7 @@ import com.terrideboer.bookbase.models.BookCopy;
 import com.terrideboer.bookbase.repositories.AuthorRepository;
 import com.terrideboer.bookbase.repositories.BookRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,7 +52,7 @@ public class BookService {
     }
 
     public List<BookDto> getAllBooks() {
-        List<Book> books = bookRepository.findAll();
+        List<Book> books = bookRepository.findAll(Sort.by("id").ascending());
         List<BookDto> dtoBooks = new ArrayList<>();
 
         for (Book book : books) {
@@ -141,12 +144,6 @@ public class BookService {
             existingBook.setIsbn(bookPatchDto.isbn.trim());
         }
 
-//        Todo imageurl
-        if (bookPatchDto.imageUrl != null) {
-            existingBook.setImageUrl(bookPatchDto.imageUrl);
-        }
-
-//        Todo validatie enum
         if (bookPatchDto.genre != null) {
             existingBook.setGenre(bookPatchDto.genre);
         }
@@ -167,6 +164,20 @@ public class BookService {
         Book savedBook = bookRepository.save(book);
 
         return BookMapper.toDto(savedBook);
+    }
+
+    public List<BookCopyDto> getBookCopiesByBookId(Long id) {
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException(("Book with id " + id + " not found")));
+
+        List<BookCopy> bookCopies = book.getBookCopies();
+        List<BookCopyDto> dtoBookCopies = new ArrayList<>();
+
+        for (BookCopy bookCopy : bookCopies) {
+            dtoBookCopies.add(BookCopyMapper.toDto(bookCopy));
+        }
+
+        return dtoBookCopies;
     }
 
 }

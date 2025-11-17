@@ -7,12 +7,9 @@ import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
 import com.terrideboer.bookbase.mappers.BookCopyMapper;
 import com.terrideboer.bookbase.models.Book;
 import com.terrideboer.bookbase.models.BookCopy;
-import com.terrideboer.bookbase.models.Loan;
-import com.terrideboer.bookbase.models.Reservation;
 import com.terrideboer.bookbase.repositories.BookCopyRepository;
 import com.terrideboer.bookbase.repositories.BookRepository;
-import com.terrideboer.bookbase.repositories.LoanRepository;
-import com.terrideboer.bookbase.repositories.ReservationRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,18 +20,15 @@ public class BookCopyService {
 
     private final BookCopyRepository bookCopyRepository;
     private final BookRepository bookRepository;
-    private final ReservationRepository reservationRepository;
-    private final LoanRepository loanRepository;
 
-    public BookCopyService(BookCopyRepository bookCopyRepository, BookRepository bookRepository, ReservationRepository reservationRepository, LoanRepository loanRepository) {
+    public BookCopyService(BookCopyRepository bookCopyRepository,
+                           BookRepository bookRepository) {
         this.bookCopyRepository = bookCopyRepository;
         this.bookRepository = bookRepository;
-        this.reservationRepository = reservationRepository;
-        this.loanRepository = loanRepository;
     }
 
     public List<BookCopyDto> getAllBookCopies() {
-        List<BookCopy> bookCopies = bookCopyRepository.findAll();
+        List<BookCopy> bookCopies = bookCopyRepository.findAll(Sort.by("id").ascending());
         List<BookCopyDto> dtoBookCopies = new ArrayList<>();
 
         for (BookCopy bookCopy : bookCopies) {
@@ -48,20 +42,6 @@ public class BookCopyService {
         return BookCopyMapper.toDto(
                 bookCopyRepository.findById(id)
                         .orElseThrow(() -> new RecordNotFoundException("Book-copy with id " + id + " not found")));
-    }
-
-    public List<BookCopyDto> getBookCopiesByBookId(Long id) {
-        Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException(("Book with id " + id + " not found")));
-
-        List<BookCopy> bookCopies = bookCopyRepository.findByBook(book);
-        List<BookCopyDto> dtoBookCopies = new ArrayList<>();
-
-        for (BookCopy bookCopy : bookCopies) {
-            dtoBookCopies.add(BookCopyMapper.toDto(bookCopy));
-        }
-
-        return dtoBookCopies;
     }
 
     public BookCopyDto postBookCopy(BookCopyInputDto bookCopyInputDto, Long bookId) {
@@ -98,28 +78,10 @@ public class BookCopyService {
     }
 
     public void deleteBookCopy(Long id) {
-        BookCopy bookCopy = bookCopyRepository.findById(id)
+        bookCopyRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Book-copy with id " + id + " not found"));
 
-        if (bookCopy.getReservations() != null && !bookCopy.getReservations().isEmpty()) {
-            for (Reservation reservation : bookCopy.getReservations()) {
-                reservation.setBookCopy(null);
-                reservationRepository.save(reservation);
-            }
-
-            bookCopy.getReservations().clear();
-        }
-
-        if (bookCopy.getLoans() != null && !bookCopy.getLoans().isEmpty()) {
-            for (Loan loan : bookCopy.getLoans()) {
-                loan.setBookCopy(null);
-                loanRepository.save(loan);
-            }
-
-            bookCopy.getLoans().clear();
-        }
-
-        bookCopyRepository.delete(bookCopy);
+        bookCopyRepository.deleteById(id);
     }
 
     private String buildTrackingNumber(BookCopy bookCopy, Long bookId) {

@@ -2,6 +2,8 @@ package com.terrideboer.bookbase.models;
 
 import com.terrideboer.bookbase.models.enums.ReservationStatus;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
 
@@ -26,6 +28,7 @@ public class Reservation {
 
     @ManyToOne
     @JoinColumn(name = "book_copy_id")
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     private BookCopy bookCopy;
 
     @OneToOne

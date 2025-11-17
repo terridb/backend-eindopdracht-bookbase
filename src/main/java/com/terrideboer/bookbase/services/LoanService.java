@@ -11,6 +11,7 @@ import com.terrideboer.bookbase.repositories.BookCopyRepository;
 import com.terrideboer.bookbase.repositories.LoanRepository;
 import com.terrideboer.bookbase.repositories.UserRepository;
 import com.terrideboer.bookbase.utils.LoanUtils;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -25,7 +26,10 @@ public class LoanService {
     private final UserRepository userRepository;
     private final FineService fineService;
 
-    public LoanService(LoanRepository loanRepository, BookCopyRepository bookCopyRepository, UserRepository userRepository, FineService fineService) {
+    public LoanService(LoanRepository loanRepository,
+                       BookCopyRepository bookCopyRepository,
+                       UserRepository userRepository,
+                       FineService fineService) {
         this.loanRepository = loanRepository;
         this.bookCopyRepository = bookCopyRepository;
         this.userRepository = userRepository;
@@ -33,14 +37,10 @@ public class LoanService {
     }
 
     public List<LoanDto> getAllLoans() {
-        List<Loan> loans = loanRepository.findAll();
+        List<Loan> loans = loanRepository.findAll(Sort.by("id").ascending());
         List<LoanDto> dtoLoans = new ArrayList<>();
 
         for (Loan loan : loans) {
-            if (LoanUtils.checkIfLoanIsExpired(loan) && loan.getLoanStatus() != LoanStatus.RETURNED) {
-                setLoanAsOverdue(loan);
-            }
-
             dtoLoans.add(LoanMapper.toDto(loan));
         }
 
@@ -51,46 +51,11 @@ public class LoanService {
         Loan loan = loanRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Loan with id " + id + " not found"));
 
-        if (LoanUtils.checkIfLoanIsExpired(loan) && loan.getLoanStatus() != LoanStatus.RETURNED) {
-            setLoanAsOverdue(loan);
-        }
-
         return LoanMapper.toLoanWithFineDto(loan);
     }
 
-    public List<LoanWithFineDto> getLoansByUserId(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException("User with id " + id + " not found"));
-
-//        todo kan dit niet simpeler met getloans
-        List<Loan> loans = loanRepository.findByUser(user);
-        List<LoanWithFineDto> dtoLoans = new ArrayList<>();
-
-        for (Loan loan : loans) {
-            if (LoanUtils.checkIfLoanIsExpired(loan) && loan.getLoanStatus() != LoanStatus.RETURNED) {
-                setLoanAsOverdue(loan);
-            }
-
-            dtoLoans.add(LoanMapper.toLoanWithFineDto(loan));
-        }
-
-        return dtoLoans;
-    }
-
     public LoanDto postLoan(LoanInputDto loanInputDto) {
-        Loan loan = LoanMapper.toEntity(loanInputDto, null);
-        BookCopy bookCopy = bookCopyRepository.findById(loanInputDto.bookCopyId)
-                .orElseThrow(() -> new RecordNotFoundException(("Book-copy with id " + loanInputDto.bookCopyId + " not found")));
-        User user = userRepository.findById(loanInputDto.userId)
-                .orElseThrow(() -> new RecordNotFoundException(("User with id " + loanInputDto.userId + " not found")));
-
-        if (loanInputDto.loanDate == null) {
-            loan.setLoanDate(LocalDate.now());
-        }
-
-        loan.setBookCopy(bookCopy);
-        loan.setUser(user);
-
+        Loan loan = buildLoanEntity(loanInputDto);
         Loan savedLoan = loanRepository.save(loan);
         return LoanMapper.toDto(savedLoan);
     }
@@ -133,8 +98,26 @@ public class LoanService {
         return LoanMapper.toLoanWithFineDto(loan);
     }
 
-    private void setLoanAsOverdue(Loan loan) {
-        loan.setLoanStatus(LoanStatus.OVERDUE);
-        loanRepository.save(loan);
+    public Loan createLoanEntity(LoanInputDto loanInputDto) {
+        Loan loan = buildLoanEntity(loanInputDto);
+        return loanRepository.save(loan);
+    }
+
+    private Loan buildLoanEntity(LoanInputDto loanInputDto) {
+        Loan loan = LoanMapper.toEntity(loanInputDto, null);
+
+        BookCopy bookCopy = bookCopyRepository.findById(loanInputDto.bookCopyId)
+                .orElseThrow(() -> new RecordNotFoundException(("Book-copy with id " + loanInputDto.bookCopyId + " not found")));
+        User user = userRepository.findById(loanInputDto.userId)
+                .orElseThrow(() -> new RecordNotFoundException(("User with id " + loanInputDto.userId + " not found")));
+
+        if (loanInputDto.loanDate == null) {
+            loan.setLoanDate(LocalDate.now());
+        }
+
+        loan.setBookCopy(bookCopy);
+        loan.setUser(user);
+
+        return loan;
     }
 }

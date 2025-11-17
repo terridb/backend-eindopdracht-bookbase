@@ -32,7 +32,7 @@ public class FineMapper {
         fineDto.paymentStatus = fine.getPaymentStatus();
 
         if (fine.getLoan() != null) {
-            fineDto.loan = LoanMapper.toSummaryDto(fine.getLoan());
+            fineDto.loanId = fine.getLoan().getId();
         }
 
         return fineDto;

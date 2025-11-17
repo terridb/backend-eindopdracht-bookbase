@@ -9,5 +9,5 @@ import java.util.List;
 public interface BookCopyRepository extends JpaRepository<BookCopy, Long> {
     boolean existsByTrackingNumber(String trackingNumber);
 
-    List<BookCopy> findByBook(Book book);
+    List<BookCopy> findByBookOrderByIdAsc(Book book);
 }
