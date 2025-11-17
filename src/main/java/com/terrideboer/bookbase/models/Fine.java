@@ -4,6 +4,7 @@ import com.terrideboer.bookbase.models.enums.PaymentStatus;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "fines")
@@ -14,6 +15,8 @@ public class Fine {
     private Long id;
 
     private BigDecimal fineAmount;
+
+    private LocalDate paymentDate;
 
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus = PaymentStatus.NOT_PAID;
@@ -48,5 +51,13 @@ public class Fine {
 
     public void setLoan(Loan loan) {
         this.loan = loan;
+    }
+
+    public LocalDate getPaymentDate() {
+        return paymentDate;
+    }
+
+    public void setPaymentDate(LocalDate paymentDate) {
+        this.paymentDate = paymentDate;
     }
 }

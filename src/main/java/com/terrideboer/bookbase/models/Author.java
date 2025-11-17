@@ -1,6 +1,5 @@
 package com.terrideboer.bookbase.models;
 
-
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -22,10 +21,16 @@ public class Author {
     @Column(nullable = false)
     private String lastName;
 
+    private String displayName;
+
     private LocalDate dateOfBirth;
 
     @ManyToMany(mappedBy = "authors")
     private Set<Book> books;
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Long getId() {
         return id;
@@ -69,5 +74,13 @@ public class Author {
 
     public void setBooks(Set<Book> books) {
         this.books = books;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 }

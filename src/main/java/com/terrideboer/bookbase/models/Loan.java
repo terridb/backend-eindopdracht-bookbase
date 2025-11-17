@@ -2,6 +2,8 @@ package com.terrideboer.bookbase.models;
 
 import com.terrideboer.bookbase.models.enums.LoanStatus;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
 
@@ -16,6 +18,8 @@ public class Loan {
     @Column(nullable = false)
     private LocalDate loanDate;
 
+    private LocalDate returnDate;
+
     private Integer loanPeriodInDays = 21;
 
     @Enumerated(EnumType.STRING)
@@ -25,12 +29,16 @@ public class Loan {
     private Fine fine;
 
     @ManyToOne
-    @JoinColumn(name = "book_copy_id", nullable = false)
+    @JoinColumn(name = "book_copy_id")
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     private BookCopy bookCopy;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @OneToOne(mappedBy = "loan")
+    private Reservation reservation;
 
     public Long getId() {
         return id;
@@ -82,5 +90,21 @@ public class Loan {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public LocalDate getReturnDate() {
+        return returnDate;
+    }
+
+    public void setReturnDate(LocalDate returnDate) {
+        this.returnDate = returnDate;
+    }
+
+    public Reservation getReservation() {
+        return reservation;
+    }
+
+    public void setReservation(Reservation reservation) {
+        this.reservation = reservation;
     }
 }
