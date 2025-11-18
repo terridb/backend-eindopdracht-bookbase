@@ -11,22 +11,34 @@ import com.terrideboer.bookbase.mappers.FineMapper;
 import com.terrideboer.bookbase.mappers.LoanMapper;
 import com.terrideboer.bookbase.mappers.UserMapper;
 import com.terrideboer.bookbase.models.Loan;
+import com.terrideboer.bookbase.models.Role;
 import com.terrideboer.bookbase.models.User;
+import com.terrideboer.bookbase.repositories.RoleRepository;
 import com.terrideboer.bookbase.repositories.UserRepository;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder encoder;
+    private final RoleRepository roleRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder encoder, RoleRepository roleRepository) {
         this.userRepository = userRepository;
+        this.encoder = encoder;
+        this.roleRepository = roleRepository;
     }
 
     public List<UserDto> getAllUsers() {
@@ -49,17 +61,9 @@ public class UserService {
     public UserDto postUser(UserInputDto userInputDto) {
         User user = UserMapper.toEntity(userInputDto, null);
 
+        user.setPassword(encoder.encode(userInputDto.password));
         User savedUser = userRepository.save(user);
 
-        return UserMapper.toDto(savedUser);
-    }
-
-    public UserDto putUser(Long id, UserInputDto userInputDto) {
-        User existingUser =   userRepository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException("User with id " + id + " not found"));
-
-        User updatedUser = UserMapper.toEntity(userInputDto, existingUser);
-        User savedUser = userRepository.save(updatedUser);
         return UserMapper.toDto(savedUser);
     }
 
@@ -71,7 +75,7 @@ public class UserService {
     }
 
     public UserDto patchUser(Long id, UserPatchDto userPatchDto) {
-        User existingUser =   userRepository.findById(id)
+        User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("User with id " + id + " not found"));
 
         if (userPatchDto.firstName != null) {
@@ -103,14 +107,61 @@ public class UserService {
         }
 
         if (userPatchDto.password != null) {
-            if (userPatchDto.password.equals(existingUser.getPassword())) {
-                throw new InvalidInputException("Password cannot be the same as previous password");
-            }
-            existingUser.setPassword(userPatchDto.password);
+            existingUser.setPassword(encoder.encode(userPatchDto.password));
         }
 
         User savedUser = userRepository.save(existingUser);
         return UserMapper.toDto(savedUser);
+    }
+
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RecordNotFoundException("User with email address " + email + " not found"));
+    }
+
+    public Set<Role> getRoles(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("User with id " + id + " not found"));
+        UserDto userDto = UserMapper.toDto(user);
+        return userDto.roles;
+    }
+
+    public void addRole(Long userId, String roleName) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RecordNotFoundException("User with id " + userId + " not found"));
+        Role role = roleRepository.findRoleByRoleNameIgnoreCase(roleName)
+                .orElseThrow(() -> new RecordNotFoundException("Role " + roleName + " not found"));
+
+        user.getRoles().add(role);
+        userRepository.save(user);
+    }
+
+    public void removeRole(Long userId, String roleName) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RecordNotFoundException("User with id " + userId + " not found"));
+        Role role = roleRepository.findRoleByRoleNameIgnoreCase(roleName)
+                .orElseThrow(() -> new RecordNotFoundException("Role " + roleName + " not found"));
+
+        if (!user.getRoles().contains(role)) {
+            throw new RecordNotFoundException("User does not have role " + roleName);
+        }
+
+        user.removeRole(role);
+        userRepository.save(user);
+    }
+
+    public boolean isOwnerOrAdmin(Long userId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String loggedInEmail = authentication.getName();
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+        if (isAdmin) return true;
+
+        UserDto user = getUserById(userId);
+
+        return user.email.equals(loggedInEmail);
     }
 
     public List<LoanWithFineDto> getLoansByUserId(Long id) {
@@ -147,6 +198,8 @@ public class UserService {
 
         return dtoFines;
     }
+
+//    todo namen wijzigen
 
 //    todo overdue loans weghalen
 //    todo kan springboot bij opstarten checken op overdue?

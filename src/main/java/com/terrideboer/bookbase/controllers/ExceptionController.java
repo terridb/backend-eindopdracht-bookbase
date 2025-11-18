@@ -1,6 +1,7 @@
 package com.terrideboer.bookbase.controllers;
 
 import com.terrideboer.bookbase.exceptions.AlreadyExistsException;
+import com.terrideboer.bookbase.exceptions.BadRequestException;
 import com.terrideboer.bookbase.exceptions.InvalidInputException;
 import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -42,5 +43,10 @@ public class ExceptionController {
         });
 
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = BadRequestException.class)
+    public ResponseEntity<Object> exception(BadRequestException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }

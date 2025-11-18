@@ -1,6 +1,9 @@
 package com.terrideboer.bookbase.dtos.users;
 
-import com.terrideboer.bookbase.models.enums.Role;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.terrideboer.bookbase.models.Role;
+
+import java.util.Set;
 
 public class UserDto {
     public Long id;
@@ -8,5 +11,7 @@ public class UserDto {
     public String lastName;
     public String email;
     public String phoneNumber;
-    public Role role;
+
+    @JsonSerialize
+    public Set<Role> roles;
 }

@@ -1,6 +1,5 @@
 package com.terrideboer.bookbase.dtos.users;
 
-import com.terrideboer.bookbase.models.enums.Role;
 import jakarta.validation.constraints.*;
 
 public class UserInputDto {
@@ -23,7 +22,4 @@ public class UserInputDto {
     @NotBlank(message = "Phone number is required")
     @Pattern(regexp = "^\\+?[0-9]{8,15}$", message = "Phone number must be a valid phone number, e.g. +31612345678")
     public String phoneNumber;
-
-    @NotNull(message = "Role is required")
-    public Role role;
 }
