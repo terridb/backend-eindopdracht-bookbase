@@ -3,6 +3,7 @@ package com.terrideboer.bookbase.services;
 import com.terrideboer.bookbase.dtos.loans.LoanDto;
 import com.terrideboer.bookbase.dtos.loans.LoanInputDto;
 import com.terrideboer.bookbase.dtos.loans.LoanWithFineDto;
+import com.terrideboer.bookbase.exceptions.ForbiddenException;
 import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
 import com.terrideboer.bookbase.mappers.LoanMapper;
 import com.terrideboer.bookbase.models.*;
@@ -11,6 +12,7 @@ import com.terrideboer.bookbase.repositories.BookCopyRepository;
 import com.terrideboer.bookbase.repositories.LoanRepository;
 import com.terrideboer.bookbase.repositories.UserRepository;
 import com.terrideboer.bookbase.utils.LoanUtils;
+import com.terrideboer.bookbase.utils.UserUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +52,11 @@ public class LoanService {
     public LoanWithFineDto getLoanById(Long id) {
         Loan loan = loanRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Loan with id " + id + " not found"));
+
+        User user = loan.getUser();
+        if (!UserUtils.isOwnerOrAdmin(user)) {
+            throw new ForbiddenException();
+        }
 
         return LoanMapper.toLoanWithFineDto(loan);
     }

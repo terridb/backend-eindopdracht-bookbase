@@ -1,9 +1,6 @@
 package com.terrideboer.bookbase.controllers;
 
-import com.terrideboer.bookbase.exceptions.AlreadyExistsException;
-import com.terrideboer.bookbase.exceptions.BadRequestException;
-import com.terrideboer.bookbase.exceptions.InvalidInputException;
-import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
+import com.terrideboer.bookbase.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -48,5 +45,10 @@ public class ExceptionController {
     @ExceptionHandler(value = BadRequestException.class)
     public ResponseEntity<Object> exception(BadRequestException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = ForbiddenException.class)
+    public ResponseEntity<Object> exception(ForbiddenException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.FORBIDDEN);
     }
 }

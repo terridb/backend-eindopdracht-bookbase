@@ -2,16 +2,22 @@ package com.terrideboer.bookbase.services;
 
 import com.terrideboer.bookbase.dtos.fines.FineDto;
 import com.terrideboer.bookbase.dtos.fines.FineInputDto;
+import com.terrideboer.bookbase.dtos.users.UserDto;
 import com.terrideboer.bookbase.exceptions.AlreadyExistsException;
+import com.terrideboer.bookbase.exceptions.ForbiddenException;
 import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
 import com.terrideboer.bookbase.mappers.FineMapper;
 import com.terrideboer.bookbase.models.Fine;
 import com.terrideboer.bookbase.models.Loan;
+import com.terrideboer.bookbase.models.User;
 import com.terrideboer.bookbase.models.enums.PaymentStatus;
 import com.terrideboer.bookbase.repositories.FineRepository;
 import com.terrideboer.bookbase.repositories.LoanRepository;
 import com.terrideboer.bookbase.utils.LoanUtils;
+import com.terrideboer.bookbase.utils.UserUtils;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -42,9 +48,15 @@ public class FineService {
     }
 
     public FineDto getFineById(Long id) {
-        return FineMapper.toDto(
-                fineRepository.findById(id)
-                        .orElseThrow(() -> new RecordNotFoundException("Fine with id " + id + " not found")));
+        Fine fine = fineRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("Fine with id " + id + " not found"));
+
+        User user = fine.getLoan().getUser();
+        if (!UserUtils.isOwnerOrAdmin(user)) {
+            throw new ForbiddenException();
+        }
+
+        return FineMapper.toDto(fine);
     }
 
     public FineDto postManualFine(FineInputDto fineInputDto, Long loanId) {
@@ -89,6 +101,11 @@ public class FineService {
     public FineDto payFine(Long id) {
         Fine fine = fineRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(("Fine with id " + id + " not found")));
+
+        User user = fine.getLoan().getUser();
+        if (!UserUtils.isOwnerOrAdmin(user)) {
+            throw new ForbiddenException();
+        }
 
         if (fine.getPaymentStatus() == PaymentStatus.PAID) {
             throw new AlreadyExistsException("This fine has already been paid");

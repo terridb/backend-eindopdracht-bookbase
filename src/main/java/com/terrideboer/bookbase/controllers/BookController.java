@@ -63,14 +63,6 @@ public class BookController {
         return ResponseEntity.ok(bookDto);
     }
 
-    //       Endpoint to adjust a book by book-id (put)
-    @PutMapping("/{id}")
-    public ResponseEntity<BookDto> putBook(@PathVariable Long id, @Valid @RequestBody BookInputDto bookInputDto) {
-        BookDto bookDto = bookService.putBook(id, bookInputDto);
-
-        return ResponseEntity.ok(bookDto);
-    }
-
     //       Endpoint to delete a book by book-id
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBook(@PathVariable Long id) {

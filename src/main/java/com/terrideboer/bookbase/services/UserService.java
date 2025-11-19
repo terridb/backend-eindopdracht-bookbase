@@ -5,6 +5,7 @@ import com.terrideboer.bookbase.dtos.loans.LoanWithFineDto;
 import com.terrideboer.bookbase.dtos.users.UserDto;
 import com.terrideboer.bookbase.dtos.users.UserInputDto;
 import com.terrideboer.bookbase.dtos.users.UserPatchDto;
+import com.terrideboer.bookbase.exceptions.ForbiddenException;
 import com.terrideboer.bookbase.exceptions.InvalidInputException;
 import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
 import com.terrideboer.bookbase.mappers.FineMapper;
@@ -15,11 +16,8 @@ import com.terrideboer.bookbase.models.Role;
 import com.terrideboer.bookbase.models.User;
 import com.terrideboer.bookbase.repositories.RoleRepository;
 import com.terrideboer.bookbase.repositories.UserRepository;
+import com.terrideboer.bookbase.utils.UserUtils;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -53,9 +51,14 @@ public class UserService {
     }
 
     public UserDto getUserById(Long id) {
-        return UserMapper.toDto(
-                userRepository.findById(id)
-                        .orElseThrow(() -> new RecordNotFoundException("User with id " + id + " not found")));
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("User with id " + id + " not found"));
+
+        if (!UserUtils.isOwnerOrAdmin(user)) {
+            throw new ForbiddenException();
+        }
+
+        return UserMapper.toDto(user);
     }
 
     public UserDto postUser(UserInputDto userInputDto) {
@@ -77,6 +80,10 @@ public class UserService {
     public UserDto patchUser(Long id, UserPatchDto userPatchDto) {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("User with id " + id + " not found"));
+
+        if (!UserUtils.isOwnerOrAdmin(existingUser)) {
+            throw new ForbiddenException();
+        }
 
         if (userPatchDto.firstName != null) {
             if (userPatchDto.firstName.length() < 2 || userPatchDto.firstName.length() > 128) {
@@ -150,23 +157,13 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public boolean isOwnerOrAdmin(Long userId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String loggedInEmail = authentication.getName();
-
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
-
-        if (isAdmin) return true;
-
-        UserDto user = getUserById(userId);
-
-        return user.email.equals(loggedInEmail);
-    }
-
     public List<LoanWithFineDto> getLoansByUserId(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("User with id " + id + " not found"));
+
+        if (!UserUtils.isOwnerOrAdmin(user)) {
+            throw new ForbiddenException();
+        }
 
         List<Loan> loans = user.getLoans();
         List<LoanWithFineDto> dtoLoans = new ArrayList<>();
@@ -181,6 +178,10 @@ public class UserService {
     public List<FineDto> getFinesByUserId(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("User with id " + id + " not found"));
+
+        if (!UserUtils.isOwnerOrAdmin(user)) {
+            throw new ForbiddenException();
+        }
 
         List<Loan> userLoans = user.getLoans();
 

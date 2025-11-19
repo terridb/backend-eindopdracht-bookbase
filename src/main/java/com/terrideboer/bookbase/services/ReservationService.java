@@ -4,6 +4,7 @@ import com.terrideboer.bookbase.dtos.loans.LoanInputDto;
 import com.terrideboer.bookbase.dtos.reservations.ReservationDto;
 import com.terrideboer.bookbase.dtos.reservations.ReservationInputDto;
 import com.terrideboer.bookbase.dtos.reservations.ReservationPatchDto;
+import com.terrideboer.bookbase.exceptions.ForbiddenException;
 import com.terrideboer.bookbase.exceptions.InvalidInputException;
 import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
 import com.terrideboer.bookbase.mappers.ReservationMapper;
@@ -13,6 +14,7 @@ import com.terrideboer.bookbase.repositories.BookCopyRepository;
 import com.terrideboer.bookbase.repositories.ReservationRepository;
 import com.terrideboer.bookbase.repositories.UserRepository;
 import com.terrideboer.bookbase.utils.DateUtils;
+import com.terrideboer.bookbase.utils.UserUtils;
 import org.openpdf.text.*;
 import org.openpdf.text.pdf.PdfPTable;
 import org.openpdf.text.pdf.PdfWriter;
@@ -57,6 +59,10 @@ public class ReservationService {
         Reservation reservation = reservationRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Reservation with id " + id + " not found"));
 
+        User user = reservation.getUser();
+        if (!UserUtils.isOwnerOrAdmin(user)) {
+            throw new ForbiddenException();
+        }
 
         return ReservationMapper.toDto(reservation);
     }
@@ -78,6 +84,10 @@ public class ReservationService {
                 .orElseThrow(() -> new RecordNotFoundException(("Book-copy with id " + reservationInputDto.bookCopyId + " not found")));
         User user = userRepository.findById(reservationInputDto.userId)
                 .orElseThrow(() -> new RecordNotFoundException(("User with id " + reservationInputDto.bookCopyId + " not found")));
+
+        if (!UserUtils.isOwnerOrAdmin(user)) {
+            throw new ForbiddenException("You're not allowed to create reservations for other members");
+        }
 
         Reservation reservation = new Reservation();
 
@@ -159,6 +169,11 @@ public class ReservationService {
     public ReservationDto cancelReservation(Long id) {
         Reservation reservation = reservationRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Reservation with id " + id + " not found"));
+        User user = reservation.getUser();
+
+        if (!UserUtils.isOwnerOrAdmin(user)) {
+            throw new ForbiddenException("You're not allowed to cancel reservations for other members");
+        }
 
         if (reservation.getReservationStatus() == ReservationStatus.COLLECTED) {
             throw new InvalidInputException("Collected reservations cannot be cancelled");

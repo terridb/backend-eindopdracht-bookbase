@@ -9,10 +9,7 @@ import com.terrideboer.bookbase.dtos.users.UserPatchDto;
 import com.terrideboer.bookbase.exceptions.BadRequestException;
 import com.terrideboer.bookbase.services.UserService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -36,11 +33,8 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
-        if (!userService.isOwnerOrAdmin(id)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-
         UserDto userDto = userService.getUserById(id);
+
         return ResponseEntity.ok(userDto);
     }
 
@@ -62,29 +56,18 @@ public class UserController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<UserDto> patchUser(@PathVariable Long id, @RequestBody UserPatchDto userPatchDto) {
-        if (!userService.isOwnerOrAdmin(id)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-
         UserDto userDto = userService.patchUser(id, userPatchDto);
+
         return ResponseEntity.ok(userDto);
     }
 
     @GetMapping("{id}/loans")
     public ResponseEntity<List<LoanWithFineDto>> getLoansByUserId(@PathVariable Long id) {
-        if (!userService.isOwnerOrAdmin(id)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-
         return ResponseEntity.ok(userService.getLoansByUserId(id));
     }
 
     @GetMapping("{id}/fines")
     public ResponseEntity<List<FineDto>> getFinesByUserId(@PathVariable Long id) {
-        if (!userService.isOwnerOrAdmin(id)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-
         return ResponseEntity.ok(userService.getFinesByUserId(id));
     }
 
