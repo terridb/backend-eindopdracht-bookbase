@@ -5,6 +5,7 @@ import com.terrideboer.bookbase.dtos.loans.LoanWithFineDto;
 import com.terrideboer.bookbase.dtos.users.UserDto;
 import com.terrideboer.bookbase.dtos.users.UserInputDto;
 import com.terrideboer.bookbase.dtos.users.UserPatchDto;
+import com.terrideboer.bookbase.models.enums.RoleName;
 import com.terrideboer.bookbase.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +24,6 @@ public class UserController {
         this.userService = userService;
     }
 
-//    todo needs to be adjusted when implementing authentication
-
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers() {
 
@@ -33,8 +32,9 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
+        UserDto userDto = userService.getUserById(id);
 
-        return ResponseEntity.ok(userService.getUserById(id));
+        return ResponseEntity.ok(userDto);
     }
 
     @PostMapping
@@ -44,13 +44,6 @@ public class UserController {
         URI uri = URI.create("/users/" + userDto.id);
 
         return ResponseEntity.created(uri).body(userDto);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<UserDto> putUser(@PathVariable Long id, @Valid @RequestBody UserInputDto userInputDto) {
-        UserDto userDto = userService.putUser(id, userInputDto);
-
-        return ResponseEntity.ok(userDto);
     }
 
     @DeleteMapping("/{id}")
@@ -69,13 +62,24 @@ public class UserController {
 
     @GetMapping("{id}/loans")
     public ResponseEntity<List<LoanWithFineDto>> getLoansByUserId(@PathVariable Long id) {
-
         return ResponseEntity.ok(userService.getLoansByUserId(id));
     }
 
     @GetMapping("{id}/fines")
     public ResponseEntity<List<FineDto>> getFinesByUserId(@PathVariable Long id) {
-
         return ResponseEntity.ok(userService.getFinesByUserId(id));
+    }
+
+    @PostMapping("/{id}/roles/{role}")
+    public ResponseEntity<UserDto> addUserRole(@PathVariable Long id, @PathVariable("role") RoleName role) {
+        UserDto user = userService.addRole(id, role);
+
+        return ResponseEntity.ok(user);
+    }
+
+    @DeleteMapping(value = "/{id}/roles/{role}")
+    public ResponseEntity<Void> deleteUserRole(@PathVariable Long id, @PathVariable("role") RoleName role) {
+        userService.removeRole(id, role);
+        return ResponseEntity.noContent().build();
     }
 }

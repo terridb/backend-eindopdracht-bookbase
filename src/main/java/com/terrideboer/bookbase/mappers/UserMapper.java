@@ -4,6 +4,7 @@ import com.terrideboer.bookbase.dtos.users.UserDto;
 import com.terrideboer.bookbase.dtos.users.UserInputDto;
 import com.terrideboer.bookbase.dtos.users.UserSummaryDto;
 import com.terrideboer.bookbase.models.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class UserMapper {
 
@@ -17,7 +18,6 @@ public class UserMapper {
         user.setLastName(userInputDto.lastName);
         user.setPassword(userInputDto.password);
         user.setPhoneNumber(userInputDto.phoneNumber);
-        user.setRole(userInputDto.role);
 
         return user;
     }
@@ -30,7 +30,7 @@ public class UserMapper {
         userDto.firstName = user.getFirstName();
         userDto.lastName = user.getLastName();
         userDto.phoneNumber = user.getPhoneNumber();
-        userDto.role = user.getRole();
+        userDto.roles = user.getRoles();
 
         return userDto;
     }

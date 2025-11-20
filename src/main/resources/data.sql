@@ -91,20 +91,36 @@ VALUES (1, 'BB-1-1'),
        (20, 'BB-20-1'),
        (20, 'BB-20-2');
 
-INSERT INTO users (first_name, last_name, email, phone_number, password, role)
-VALUES ('Karel', 'Kiwi', 'karel.kiwi@gmail.nl', '0612345678', 'test123', 'MEMBER'),
-       ('Mara', 'Mango', 'mara.mango@gmail.nl', '0687654321', 'test123', 'MEMBER'),
-       ('Barrie', 'Bosbes', 'barrie.bosbes@gmail.nl', '0658468953', 'test123', 'MEMBER'),
-       ('Pino', 'Pruim', 'pino.pruim@gmail.nl', '0626497852', 'test123', 'MEMBER'),
-       ('Ella', 'Eland', 'ella.eland@gmail.nl', '0665432198', 'test123', 'MEMBER'),
-       ('Noah', 'Noten', 'noah.noten@gmail.nl', '0676543219', 'test123', 'MEMBER'),
-       ('Lisa', 'Langpootmug', 'lisa.langpootmug@gmail.nl', '0611223344', 'test123', 'MEMBER'),
-       ('Bobby', 'Bobsleebaan', 'bobby.bobsleebaan@gmail.nl', '0643245895', 'test123', 'MEMBER'),
-       ('Bob', 'Sleejen', 'bob.sleejen@bookbase.nl', '0659048512', 'test123', 'EMPLOYEE'),
-       ('Sia', 'Later', 'sia.later@bookbase.nl', '0612589542', 'test123', 'EMPLOYEE'),
-       ('Ben', 'Weg', 'ben.weg@bookbase.nl', '0642385948', 'test123', 'LIBRARIAN'),
-       ('Frits', 'Frituur', 'frits.frituur@bookbase.nl', '0635479815', 'test123', 'LIBRARIAN'),
-       ('Dido', 'Delete', 'dido.delete@gmail.nl', '0623589412', 'test123', 'MEMBER');
+-- Wachtwoord voor elke user is "test"
+INSERT INTO users (first_name, last_name, email, phone_number, password)
+VALUES ('Karel', 'Kiwi', 'karel.kiwi@gmail.com', '0612345678', '$2a$10$gKNCIzK5xF8Z4QaPz2fzsuvmLfXCyf2fEhABB9U74jcjZupBxdERi'),
+       ('Mara', 'Mango', 'mara.mango@gmail.com', '0687654321', '$2a$10$gKNCIzK5xF8Z4QaPz2fzsuvmLfXCyf2fEhABB9U74jcjZupBxdERi'),
+       ('Barrie', 'Bosbes', 'barrie.bosbes@gmail.com', '0658468953', '$2a$10$gKNCIzK5xF8Z4QaPz2fzsuvmLfXCyf2fEhABB9U74jcjZupBxdERi'),
+       ('Pino', 'Pruim', 'pino.pruim@gmail.com', '0626497852', '$2a$10$gKNCIzK5xF8Z4QaPz2fzsuvmLfXCyf2fEhABB9U74jcjZupBxdERi'),
+       ('Ella', 'Eland', 'ella.eland@gmail.com', '0665432198', '$2a$10$gKNCIzK5xF8Z4QaPz2fzsuvmLfXCyf2fEhABB9U74jcjZupBxdERi'),
+       ('Noah', 'Noten', 'noah.noten@gmail.com', '0676543219', '$2a$10$gKNCIzK5xF8Z4QaPz2fzsuvmLfXCyf2fEhABB9U74jcjZupBxdERi'),
+       ('Lisa', 'Langpootmug', 'lisa.langpootmug@gmail.com', '0611223344', '$2a$10$gKNCIzK5xF8Z4QaPz2fzsuvmLfXCyf2fEhABB9U74jcjZupBxdERi'),
+       ('Bobby', 'Bobsleebaan', 'bobby.bobsleebaan@gmail.com', '0643245895', '$2a$10$gKNCIzK5xF8Z4QaPz2fzsuvmLfXCyf2fEhABB9U74jcjZupBxdERi'),
+       ('Bob', 'Sleejen', 'bob.sleejen@bookbase.nl', '0659048512', '$2a$10$gKNCIzK5xF8Z4QaPz2fzsuvmLfXCyf2fEhABB9U74jcjZupBxdERi'),
+       ('Sia', 'Later', 'sia.later@bookbase.nl', '0612589542', '$2a$10$gKNCIzK5xF8Z4QaPz2fzsuvmLfXCyf2fEhABB9U74jcjZupBxdERi'),
+       ('Ben', 'Weg', 'ben.weg@bookbase.nl', '0642385948', '$2a$10$gKNCIzK5xF8Z4QaPz2fzsuvmLfXCyf2fEhABB9U74jcjZupBxdERi'),
+       ('Frits', 'Frituur', 'frits.frituur@bookbase.nl', '0635479815', '$2a$10$gKNCIzK5xF8Z4QaPz2fzsuvmLfXCyf2fEhABB9U74jcjZupBxdERi'),
+       ('Dido', 'Delete', 'dido.delete@gmail.nl', '0623589412', '$2a$10$gKNCIzK5xF8Z4QaPz2fzsuvmLfXCyf2fEhABB9U74jcjZupBxdERi');
+
+INSERT INTO roles (user_id, role)
+VALUES (1, 'ROLE_MEMBER'),
+       (2, 'ROLE_MEMBER'),
+       (3, 'ROLE_MEMBER'),
+       (4, 'ROLE_MEMBER'),
+       (5, 'ROLE_MEMBER'),
+       (6, 'ROLE_MEMBER'),
+       (7, 'ROLE_MEMBER'),
+       (8, 'ROLE_MEMBER'),
+       (9, 'ROLE_EMPLOYEE'),
+       (10, 'ROLE_EMPLOYEE'),
+       (11, 'ROLE_LIBRARIAN'),
+       (12, 'ROLE_LIBRARIAN'),
+       (13, 'ROLE_MEMBER');
 
 INSERT INTO loans (loan_date, return_date, loan_period_in_days, loan_status, book_copy_id, user_id)
 VALUES ('2025-09-01', '2025-09-30', 21, 'RETURNED', 1, 1),

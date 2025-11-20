@@ -98,15 +98,6 @@ public class BookService {
 
 //    todo kan ik de uploads map automatisch verwijderen bij heropstarten van de applicatie?
 
-    public BookDto putBook(Long id, BookInputDto bookInputDto) {
-        Book existingBook = bookRepository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException(("Book with id " + id + " not found")));
-
-        Book updatedBook = BookMapper.toEntity(bookInputDto, existingBook);
-        Book savedBook = bookRepository.save(updatedBook);
-        return BookMapper.toDto(savedBook);
-    }
-
     public void deleteBook(Long id) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(("Book with id " + id + " not found")));

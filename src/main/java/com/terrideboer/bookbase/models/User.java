@@ -1,9 +1,10 @@
 package com.terrideboer.bookbase.models;
 
-import com.terrideboer.bookbase.models.enums.Role;
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -26,8 +27,12 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    private Role role = Role.MEMBER;
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.EAGER)
+    private Set<Role> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "user")
     @OrderBy("id asc")
@@ -80,14 +85,6 @@ public class User {
         this.password = password;
     }
 
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
     public List<Loan> getLoans() {
         return loans;
     }
@@ -103,4 +100,17 @@ public class User {
     public void setReservations(List<Reservation> reservations) {
         this.reservations = reservations;
     }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void addRole(Role role) {
+        this.roles.add(role);
+    }
+
+    public void removeRole(Role role) {
+        this.roles.remove(role);
+    }
+//    todo get reservations by user
 }
