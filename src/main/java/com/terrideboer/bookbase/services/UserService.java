@@ -5,6 +5,7 @@ import com.terrideboer.bookbase.dtos.loans.LoanWithFineDto;
 import com.terrideboer.bookbase.dtos.users.UserDto;
 import com.terrideboer.bookbase.dtos.users.UserInputDto;
 import com.terrideboer.bookbase.dtos.users.UserPatchDto;
+import com.terrideboer.bookbase.exceptions.AlreadyExistsException;
 import com.terrideboer.bookbase.exceptions.ForbiddenException;
 import com.terrideboer.bookbase.exceptions.InvalidInputException;
 import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
@@ -14,6 +15,7 @@ import com.terrideboer.bookbase.mappers.UserMapper;
 import com.terrideboer.bookbase.models.Loan;
 import com.terrideboer.bookbase.models.Role;
 import com.terrideboer.bookbase.models.User;
+import com.terrideboer.bookbase.models.enums.RoleName;
 import com.terrideboer.bookbase.repositories.RoleRepository;
 import com.terrideboer.bookbase.repositories.UserRepository;
 import com.terrideboer.bookbase.utils.UserUtils;
@@ -24,7 +26,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class UserService {
@@ -65,6 +66,12 @@ public class UserService {
         User user = UserMapper.toEntity(userInputDto, null);
 
         user.setPassword(encoder.encode(userInputDto.password));
+
+        Role defaultRole = new Role();
+        defaultRole.setRole(RoleName.ROLE_MEMBER);
+        defaultRole.setUser(user);
+        user.getRoles().add(defaultRole);
+
         User savedUser = userRepository.save(user);
 
         return UserMapper.toDto(savedUser);
@@ -126,32 +133,31 @@ public class UserService {
                 .orElseThrow(() -> new RecordNotFoundException("User with email address " + email + " not found"));
     }
 
-    public Set<Role> getRoles(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException("User with id " + id + " not found"));
-        UserDto userDto = UserMapper.toDto(user);
-        return userDto.roles;
-    }
-
-    public void addRole(Long userId, String roleName) {
+    public UserDto addRole(Long userId, RoleName roleName) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RecordNotFoundException("User with id " + userId + " not found"));
-        Role role = roleRepository.findRoleByRoleNameIgnoreCase(roleName)
-                .orElseThrow(() -> new RecordNotFoundException("Role " + roleName + " not found"));
+
+        boolean alreadyHasRole = user.getRoles().stream()
+                .anyMatch(r -> r.getRole() == roleName);
+
+        if (alreadyHasRole) {
+            throw new AlreadyExistsException("User already has role " + roleName);
+        }
+
+        Role role = new Role();
+        role.setRole(roleName);
+        role.setUser(user);
 
         user.getRoles().add(role);
         userRepository.save(user);
+        return UserMapper.toDto(user);
     }
 
-    public void removeRole(Long userId, String roleName) {
+    public void removeRole(Long userId, RoleName roleName) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RecordNotFoundException("User with id " + userId + " not found"));
-        Role role = roleRepository.findRoleByRoleNameIgnoreCase(roleName)
-                .orElseThrow(() -> new RecordNotFoundException("Role " + roleName + " not found"));
-
-        if (!user.getRoles().contains(role)) {
-            throw new RecordNotFoundException("User does not have role " + roleName);
-        }
+        Role role = roleRepository.findByUser_IdAndRole(userId, roleName)
+                .orElseThrow(() -> new RecordNotFoundException("User does not have role " + roleName));
 
         user.removeRole(role);
         userRepository.save(user);

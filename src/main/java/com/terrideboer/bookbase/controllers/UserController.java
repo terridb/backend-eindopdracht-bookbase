@@ -2,11 +2,10 @@ package com.terrideboer.bookbase.controllers;
 
 import com.terrideboer.bookbase.dtos.fines.FineDto;
 import com.terrideboer.bookbase.dtos.loans.LoanWithFineDto;
-import com.terrideboer.bookbase.dtos.roles.RoleInputDto;
 import com.terrideboer.bookbase.dtos.users.UserDto;
 import com.terrideboer.bookbase.dtos.users.UserInputDto;
 import com.terrideboer.bookbase.dtos.users.UserPatchDto;
-import com.terrideboer.bookbase.exceptions.BadRequestException;
+import com.terrideboer.bookbase.models.enums.RoleName;
 import com.terrideboer.bookbase.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -71,19 +70,15 @@ public class UserController {
         return ResponseEntity.ok(userService.getFinesByUserId(id));
     }
 
-    @PostMapping("/{id}/roles")
-    public ResponseEntity<Object> addUserRole(@PathVariable Long id, @RequestBody RoleInputDto roleInputDto) {
-        try {
-            String roleName = roleInputDto.role;
-            userService.addRole(id, roleName);
-            return ResponseEntity.noContent().build();
-        } catch (Exception ex) {
-            throw new BadRequestException();
-        }
+    @PostMapping("/{id}/roles/{role}")
+    public ResponseEntity<UserDto> addUserRole(@PathVariable Long id, @PathVariable("role") RoleName role) {
+        UserDto user = userService.addRole(id, role);
+
+        return ResponseEntity.ok(user);
     }
 
     @DeleteMapping(value = "/{id}/roles/{role}")
-    public ResponseEntity<Object> deleteUserRole(@PathVariable Long id, @PathVariable("role") String role) {
+    public ResponseEntity<Void> deleteUserRole(@PathVariable Long id, @PathVariable("role") RoleName role) {
         userService.removeRole(id, role);
         return ResponseEntity.noContent().build();
     }

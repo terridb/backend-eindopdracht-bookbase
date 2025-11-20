@@ -1,35 +1,40 @@
 package com.terrideboer.bookbase.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.terrideboer.bookbase.models.enums.RoleName;
 import jakarta.persistence.*;
 
-import java.util.Set;
+import java.io.Serializable;
 
 @Entity
+@IdClass(AuthorityKey.class)
 @Table(name = "roles")
-public class Role {
+public class Role implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private RoleName role;
 
-    private String roleName;
+    @Id
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
 
-    @ManyToMany(mappedBy = "roles")
-    private Set<User> users;
-
-    public String getRoleName() {
-        return roleName;
+    public RoleName getRole() {
+        return role;
     }
 
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
+    public void setRole(RoleName role) {
+        this.role = role;
     }
 
-    public Set<User> getUsers() {
-        return users;
+    public User getUser() {
+        return user;
     }
 
-    public void setUsers(Set<User> users) {
-        this.users = users;
+    public void setUser(User user) {
+        this.user = user;
     }
 }

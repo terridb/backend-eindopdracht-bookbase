@@ -27,7 +27,11 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.EAGER)
     private Set<Role> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "user")

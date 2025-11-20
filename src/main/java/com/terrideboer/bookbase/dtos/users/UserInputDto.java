@@ -16,7 +16,7 @@ public class UserInputDto {
     @Email(message = "Email must be a valid email address")
     public String email;
 
-    @NotBlank
+    @NotBlank(message = "Password is required")
     public String password;
 
     @NotBlank(message = "Phone number is required")

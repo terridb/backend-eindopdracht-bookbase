@@ -80,7 +80,7 @@ public class SecurityConfiguration {
                                 .requestMatchers(HttpMethod.GET, "/loans/**").authenticated()
 
                                 .requestMatchers(HttpMethod.POST,
-                                        "/loans/",
+                                        "/loans",
                                         "/loans/*/fines"
                                 ).hasAnyRole("EMPLOYEE", "LIBRARIAN")
 
@@ -118,7 +118,7 @@ public class SecurityConfiguration {
                                 .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("LIBRARIAN")
                                 .requestMatchers(HttpMethod.PATCH, "/users/**").authenticated()
 
-                                .requestMatchers(HttpMethod.POST, "/users/*/roles").hasRole("LIBRARIAN")
+                                .requestMatchers(HttpMethod.POST, "/users/*/roles/**").hasRole("LIBRARIAN")
                                 .requestMatchers(HttpMethod.DELETE, "/users/*/roles/**").hasRole("LIBRARIAN")
 
                                 .anyRequest().denyAll()
