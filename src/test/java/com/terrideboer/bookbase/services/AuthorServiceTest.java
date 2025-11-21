@@ -3,6 +3,7 @@ package com.terrideboer.bookbase.services;
 import com.terrideboer.bookbase.dtos.authors.AuthorDto;
 import com.terrideboer.bookbase.dtos.authors.AuthorInputDto;
 import com.terrideboer.bookbase.dtos.books.BookDto;
+import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
 import com.terrideboer.bookbase.models.Author;
 import com.terrideboer.bookbase.models.Book;
 import com.terrideboer.bookbase.repositories.AuthorRepository;
@@ -39,9 +40,14 @@ class AuthorServiceTest {
     @InjectMocks
     AuthorService authorService;
 
-    List<Author> authors;
     Author author1 = new Author();
     Author author2 = new Author();
+
+    Author tina = new Author();
+    Author savedTina = new Author();
+    AuthorInputDto tinaDto = new AuthorInputDto();
+
+    List<Author> authors;
 
     @BeforeEach
     void setUp() {
@@ -59,10 +65,27 @@ class AuthorServiceTest {
         author2.setDateOfBirth(LocalDate.parse("1986-03-05"));
 
         authors = List.of(author1, author2);
+
+        tina.setId(5L);
+        tina.setFirstName("OldName");
+        tina.setMiddleNames("Tommy Junior");
+        tina.setLastName("Test");
+        tina.setDateOfBirth(LocalDate.parse("2000-01-01"));
+
+        tinaDto.firstName = "Tina";
+        tinaDto.middleNames = "Tommy Junior";
+        tinaDto.lastName = "Test";
+        tinaDto.dateOfBirth = LocalDate.parse("2000-01-01");
+
+        savedTina.setId(5L);
+        savedTina.setFirstName("Tina");
+        savedTina.setMiddleNames("Tommy Junior");
+        savedTina.setLastName("Test");
+        savedTina.setDateOfBirth(LocalDate.parse("2000-01-01"));
     }
 
     @Test
-    @DisplayName("Get all authors should show all authors")
+    @DisplayName("getAllAuthors should show all existing authors")
     public void getAllAuthorsShouldShowAllAuthors() {
         Mockito.when(authorRepository.findAll(Sort.by("id").ascending())).thenReturn(authors);
 
@@ -74,11 +97,11 @@ class AuthorServiceTest {
     }
 
     @Test
-    @DisplayName("Get author by Id should show correct author")
+    @DisplayName("getAuthorById should return correct author")
     public void getAuthorByIdShouldShowCorrectAuthor() {
-        Mockito.when(authorRepository.findById(author1.getId())).thenReturn(Optional.of(author1));
+        Mockito.when(authorRepository.findById(1L)).thenReturn(Optional.of(author1));
 
-        AuthorDto authorDto = authorService.getAuthorById(author1.getId());
+        AuthorDto authorDto = authorService.getAuthorById(1L);
 
         assertEquals("Ali", authorDto.firstName);
         assertEquals("Hazelwood", authorDto.lastName);
@@ -88,20 +111,25 @@ class AuthorServiceTest {
     }
 
     @Test
-    @DisplayName("Get books from author should show all books from one author")
-    public void getAllBooksFromAuthorShouldShowAllBooks() {
-        List<Book> books;
-        Book book1 = new Book();
-        Book book2 = new Book();
-        book1.setTitle("Test Book 1");
-        book1.setId(1L);
-        book2.setTitle("Test Book 2");
-        book2.setId(2L);
-        books = List.of(book1, book2);
-        Mockito.when(authorRepository.findById(author1.getId())).thenReturn(Optional.of(author1));
-        Mockito.when(bookRepository.findByAuthorsOrderByIdAsc(Set.of(author1))).thenReturn(books);
+    @DisplayName("getAuthorById should throw exception when not found")
+    public void getAuthorByIdShouldThrowNotFound() {
+        Mockito.when(authorRepository.findById(100L)).thenReturn(Optional.empty());
 
-        List<BookDto> bookDtos = authorService.getAllBooksFromAuthor(author1.getId());
+        assertThrows(RecordNotFoundException.class, () -> authorService.getAuthorById(100L));
+    }
+
+    @Test
+    @DisplayName("getAllBooksFromAuthor should return books for existing author")
+    public void getAllBooksFromAuthorShouldShowAllBooks() {
+        Book book1 = new Book();
+        book1.setTitle("Test Book 1");
+        Book book2 = new Book();
+        book2.setTitle("Test Book 2");
+
+        Mockito.when(authorRepository.findById(1L)).thenReturn(Optional.of(author1));
+        Mockito.when(bookRepository.findByAuthorsOrderByIdAsc(Set.of(author1))).thenReturn(List.of(book1, book2));
+
+        List<BookDto> bookDtos = authorService.getAllBooksFromAuthor(1L);
 
         assertEquals(2, bookDtos.size());
         assertEquals("Test Book 1", bookDtos.get(0).title);
@@ -109,68 +137,118 @@ class AuthorServiceTest {
     }
 
     @Test
-    @DisplayName("Post Author should correctly post a new author")
-    public void postAuthorShouldPostAuthor() {
-        AuthorInputDto inputDto = new AuthorInputDto();
-        inputDto.firstName = "Tina";
-        inputDto.middleNames = "Tommy Junior";
-        inputDto.lastName = "Test";
-        inputDto.displayName = null;
-        inputDto.dateOfBirth = LocalDate.parse("2000-01-01");
+    @DisplayName("getAllBooksFromAuthor should throw exception when author is not found")
+    public void getAllBooksFromAuthorShouldThrowNotFound() {
+        Mockito.when(authorRepository.findById(100L)).thenReturn(Optional.empty());
 
-        Author savedAuthor = new Author();
-        savedAuthor.setId(1L);
-        savedAuthor.setFirstName("Tina");
-        savedAuthor.setMiddleNames("Tommy Junior");
-        savedAuthor.setLastName("Test");
-        savedAuthor.setDisplayName("Tina T. J. Test");
-        savedAuthor.setDateOfBirth(LocalDate.parse("2000-01-01"));
-
-        Mockito.when(authorRepository.save(any())).thenReturn(savedAuthor);
-
-        AuthorDto authorDto = authorService.postAuthor(inputDto);
-
-        assertEquals(savedAuthor.getId(), authorDto.id);
-        assertEquals(savedAuthor.getFirstName(), authorDto.firstName);
-        assertEquals(savedAuthor.getMiddleNames(), authorDto.middleNames);
-        assertEquals(savedAuthor.getLastName(), authorDto.lastName);
-        assertEquals(savedAuthor.getDisplayName(), authorDto.displayName);
-        assertEquals(savedAuthor.getDateOfBirth(), authorDto.dateOfBirth);
+        assertThrows(RecordNotFoundException.class, () -> authorService.getAllBooksFromAuthor(100L));
     }
 
     @Test
-    @DisplayName("Put Author should correctly update an author")
-    public void putAuthorShouldUpdateExistingAuthor() {
-        AuthorInputDto inputDto = new AuthorInputDto();
-        inputDto.firstName = "Alicia";
-        inputDto.middleNames = "Test";
-        inputDto.lastName = "Hazelwoods";
-        inputDto.displayName = null;
-        inputDto.dateOfBirth = author1.getDateOfBirth();
+    @DisplayName("postAuthor should generate displayName when none is given")
+    public void postAuthorWithoutDisplayNameShouldPostAuthor() {
+        tinaDto.displayName = null;
+        savedTina.setDisplayName("Tina T. J. Test");
 
-        Author savedAuthor = new Author();
-        savedAuthor.setId(author1.getId());
-        savedAuthor.setFirstName("Alicia");
-        savedAuthor.setMiddleNames("Test");
-        savedAuthor.setLastName("Hazelwoods");
-        savedAuthor.setDisplayName("Alicia T. Hazelwoods");
-        savedAuthor.setDateOfBirth(author1.getDateOfBirth());
+        Mockito.when(authorRepository.save(any())).thenReturn(savedTina);
 
-        Mockito.when(authorRepository.findById(author1.getId())).thenReturn(Optional.of(author1));
-        Mockito.when(authorRepository.save(any())).thenReturn(savedAuthor);
+        AuthorDto authorDto = authorService.postAuthor(tinaDto);
 
-        AuthorDto authorDto = authorService.putAuthor(author1.getId(), inputDto);
-
-        assertEquals(savedAuthor.getId(), authorDto.id);
-        assertEquals("Alicia", authorDto.firstName);
-        assertEquals("Test", authorDto.middleNames);
-        assertEquals("Hazelwoods", authorDto.lastName);
-        assertEquals("Alicia T. Hazelwoods", authorDto.displayName);
-        assertEquals(savedAuthor.getDateOfBirth(), authorDto.dateOfBirth);
+        assertEquals(5L, authorDto.id);
+        assertEquals("Tina", authorDto.firstName);
+        assertEquals("Tommy Junior", authorDto.middleNames);
+        assertEquals("Test", authorDto.lastName);
+        assertEquals("Tina T. J. Test", authorDto.displayName);
+        assertEquals(LocalDate.parse("2000-01-01"), authorDto.dateOfBirth);
     }
 
     @Test
-    @DisplayName("Delete Author should correctly delete an author")
+    @DisplayName("postAuthor should not generate displayName when it's given")
+    public void postAuthorWithDisplayNameShouldPostAuthor() {
+        tinaDto.displayName = "Tina J. Test";
+        savedTina.setDisplayName("Tina J. Test");
+
+        Mockito.when(authorRepository.save(any())).thenReturn(savedTina);
+
+        AuthorDto authorDto = authorService.postAuthor(tinaDto);
+
+        assertEquals(5L, authorDto.id);
+        assertEquals("Tina", authorDto.firstName);
+        assertEquals("Tommy Junior", authorDto.middleNames);
+        assertEquals("Test", authorDto.lastName);
+        assertEquals("Tina J. Test", authorDto.displayName);
+        assertEquals(LocalDate.parse("2000-01-01"), authorDto.dateOfBirth);
+    }
+
+    @Test
+    @DisplayName("postAuthor without middlenames should build correct displayname")
+    public void postAuthorShouldBuildDiplayNameWithoutMiddleNames() {
+        tinaDto.middleNames = null;
+        tinaDto.displayName = null;
+        savedTina.setMiddleNames(null);
+        savedTina.setDisplayName("Tina Test");
+
+        Mockito.when(authorRepository.save(any())).thenReturn(savedTina);
+
+        AuthorDto authorDto = authorService.postAuthor(tinaDto);
+
+        assertEquals(5L, authorDto.id);
+        assertEquals("Tina", authorDto.firstName);
+        assertNull(authorDto.middleNames);
+        assertEquals("Test", authorDto.lastName);
+        assertEquals("Tina Test", authorDto.displayName);
+        assertEquals(LocalDate.parse("2000-01-01"), authorDto.dateOfBirth);
+    }
+
+    @Test
+    @DisplayName("updateAuthor without given displayname should correctly update an existing author")
+    public void updateAuthorWithoutDisplayNameShouldUpdateExistingAuthor() {
+        tinaDto.displayName = null;
+        savedTina.setDisplayName("Tina T. J. Test");
+
+        Mockito.when(authorRepository.findById(5L)).thenReturn(Optional.of(tina));
+        Mockito.when(authorRepository.save(any())).thenReturn(savedTina);
+
+        AuthorDto authorDto = authorService.updateAuthor(5L, tinaDto);
+
+        assertEquals(5L, authorDto.id);
+        assertEquals("Tina", authorDto.firstName);
+        assertEquals("Tommy Junior", authorDto.middleNames);
+        assertEquals("Test", authorDto.lastName);
+        assertEquals("Tina T. J. Test", authorDto.displayName);
+        assertEquals(LocalDate.parse("2000-01-01"), authorDto.dateOfBirth);
+    }
+
+    @Test
+    @DisplayName("updateAuthor with given displayname should correctly update an existing author")
+    public void updateAuthorWithDisplayNameShouldUpdateExistingAuthor() {
+        tinaDto.displayName = "Tina J. Test";
+        savedTina.setDisplayName("Tina J. Test");
+
+        Mockito.when(authorRepository.findById(5L)).thenReturn(Optional.of(tina));
+        Mockito.when(authorRepository.save(any())).thenReturn(savedTina);
+
+        AuthorDto authorDto = authorService.updateAuthor(5L, tinaDto);
+
+        assertEquals(5L, authorDto.id);
+        assertEquals("Tina", authorDto.firstName);
+        assertEquals("Tommy Junior", authorDto.middleNames);
+        assertEquals("Test", authorDto.lastName);
+        assertEquals("Tina J. Test", authorDto.displayName);
+        assertEquals(LocalDate.parse("2000-01-01"), authorDto.dateOfBirth);
+    }
+
+    @Test
+    @DisplayName("updateAuthor should throw correct exception when author is not found")
+    public void updateAuthorShouldThrowNotFoundException() {
+        Mockito.when(authorRepository.findById(100L))
+                .thenReturn(Optional.empty());
+
+        assertThrows(RecordNotFoundException.class, () -> authorService.updateAuthor(100L, tinaDto));
+    }
+
+    @Test
+    @DisplayName("deleteAuthor should correctly delete an existing author")
     public void deleteAuthorShouldDeleteAuthor() {
         Book book1 = new Book();
         Book book2 = new Book();
@@ -186,5 +264,14 @@ class AuthorServiceTest {
         assertFalse(book1.getAuthors().contains(author1));
         assertFalse(book2.getAuthors().contains(author1));
         verify(authorRepository).delete(author1);
+    }
+
+    @Test
+    @DisplayName("deleteAuthor should throw correct exception when author is not found")
+    public void deleteAuthorShouldThrowNotFoundException() {
+        Mockito.when(authorRepository.findById(100L))
+                .thenReturn(Optional.empty());
+
+        assertThrows(RecordNotFoundException.class, () -> authorService.deleteAuthor(100L));
     }
 }

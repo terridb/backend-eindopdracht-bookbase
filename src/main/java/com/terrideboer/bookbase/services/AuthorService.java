@@ -70,7 +70,7 @@ public class AuthorService {
         return AuthorMapper.toDto(savedAuthor);
     }
 
-    public AuthorDto putAuthor(Long id, AuthorInputDto authorInputDto) {
+    public AuthorDto updateAuthor(Long id, AuthorInputDto authorInputDto) {
         Author existingAuthor =  authorRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Author with id " + id + " not found"));
 
