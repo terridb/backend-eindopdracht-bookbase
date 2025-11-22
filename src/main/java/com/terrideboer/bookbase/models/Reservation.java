@@ -35,6 +35,10 @@ public class Reservation {
     @JoinColumn(name = "loan_id")
     private Loan loan;
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Long getId() {
         return id;
     }

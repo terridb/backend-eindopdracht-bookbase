@@ -36,7 +36,7 @@ public class BookCopyController {
     //       Endpoint to adjust a book-copy by id (put)
     @PutMapping("/{id}")
     public ResponseEntity<BookCopyDto> putBookCopy(@PathVariable Long id, @Valid @RequestBody BookCopyInputDto bookCopyInputDto) {
-        BookCopyDto bookCopyDto = bookCopyService.putBookCopy(id, bookCopyInputDto);
+        BookCopyDto bookCopyDto = bookCopyService.updateBookCopy(id, bookCopyInputDto);
 
         return ResponseEntity.ok(bookCopyDto);
     }

@@ -87,7 +87,8 @@ class AuthorServiceTest {
     @Test
     @DisplayName("getAllAuthors should show all existing authors")
     public void getAllAuthorsShouldShowAllAuthors() {
-        Mockito.when(authorRepository.findAll(Sort.by("id").ascending())).thenReturn(authors);
+        Mockito.when(authorRepository.findAll(Sort.by("id").ascending()))
+                .thenReturn(authors);
 
         List<AuthorDto> dtos = authorService.getAllAuthors();
 
@@ -145,7 +146,7 @@ class AuthorServiceTest {
     }
 
     @Test
-    @DisplayName("postAuthor should generate displayName when none is given")
+    @DisplayName("postAuthor should create a new author and generate a displayName when none is provided")
     public void postAuthorWithoutDisplayNameShouldPostAuthor() {
         tinaDto.displayName = null;
         savedTina.setDisplayName("Tina T. J. Test");
@@ -163,7 +164,7 @@ class AuthorServiceTest {
     }
 
     @Test
-    @DisplayName("postAuthor should not generate displayName when it's given")
+    @DisplayName("postAuthor should create a new author and keep the provided displayName")
     public void postAuthorWithDisplayNameShouldPostAuthor() {
         tinaDto.displayName = "Tina J. Test";
         savedTina.setDisplayName("Tina J. Test");
@@ -181,7 +182,7 @@ class AuthorServiceTest {
     }
 
     @Test
-    @DisplayName("postAuthor without middlenames should build correct displayname")
+    @DisplayName("postAuthor should create a new author and build displayName without middleNames")
     public void postAuthorShouldBuildDiplayNameWithoutMiddleNames() {
         tinaDto.middleNames = null;
         tinaDto.displayName = null;
@@ -201,7 +202,7 @@ class AuthorServiceTest {
     }
 
     @Test
-    @DisplayName("updateAuthor without given displayname should correctly update an existing author")
+    @DisplayName("updateAuthor should update author and generate a displayName when none is provided")
     public void updateAuthorWithoutDisplayNameShouldUpdateExistingAuthor() {
         tinaDto.displayName = null;
         savedTina.setDisplayName("Tina T. J. Test");
@@ -220,7 +221,7 @@ class AuthorServiceTest {
     }
 
     @Test
-    @DisplayName("updateAuthor with given displayname should correctly update an existing author")
+    @DisplayName("updateAuthor should update author and keep the provided displayName")
     public void updateAuthorWithDisplayNameShouldUpdateExistingAuthor() {
         tinaDto.displayName = "Tina J. Test";
         savedTina.setDisplayName("Tina J. Test");
@@ -239,7 +240,7 @@ class AuthorServiceTest {
     }
 
     @Test
-    @DisplayName("updateAuthor should throw correct exception when author is not found")
+    @DisplayName("updateAuthor should throw exception when author is not found")
     public void updateAuthorShouldThrowNotFoundException() {
         Mockito.when(authorRepository.findById(100L))
                 .thenReturn(Optional.empty());
@@ -248,7 +249,7 @@ class AuthorServiceTest {
     }
 
     @Test
-    @DisplayName("deleteAuthor should correctly delete an existing author")
+    @DisplayName("deleteAuthor should delete an existing author")
     public void deleteAuthorShouldDeleteAuthor() {
         Book book1 = new Book();
         Book book2 = new Book();
@@ -267,7 +268,7 @@ class AuthorServiceTest {
     }
 
     @Test
-    @DisplayName("deleteAuthor should throw correct exception when author is not found")
+    @DisplayName("deleteAuthor should throw exception when author is not found")
     public void deleteAuthorShouldThrowNotFoundException() {
         Mockito.when(authorRepository.findById(100L))
                 .thenReturn(Optional.empty());

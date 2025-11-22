@@ -63,7 +63,7 @@ public class BookCopyService {
         return BookCopyMapper.toDto(savedBookCopy);
     }
 
-    public BookCopyDto putBookCopy(Long id, BookCopyInputDto bookCopyInputDto) {
+    public BookCopyDto updateBookCopy(Long id, BookCopyInputDto bookCopyInputDto) {
         BookCopy existingBookCopy = bookCopyRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Book-copy with id " + id + " not found"));
 
