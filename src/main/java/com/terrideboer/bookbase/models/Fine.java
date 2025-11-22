@@ -25,6 +25,10 @@ public class Fine {
     @JoinColumn(name = "loan_id", nullable = false)
     private Loan loan;
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Long getId() {
         return id;
     }

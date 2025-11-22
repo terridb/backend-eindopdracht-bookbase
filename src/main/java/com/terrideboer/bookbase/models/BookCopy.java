@@ -25,6 +25,10 @@ public class BookCopy {
     @OneToMany(mappedBy = "bookCopy")
     private List<Reservation> reservations;
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Long getId() {
         return id;
     }
