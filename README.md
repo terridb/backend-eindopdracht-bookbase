@@ -9,7 +9,6 @@
 5. [Installatie instructies](#5-installatie-instructies)
 6. [Tests](#6-tests)
 7. [Testgebruikers](#7-testgebruikers)
-8. [Overige commando's](#8-overige-commandos)
 
 ## 1. Inleiding
 
@@ -169,5 +168,3 @@ gereserveerd en is daarom niet opgenomen.
 
 Deze gebruikers zijn bedoeld om endpoints met verschillende autorisatieniveaus te testen (Member, Employee, Librarian)
 en om data te leveren aan endpoints zoals loans en reservations.
-
-## 8. Overige commando's
