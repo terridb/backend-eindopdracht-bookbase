@@ -38,9 +38,16 @@ public class LoanService {
         this.fineService = fineService;
     }
 
-    public List<LoanDto> getAllLoans() {
-        List<Loan> loans = loanRepository.findAll(Sort.by("id").ascending());
+    public List<LoanDto> getAllLoans(String status) {
         List<LoanDto> dtoLoans = new ArrayList<>();
+        List<Loan> loans;
+
+        if (status == null || status.isBlank()) {
+            loans = loanRepository.findAll(Sort.by("id").ascending());
+        } else {
+            LoanStatus enumStatus = LoanStatus.valueOf(status.trim().toUpperCase());
+            loans = loanRepository.findByLoanStatus(enumStatus);
+        }
 
         for (Loan loan : loans) {
             dtoLoans.add(LoanMapper.toDto(loan));

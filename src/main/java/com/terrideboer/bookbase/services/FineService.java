@@ -2,7 +2,6 @@ package com.terrideboer.bookbase.services;
 
 import com.terrideboer.bookbase.dtos.fines.FineDto;
 import com.terrideboer.bookbase.dtos.fines.FineInputDto;
-import com.terrideboer.bookbase.dtos.users.UserDto;
 import com.terrideboer.bookbase.exceptions.AlreadyExistsException;
 import com.terrideboer.bookbase.exceptions.ForbiddenException;
 import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
@@ -16,8 +15,6 @@ import com.terrideboer.bookbase.repositories.LoanRepository;
 import com.terrideboer.bookbase.utils.LoanUtils;
 import com.terrideboer.bookbase.utils.UserUtils;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -36,9 +33,16 @@ public class FineService {
         this.loanRepository = loanRepository;
     }
 
-    public List<FineDto> getAllFines() {
-        List<Fine> fines = fineRepository.findAll(Sort.by("id").ascending());
+    public List<FineDto> getAllFines(String status) {
         List<FineDto> dtoFines = new ArrayList<>();
+        List<Fine> fines;
+
+        if (status == null || status.isBlank()) {
+             fines = fineRepository.findAll(Sort.by("id").ascending());
+        } else {
+            PaymentStatus enumStatus = PaymentStatus.valueOf(status.trim().toUpperCase());
+            fines = fineRepository.findByPaymentStatus(enumStatus);
+        }
 
         for (Fine fine : fines) {
             dtoFines.add(FineMapper.toDto(fine));
@@ -134,6 +138,4 @@ public class FineService {
 
         return fineRepository.save(fine);
     }
-
-//    todo: query parameters
 }

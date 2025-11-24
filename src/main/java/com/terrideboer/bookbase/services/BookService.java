@@ -44,7 +44,6 @@ public class BookService {
         this.bookRepository = bookRepository;
         this.authorRepository = authorRepository;
         this.bookCopyService = bookCopyService;
-
         this.fileStoragePath = Paths.get(fileStorageLocation).toAbsolutePath().normalize();
         Files.createDirectories(this.fileStoragePath);
     }
@@ -59,19 +58,16 @@ public class BookService {
                 dtoBooks.add(BookMapper.toDto(book));
             }
 
-            return dtoBooks;
-        }
+        } else {
+            Set<Book> books = new HashSet<>();
+            books.addAll(bookRepository.findByTitleContainingIgnoreCase(search.trim()));
+            books.addAll(bookRepository.findByIsbnContainingIgnoreCase(search.trim()));
+            books.addAll(bookRepository.findByAuthorsDisplayNameContainingIgnoreCase(search.trim()));
 
-        Set<Book> books = new HashSet<>();
-        books.addAll(bookRepository.findByTitleContainingIgnoreCase(search));
-        books.addAll(bookRepository.findByIsbnContainingIgnoreCase(search));
-        books.addAll(bookRepository.findByAuthorsDisplayNameContainingIgnoreCase(search));
+            for (Book book : books) {
+                dtoBooks.add(BookMapper.toDto(book));
+            }
 
-        List<Book> sortedBooks = new ArrayList<>(books);
-        sortedBooks.sort(Comparator.comparing(Book::getId));
-
-        for (Book book : sortedBooks) {
-            dtoBooks.add(BookMapper.toDto(book));
         }
 
         return dtoBooks;

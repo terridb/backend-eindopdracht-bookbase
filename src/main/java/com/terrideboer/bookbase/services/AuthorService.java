@@ -28,9 +28,15 @@ public class AuthorService {
         this.bookRepository = bookRepository;
     }
 
-    public List<AuthorDto> getAllAuthors() {
-        List<Author> authors = authorRepository.findAll(Sort.by("id").ascending());
+    public List<AuthorDto> getAllAuthors(String search) {
         List<AuthorDto> dtoAuthors = new ArrayList<>();
+        List<Author> authors;
+
+        if (search == null || search.isBlank()) {
+            authors = authorRepository.findAll(Sort.by("id").ascending());
+        } else {
+            authors = authorRepository.findByDisplayNameContainingIgnoreCase(search.trim());
+        }
 
         for (Author author : authors) {
             dtoAuthors.add(AuthorMapper.toDto(author));
@@ -71,7 +77,7 @@ public class AuthorService {
     }
 
     public AuthorDto updateAuthor(Long id, AuthorInputDto authorInputDto) {
-        Author existingAuthor =  authorRepository.findById(id)
+        Author existingAuthor = authorRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Author with id " + id + " not found"));
 
         Author updatedAuthor = AuthorMapper.toEntity(authorInputDto, existingAuthor);
@@ -88,11 +94,11 @@ public class AuthorService {
         Author author = authorRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(("Author with id " + id + " not found")));
 
-            for (Book book : author.getBooks()) {
-                book.getAuthors().remove(author);
-                bookRepository.save(book);
-            }
-            author.getBooks().clear();
+        for (Book book : author.getBooks()) {
+            book.getAuthors().remove(author);
+            bookRepository.save(book);
+        }
+        author.getBooks().clear();
 
         authorRepository.delete(author);
     }

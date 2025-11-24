@@ -20,9 +20,11 @@ public class FineController {
 
     //       Endpoint to get all fines
     @GetMapping
-    public ResponseEntity<List<FineDto>> getAllFines() {
+    public ResponseEntity<List<FineDto>> getAllFines(
+            @RequestParam(required = false) String status
+    ) {
 
-        return ResponseEntity.ok(fineService.getAllFines());
+        return ResponseEntity.ok(fineService.getAllFines(status));
     }
 
     //       Endpoint to get a fine by fine-id

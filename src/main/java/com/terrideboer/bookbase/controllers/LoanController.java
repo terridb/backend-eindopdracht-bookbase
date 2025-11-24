@@ -28,9 +28,11 @@ public class LoanController {
 
     //    Endpoint to get all loans
     @GetMapping
-    public ResponseEntity<List<LoanDto>> getAllLoans() {
+    public ResponseEntity<List<LoanDto>> getAllLoans(
+            @RequestParam(required = false) String status
+    ) {
 
-        return ResponseEntity.ok(loanService.getAllLoans());
+        return ResponseEntity.ok(loanService.getAllLoans(status));
     }
 
     //    Endpoint to get a loan by loan-id
