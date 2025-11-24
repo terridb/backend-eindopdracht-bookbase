@@ -73,7 +73,7 @@ public class UserService {
         Role defaultRole = new Role();
         defaultRole.setRole(RoleName.ROLE_MEMBER);
         defaultRole.setUser(user);
-        user.getRoles().add(defaultRole);
+        user.addRole(defaultRole);
 
         User savedUser = userRepository.save(user);
 

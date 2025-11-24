@@ -4,7 +4,6 @@ import com.terrideboer.bookbase.dtos.users.UserDto;
 import com.terrideboer.bookbase.dtos.users.UserInputDto;
 import com.terrideboer.bookbase.dtos.users.UserSummaryDto;
 import com.terrideboer.bookbase.models.User;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class UserMapper {
 

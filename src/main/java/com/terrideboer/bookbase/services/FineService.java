@@ -38,7 +38,7 @@ public class FineService {
         List<Fine> fines;
 
         if (status == null || status.isBlank()) {
-             fines = fineRepository.findAll(Sort.by("id").ascending());
+            fines = fineRepository.findAll(Sort.by("id").ascending());
         } else {
             PaymentStatus enumStatus = PaymentStatus.valueOf(status.trim().toUpperCase());
             fines = fineRepository.findByPaymentStatus(enumStatus);
@@ -82,7 +82,7 @@ public class FineService {
         return FineMapper.toDto(savedFine);
     }
 
-    public FineDto putFine(Long id, FineInputDto fineInputDto) {
+    public FineDto updateFine(Long id, FineInputDto fineInputDto) {
         Fine existingFine = fineRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(("Fine with id " + id + " not found")));
 

@@ -6,7 +6,6 @@ import com.terrideboer.bookbase.dtos.reservations.ReservationDto;
 import com.terrideboer.bookbase.dtos.users.UserDto;
 import com.terrideboer.bookbase.dtos.users.UserInputDto;
 import com.terrideboer.bookbase.dtos.users.UserPatchDto;
-import com.terrideboer.bookbase.models.Reservation;
 import com.terrideboer.bookbase.models.enums.RoleName;
 import com.terrideboer.bookbase.services.UserService;
 import jakarta.validation.Valid;

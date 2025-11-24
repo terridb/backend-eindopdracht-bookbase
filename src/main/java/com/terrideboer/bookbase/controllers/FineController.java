@@ -36,8 +36,8 @@ public class FineController {
 
     //       Endpoint to adjust a fine by fine-id (put)
     @PutMapping("/{id}")
-    public ResponseEntity<FineDto> putFine(@PathVariable Long id, @RequestBody FineInputDto fineInputDto) {
-        FineDto fineDto = fineService.putFine(id, fineInputDto);
+    public ResponseEntity<FineDto> updateFine(@PathVariable Long id, @RequestBody FineInputDto fineInputDto) {
+        FineDto fineDto = fineService.updateFine(id, fineInputDto);
 
         return ResponseEntity.ok(fineDto);
     }

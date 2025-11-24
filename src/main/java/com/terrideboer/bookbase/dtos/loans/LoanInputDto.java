@@ -17,6 +17,7 @@ public class LoanInputDto {
 
     public LoanStatus loanStatus;
 
+    @NotNull(message = "Book copy id is required")
     public Long bookCopyId;
 
     @NotNull(message = "User id is required")

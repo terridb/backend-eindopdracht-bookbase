@@ -7,8 +7,8 @@ import com.terrideboer.bookbase.dtos.books.BookSummaryDto;
 import com.terrideboer.bookbase.models.Author;
 import com.terrideboer.bookbase.models.Book;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BookMapper {
 
@@ -61,8 +61,8 @@ public class BookMapper {
         return bookSummaryDto;
     }
 
-    private static Set<AuthorSummaryDto> mapAuthors(Book book) {
-        Set<AuthorSummaryDto> authorSummaryDtos = new HashSet<>();
+    private static List<AuthorSummaryDto> mapAuthors(Book book) {
+        List<AuthorSummaryDto> authorSummaryDtos = new ArrayList<>();
 
         for (Author author : book.getAuthors()) {
             AuthorSummaryDto authorSummaryDto = new AuthorSummaryDto();

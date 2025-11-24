@@ -41,6 +41,10 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Reservation> reservations;
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Long getId() {
         return id;
     }

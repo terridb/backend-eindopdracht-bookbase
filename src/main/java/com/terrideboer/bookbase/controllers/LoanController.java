@@ -79,9 +79,9 @@ public class LoanController {
         return ResponseEntity.ok(loanWithFineDto);
     }
 
-    //    Endpoint to extend a loan
+    //    Endpoint to extend a loan by loan-id
     @PatchMapping("/{id}/extend")
-    public ResponseEntity<LoanDto> extendLoanPeriod(@PathVariable Long id, @RequestBody LoanExtendDto loanExtendDto) {
+    public ResponseEntity<LoanDto> extendLoanPeriod(@PathVariable Long id, @Valid @RequestBody LoanExtendDto loanExtendDto) {
         LoanDto loanDto = loanService.extendLoanPeriod(id, loanExtendDto);
 
         return ResponseEntity.ok(loanDto);
