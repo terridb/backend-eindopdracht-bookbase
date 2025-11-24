@@ -2,6 +2,7 @@ package com.terrideboer.bookbase.services;
 
 import com.terrideboer.bookbase.dtos.fines.FineDto;
 import com.terrideboer.bookbase.dtos.loans.LoanWithFineDto;
+import com.terrideboer.bookbase.dtos.reservations.ReservationDto;
 import com.terrideboer.bookbase.dtos.users.UserDto;
 import com.terrideboer.bookbase.dtos.users.UserInputDto;
 import com.terrideboer.bookbase.dtos.users.UserPatchDto;
@@ -11,8 +12,10 @@ import com.terrideboer.bookbase.exceptions.InvalidInputException;
 import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
 import com.terrideboer.bookbase.mappers.FineMapper;
 import com.terrideboer.bookbase.mappers.LoanMapper;
+import com.terrideboer.bookbase.mappers.ReservationMapper;
 import com.terrideboer.bookbase.mappers.UserMapper;
 import com.terrideboer.bookbase.models.Loan;
+import com.terrideboer.bookbase.models.Reservation;
 import com.terrideboer.bookbase.models.Role;
 import com.terrideboer.bookbase.models.User;
 import com.terrideboer.bookbase.models.enums.RoleName;
@@ -181,6 +184,24 @@ public class UserService {
         return dtoLoans;
     }
 
+    public List<ReservationDto> getReservationsByUserId(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("User with id " + id + " not found"));
+
+        if (!UserUtils.isOwnerOrAdmin(user)) {
+            throw new ForbiddenException();
+        }
+
+        List<Reservation> reservations = user.getReservations();
+        List<ReservationDto> dtoReservations = new ArrayList<>();
+
+        for (Reservation reservation : reservations) {
+            dtoReservations.add(ReservationMapper.toDto(reservation));
+        }
+
+        return dtoReservations;
+    }
+
     public List<FineDto> getFinesByUserId(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("User with id " + id + " not found"));
@@ -205,9 +226,4 @@ public class UserService {
 
         return dtoFines;
     }
-
-//    todo namen wijzigen
-
-//    todo overdue loans weghalen
-//    todo kan springboot bij opstarten checken op overdue?
 }

@@ -32,7 +32,6 @@ public class SecurityConfiguration {
     @Bean
     protected SecurityFilterChain filter(HttpSecurity http) throws Exception {
 
-//        todo rollen librarian etc instellen
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)

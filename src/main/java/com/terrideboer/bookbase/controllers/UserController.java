@@ -2,9 +2,11 @@ package com.terrideboer.bookbase.controllers;
 
 import com.terrideboer.bookbase.dtos.fines.FineDto;
 import com.terrideboer.bookbase.dtos.loans.LoanWithFineDto;
+import com.terrideboer.bookbase.dtos.reservations.ReservationDto;
 import com.terrideboer.bookbase.dtos.users.UserDto;
 import com.terrideboer.bookbase.dtos.users.UserInputDto;
 import com.terrideboer.bookbase.dtos.users.UserPatchDto;
+import com.terrideboer.bookbase.models.Reservation;
 import com.terrideboer.bookbase.models.enums.RoleName;
 import com.terrideboer.bookbase.services.UserService;
 import jakarta.validation.Valid;
@@ -63,6 +65,11 @@ public class UserController {
     @GetMapping("{id}/loans")
     public ResponseEntity<List<LoanWithFineDto>> getLoansByUserId(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getLoansByUserId(id));
+    }
+
+    @GetMapping("{id}/reservations")
+    public ResponseEntity<List<ReservationDto>> getReservationsByUserId(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getReservationsByUserId(id));
     }
 
     @GetMapping("{id}/fines")

@@ -24,7 +24,6 @@ public class BookMapper {
         return book;
     }
 
-    //    todo duplicate code
     public static BookDto toDto(Book book) {
         BookDto bookDto = new BookDto();
 
@@ -41,16 +40,7 @@ public class BookMapper {
         bookDto.genre = book.getGenre();
 
         if (book.getAuthors() != null) {
-            Set<AuthorSummaryDto> authorSummaryDtos = new HashSet<>();
-
-            for (Author author : book.getAuthors()) {
-                AuthorSummaryDto authorSummaryDto = new AuthorSummaryDto();
-                authorSummaryDto.id = author.getId();
-                authorSummaryDto.displayName = author.getDisplayName();
-                authorSummaryDtos.add(authorSummaryDto);
-            }
-
-            bookDto.authors = authorSummaryDtos;
+            bookDto.authors = mapAuthors(book);
         }
 
         return bookDto;
@@ -65,18 +55,22 @@ public class BookMapper {
         bookSummaryDto.genre = book.getGenre();
 
         if (book.getAuthors() != null) {
-            Set<AuthorSummaryDto> authorSummaryDtos = new HashSet<>();
-
-            for (Author author : book.getAuthors()) {
-                AuthorSummaryDto authorSummaryDto = new AuthorSummaryDto();
-                authorSummaryDto.id = author.getId();
-                authorSummaryDto.displayName = author.getDisplayName();
-                authorSummaryDtos.add(authorSummaryDto);
-            }
-
-            bookSummaryDto.authors = authorSummaryDtos;
+            bookSummaryDto.authors = mapAuthors(book);
         }
 
         return bookSummaryDto;
+    }
+
+    private static Set<AuthorSummaryDto> mapAuthors(Book book) {
+        Set<AuthorSummaryDto> authorSummaryDtos = new HashSet<>();
+
+        for (Author author : book.getAuthors()) {
+            AuthorSummaryDto authorSummaryDto = new AuthorSummaryDto();
+            authorSummaryDto.id = author.getId();
+            authorSummaryDto.displayName = author.getDisplayName();
+            authorSummaryDtos.add(authorSummaryDto);
+        }
+
+        return authorSummaryDtos;
     }
 }

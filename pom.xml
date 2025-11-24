@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.terrideboer</groupId>
 	<artifactId>bookbase</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>bookbase</name>
 	<description>BookBase Backend Eindopdracht</description>
 	<url/>

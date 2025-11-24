@@ -112,5 +112,4 @@ public class User {
     public void removeRole(Role role) {
         this.roles.remove(role);
     }
-//    todo get reservations by user
 }
