@@ -243,7 +243,4 @@ public class ReservationService {
             throw new RuntimeException("Error generating PDF", e);
         }
     }
-
-//    todo als tijd over: expired reservations
-    //    todo indien tijd over: relatie met book zodat iemand een book reserveert ipv copy. Backend kijkt vervolgens welke bookcopy available is.
 }

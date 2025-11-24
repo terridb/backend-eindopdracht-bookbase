@@ -24,9 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class BookService {
@@ -51,11 +49,28 @@ public class BookService {
         Files.createDirectories(this.fileStoragePath);
     }
 
-    public List<BookDto> getAllBooks() {
-        List<Book> books = bookRepository.findAll(Sort.by("id").ascending());
+    public List<BookDto> getAllBooks(String search) {
         List<BookDto> dtoBooks = new ArrayList<>();
 
-        for (Book book : books) {
+        if (search == null || search.isBlank()) {
+            List<Book> books = bookRepository.findAll(Sort.by("id").ascending());
+
+            for (Book book : books) {
+                dtoBooks.add(BookMapper.toDto(book));
+            }
+
+            return dtoBooks;
+        }
+
+        Set<Book> books = new HashSet<>();
+        books.addAll(bookRepository.findByTitleContainingIgnoreCase(search));
+        books.addAll(bookRepository.findByIsbnContainingIgnoreCase(search));
+        books.addAll(bookRepository.findByAuthorsDisplayNameContainingIgnoreCase(search));
+
+        List<Book> sortedBooks = new ArrayList<>(books);
+        sortedBooks.sort(Comparator.comparing(Book::getId));
+
+        for (Book book : sortedBooks) {
             dtoBooks.add(BookMapper.toDto(book));
         }
 
@@ -95,8 +110,6 @@ public class BookService {
 
         return BookMapper.toDto(savedBook);
     }
-
-//    todo kan ik de uploads map automatisch verwijderen bij heropstarten van de applicatie?
 
     public void deleteBook(Long id) {
         Book book = bookRepository.findById(id)
