@@ -9,7 +9,6 @@ import com.terrideboer.bookbase.exceptions.InvalidInputException;
 import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
 import com.terrideboer.bookbase.mappers.ReservationMapper;
 import com.terrideboer.bookbase.models.*;
-import com.terrideboer.bookbase.models.enums.PaymentStatus;
 import com.terrideboer.bookbase.models.enums.ReservationStatus;
 import com.terrideboer.bookbase.repositories.BookCopyRepository;
 import com.terrideboer.bookbase.repositories.ReservationRepository;

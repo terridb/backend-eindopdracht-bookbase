@@ -3,6 +3,7 @@ package com.terrideboer.bookbase.controllers;
 import com.terrideboer.bookbase.dtos.fines.FineDto;
 import com.terrideboer.bookbase.dtos.fines.FineInputDto;
 import com.terrideboer.bookbase.dtos.loans.LoanDto;
+import com.terrideboer.bookbase.dtos.loans.LoanExtendDto;
 import com.terrideboer.bookbase.dtos.loans.LoanInputDto;
 import com.terrideboer.bookbase.dtos.loans.LoanWithFineDto;
 import com.terrideboer.bookbase.services.FineService;
@@ -64,18 +65,26 @@ public class LoanController {
 
     //    Endpoint to adjust a loan by loan-id (put)
     @PutMapping("/{id}")
-    public ResponseEntity<LoanDto> putLoan(@PathVariable Long id, @Valid @RequestBody LoanInputDto loanInputDto) {
-        LoanDto loanDto = loanService.putLoan(id, loanInputDto);
+    public ResponseEntity<LoanDto> updateLoan(@PathVariable Long id, @Valid @RequestBody LoanInputDto loanInputDto) {
+        LoanDto loanDto = loanService.updateLoan(id, loanInputDto);
 
         return ResponseEntity.ok(loanDto);
     }
 
     //    Endpoint to return a book by loan-id
-    @PutMapping("/{id}/return")
+    @PatchMapping("/{id}/return")
     public ResponseEntity<LoanWithFineDto> returnBook(@PathVariable Long id) {
         LoanWithFineDto loanWithFineDto = loanService.returnBook(id);
 
         return ResponseEntity.ok(loanWithFineDto);
+    }
+
+    //    Endpoint to extend a loan
+    @PatchMapping("/{id}/extend")
+    public ResponseEntity<LoanDto> extendLoanPeriod(@PathVariable Long id, @RequestBody LoanExtendDto loanExtendDto) {
+        LoanDto loanDto = loanService.extendLoanPeriod(id, loanExtendDto);
+
+        return ResponseEntity.ok(loanDto);
     }
 
     //    Endpoint to delete a loan by loan-id

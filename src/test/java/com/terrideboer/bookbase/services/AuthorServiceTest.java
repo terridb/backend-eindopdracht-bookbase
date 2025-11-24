@@ -114,12 +114,12 @@ class AuthorServiceTest {
     @DisplayName("getAllAuthors should search by displayName")
     public void getAllAuthorsShouldSearchByDisplayName() {
         Mockito.when(authorRepository.findByDisplayNameContainingIgnoreCase("ali"))
-                .thenReturn(List.of(authors.get(0)));
+                .thenReturn(List.of(authors.getFirst()));
 
         List<AuthorDto> dtos = authorService.getAllAuthors("ali");
 
         assertEquals(1, dtos.size());
-        assertEquals("Ali Hazelwood", dtos.get(0).displayName);
+        assertEquals("Ali Hazelwood", dtos.getFirst().displayName);
     }
 
     @Test

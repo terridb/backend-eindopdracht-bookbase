@@ -83,9 +83,11 @@ public class SecurityConfiguration {
                                         "/loans/*/fines"
                                 ).hasAnyRole("EMPLOYEE", "LIBRARIAN")
 
-                                .requestMatchers(HttpMethod.PUT,
-                                        "/loans/**",
-                                        "/loans/*/return"
+                                .requestMatchers(HttpMethod.PUT, "/loans/**").hasAnyRole("EMPLOYEE", "LIBRARIAN")
+
+                                .requestMatchers(HttpMethod.PATCH,
+                                        "/loans/*/return",
+                                        "/loans/*/extend"
                                 ).hasAnyRole("EMPLOYEE", "LIBRARIAN")
 
                                 .requestMatchers(HttpMethod.DELETE, "/loans/**").hasRole("LIBRARIAN")
