@@ -91,7 +91,6 @@ VALUES (1, 'BB-1-1'),
        (20, 'BB-20-1'),
        (20, 'BB-20-2');
 
--- Wachtwoord voor elke user is "test"
 INSERT INTO users (first_name, last_name, email, phone_number, password)
 VALUES ('Karel', 'Kiwi', 'karel.kiwi@gmail.com', '0612345678', '$2a$10$gKNCIzK5xF8Z4QaPz2fzsuvmLfXCyf2fEhABB9U74jcjZupBxdERi'),
        ('Mara', 'Mango', 'mara.mango@gmail.com', '0687654321', '$2a$10$gKNCIzK5xF8Z4QaPz2fzsuvmLfXCyf2fEhABB9U74jcjZupBxdERi'),

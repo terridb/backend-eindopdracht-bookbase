@@ -14,7 +14,6 @@ public class LoanUtils {
             return ChronoUnit.DAYS.between(loan.getLoanDate().plusDays(loan.getLoanPeriodInDays()),
                     LocalDate.now());
         }
-
     }
 
     public static boolean checkIfLoanIsExpired(Loan loan) {

@@ -27,9 +27,11 @@ public class ReservationController {
 
     //    Endpoint to get all reservations
     @GetMapping
-    public ResponseEntity<List<ReservationDto>> getAllReservations() {
+    public ResponseEntity<List<ReservationDto>> getAllReservations(
+            @RequestParam(required = false) String status
+    ) {
 
-        return ResponseEntity.ok(reservationService.getAllReservations());
+        return ResponseEntity.ok(reservationService.getAllReservations(status));
     }
 
     //    Endpoint to get a reservation by reservation-id
@@ -37,13 +39,6 @@ public class ReservationController {
     public ResponseEntity<ReservationDto> getReservationById(@PathVariable Long id) {
 
         return ResponseEntity.ok(reservationService.getReservationById(id));
-    }
-
-    //    Endpoint to get all reservations that need to be prepared
-    @GetMapping("/to-prepare")
-    public ResponseEntity<List<ReservationDto>> getAllToBePreparedReservations() {
-
-        return ResponseEntity.ok(reservationService.getAllToBePreparedReservations());
     }
 
     //    Endpoint to download a pdf file with all to prepare reservations

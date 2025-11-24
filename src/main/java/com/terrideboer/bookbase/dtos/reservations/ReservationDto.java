@@ -16,5 +16,4 @@ public class ReservationDto {
     public UserSummaryDto user;
     public BookCopyDto bookCopy;
     public LoanSummaryDto loan;
-//    todo losse dto's voor medewerkers vs leden
 }

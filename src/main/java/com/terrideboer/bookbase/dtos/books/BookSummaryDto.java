@@ -3,12 +3,12 @@ package com.terrideboer.bookbase.dtos.books;
 import com.terrideboer.bookbase.dtos.authors.AuthorSummaryDto;
 import com.terrideboer.bookbase.models.enums.Genre;
 
-import java.util.Set;
+import java.util.List;
 
 public class BookSummaryDto {
     public Long id;
     public String title;
     public String isbn;
     public Genre genre;
-    public Set<AuthorSummaryDto> authors;
+    public List<AuthorSummaryDto> authors;
 }

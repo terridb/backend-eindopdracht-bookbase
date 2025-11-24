@@ -23,9 +23,10 @@ public class AuthorController {
 
     //       Endpoint to get all authors
     @GetMapping
-    public ResponseEntity<List<AuthorDto>> getAllAuthors() {
-
-        return ResponseEntity.ok(authorService.getAllAuthors());
+    public ResponseEntity<List<AuthorDto>> getAllAuthors(
+            @RequestParam(required = false) String search
+    ) {
+        return ResponseEntity.ok(authorService.getAllAuthors(search));
     }
 
     //       Endpoint to get an author by author-id

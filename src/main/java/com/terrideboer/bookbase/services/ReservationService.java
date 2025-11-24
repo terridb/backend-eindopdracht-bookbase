@@ -44,9 +44,16 @@ public class ReservationService {
         this.loanService = loanService;
     }
 
-    public List<ReservationDto> getAllReservations() {
-        List<Reservation> reservations = reservationRepository.findAll(Sort.by("id").ascending());
+    public List<ReservationDto> getAllReservations(String status) {
         List<ReservationDto> dtoReservations = new ArrayList<>();
+        List<Reservation> reservations;
+
+        if (status == null || status.isBlank()) {
+            reservations = reservationRepository.findAll(Sort.by("id").ascending());
+        } else {
+            ReservationStatus enumStatus = ReservationStatus.valueOf(status.trim().toUpperCase());
+            reservations = reservationRepository.findByReservationStatus(enumStatus);
+        }
 
         for (Reservation reservation : reservations) {
             dtoReservations.add(ReservationMapper.toDto(reservation));
@@ -65,18 +72,6 @@ public class ReservationService {
         }
 
         return ReservationMapper.toDto(reservation);
-    }
-
-    public List<ReservationDto> getAllToBePreparedReservations() {
-        List<Reservation> reservations = reservationRepository.findReservationsByReservationStatus(ReservationStatus.PENDING,
-                Sort.by(Sort.Direction.ASC, "reservationDate"));
-        List<ReservationDto> dtoReservations = new ArrayList<>();
-
-        for (Reservation reservation : reservations) {
-            dtoReservations.add(ReservationMapper.toDto(reservation));
-        }
-
-        return dtoReservations;
     }
 
     public ReservationDto postReservation(ReservationInputDto reservationInputDto) {
@@ -187,7 +182,7 @@ public class ReservationService {
 
     public byte[] generateReservationsPdf() {
         List<ReservationDto> reservations = reservationRepository
-                .findReservationsByReservationStatus(ReservationStatus.PENDING, Sort.by("reservationDate"))
+                .findByReservationStatus(ReservationStatus.PENDING)
                 .stream()
                 .map(ReservationMapper::toDto)
                 .toList();
@@ -243,7 +238,4 @@ public class ReservationService {
             throw new RuntimeException("Error generating PDF", e);
         }
     }
-
-//    todo als tijd over: expired reservations
-    //    todo indien tijd over: relatie met book zodat iemand een book reserveert ipv copy. Backend kijkt vervolgens welke bookcopy available is.
 }

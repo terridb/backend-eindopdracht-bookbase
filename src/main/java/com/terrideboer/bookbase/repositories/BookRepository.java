@@ -9,4 +9,10 @@ import java.util.Set;
 
 public interface BookRepository extends JpaRepository<Book, Long> {
     List<Book> findByAuthorsOrderByIdAsc(Set<Author> authors);
+
+    List<Book> findByTitleContainingIgnoreCase(String title);
+
+    List<Book> findByIsbnContainingIgnoreCase(String isbn);
+
+    List<Book> findByAuthorsDisplayNameContainingIgnoreCase(String name);
 }

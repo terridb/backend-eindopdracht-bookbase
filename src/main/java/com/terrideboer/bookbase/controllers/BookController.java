@@ -31,9 +31,10 @@ public class BookController {
 
     //       Endpoint to get all books
     @GetMapping
-    public ResponseEntity<List<BookDto>> getAllBooks() {
-
-        return ResponseEntity.ok(bookService.getAllBooks());
+    public ResponseEntity<List<BookDto>> getAllBooks(
+            @RequestParam(required = false) String search
+    ) {
+        return ResponseEntity.ok(bookService.getAllBooks(search));
     }
 
     //       Endpoint to get a book by book-id

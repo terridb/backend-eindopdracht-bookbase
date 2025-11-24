@@ -58,7 +58,6 @@ public class LoanMapper {
         return loanSummaryDto;
     }
 
-    //    todo duplicated code
     public static LoanWithFineDto toLoanWithFineDto(Loan loan) {
         LoanWithFineDto loanWithFineDto = new LoanWithFineDto();
 
