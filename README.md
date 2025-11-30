@@ -121,15 +121,12 @@ Stel de volgende waarden in:
 spring.datasource.url=jdbc:postgresql://localhost:5432/bookbase
 spring.datasource.username=postgres
 spring.datasource.password=YOUR_PASSWORD
-jwt.secret=YOUR_GENERATED_SECRET
 ```
 
 Let op:
 
 - Zorg ervoor dat je bij `spring.datasource.password` het wachtwoord invult dat je gekozen hebt tijdens de installatie
   van PostgreSQL.
-- De web-API gebruikt JWT voor authenticatie. Hiervoor is een secret key nodig. Maak [hier](https://jwtsecrets.com/) een
-  secret key aan en voeg deze toe aan `application.properties`.
 
 **Stap 5**: Run de applicatie door binnen IntelliJ op "Run BookbaseApplication" te klikken. De applicatie zou nu moeten
 draaien op http://localhost:8080.

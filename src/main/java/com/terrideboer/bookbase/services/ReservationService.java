@@ -5,7 +5,6 @@ import com.terrideboer.bookbase.dtos.reservations.ReservationDto;
 import com.terrideboer.bookbase.dtos.reservations.ReservationInputDto;
 import com.terrideboer.bookbase.exceptions.ForbiddenException;
 import com.terrideboer.bookbase.exceptions.InvalidInputException;
-import com.terrideboer.bookbase.exceptions.PdfGenerationException;
 import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
 import com.terrideboer.bookbase.mappers.ReservationMapper;
 import com.terrideboer.bookbase.models.*;
@@ -13,15 +12,11 @@ import com.terrideboer.bookbase.models.enums.ReservationStatus;
 import com.terrideboer.bookbase.repositories.BookCopyRepository;
 import com.terrideboer.bookbase.repositories.ReservationRepository;
 import com.terrideboer.bookbase.repositories.UserRepository;
-import com.terrideboer.bookbase.utils.DateUtils;
 import com.terrideboer.bookbase.utils.UserUtils;
 import org.openpdf.text.*;
-import org.openpdf.text.pdf.PdfPTable;
-import org.openpdf.text.pdf.PdfWriter;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,15 +28,17 @@ public class ReservationService {
     private final BookCopyRepository bookCopyRepository;
     private final UserRepository userRepository;
     private final LoanService loanService;
+    private final ReservationPdfService reservationPdfService;
 
     public ReservationService(ReservationRepository reservationRepository,
                               BookCopyRepository bookCopyRepository,
                               UserRepository userRepository,
-                              LoanService loanService) {
+                              LoanService loanService, ReservationPdfService reservationPdfService) {
         this.reservationRepository = reservationRepository;
         this.bookCopyRepository = bookCopyRepository;
         this.userRepository = userRepository;
         this.loanService = loanService;
+        this.reservationPdfService = reservationPdfService;
     }
 
     public List<ReservationDto> getAllReservations(String status) {
@@ -78,7 +75,7 @@ public class ReservationService {
         BookCopy bookCopy = bookCopyRepository.findById(reservationInputDto.bookCopyId)
                 .orElseThrow(() -> new RecordNotFoundException(("Book-copy with id " + reservationInputDto.bookCopyId + " not found")));
         User user = userRepository.findById(reservationInputDto.userId)
-                .orElseThrow(() -> new RecordNotFoundException(("User with id " + reservationInputDto.bookCopyId + " not found")));
+                .orElseThrow(() -> new RecordNotFoundException(("User with id " + reservationInputDto.userId + " not found")));
 
         if (!UserUtils.isOwnerOrAdmin(user)) {
             throw new ForbiddenException("You're not allowed to create reservations for other members");
@@ -167,55 +164,6 @@ public class ReservationService {
                 .map(ReservationMapper::toDto)
                 .toList();
 
-        try {
-            Document document = new Document(PageSize.A4.rotate());
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-            PdfWriter.getInstance(document, out);
-
-            Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
-            fontTitle.setSize(18);
-
-            HeaderFooter footer = new HeaderFooter(new Phrase("Page "), true);
-            footer.setAlignment(Element.ALIGN_CENTER);
-            footer.setBorderWidthBottom(0);
-            document.setFooter(footer);
-
-            document.open();
-
-            Paragraph title = new Paragraph("Reservations to prepare on " + DateUtils.formatDate(LocalDate.now()), fontTitle);
-            title.setAlignment(Element.ALIGN_CENTER);
-            document.add(title);
-            document.add(Chunk.NEWLINE);
-
-            PdfPTable table = new PdfPTable(6);
-            table.setWidthPercentage(100);
-            table.addCell("Reservation ID");
-            table.addCell("Book title");
-            table.addCell("Authors");
-            table.addCell("Tracking nr.");
-            table.addCell("Member");
-            table.addCell("Reservation Date");
-
-            for (ReservationDto reservation : reservations) {
-                table.addCell(String.valueOf(reservation.id));
-                table.addCell(reservation.bookCopy.book.title);
-                table.addCell(reservation.bookCopy.book.authors
-                        .stream()
-                        .map(Author -> Author.displayName)
-                        .reduce((a, b) -> a + ", " + b)
-                        .orElse("-"));
-                table.addCell(reservation.bookCopy.trackingNumber);
-                table.addCell(reservation.user.firstName + " " + reservation.user.lastName);
-                table.addCell(DateUtils.formatDate(reservation.reservationDate));
-            }
-
-            document.add(table);
-            document.close();
-
-            return out.toByteArray();
-        } catch (Exception e) {
-            throw new PdfGenerationException("Failed to generate PDF", e);
-        }
+        return reservationPdfService.generateReservationsPdf(reservations);
     }
 }
