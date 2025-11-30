@@ -13,7 +13,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-public class ReservationPdfService {
+public class PdfService {
     public byte[] generateReservationsPdf(List<ReservationDto> reservations) {
         try {
             Document document = new Document(PageSize.A4.rotate());

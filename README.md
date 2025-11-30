@@ -89,15 +89,15 @@ Om de web-API te kunnen draaien, heb je het volgende nodig:
 
 - **Java 21**
 - **Een IDE**, zoals <a target="_blank" href="https://www.jetbrains.com/idea/">IntelliJ</a>
-- **PostgreSQL**, inclusief database
+- **PostgreSQL**
 - **pgAdmin**
-- **Postman**
+- **Postman**, waarvan de instructies in de API-documentatie staan
 
 ## 5. Installatie instructies
 
-**Stap 1**: Zorg ervoor dat je alle benodigdheden hebt geinstalleerd.
+**Stap 1**: Zorg ervoor dat je alle benodigdheden hebt geïnstalleerd.
 
-**Stap 2**: Clone de Github repository met behulp van onderstaande SSH link naar jouw locale machine.
+**Stap 2**: Clone de Github repository met behulp van onderstaande SSH link:
 
 ```shell
 git@github.com:terridb/backend-eindopdracht-bookbase.git
@@ -127,6 +127,8 @@ Let op:
 
 - Zorg ervoor dat je bij `spring.datasource.password` het wachtwoord invult dat je gekozen hebt tijdens de installatie
   van PostgreSQL.
+- Deze applicatie bevat nu een standaard JWT-secret in de `application.properties` voor beoordelingsdoeleinden. In
+  productie zou deze uiteraard vervangen moeten worden door een environment variable.
 
 **Stap 5**: Run de applicatie door binnen IntelliJ op "Run BookbaseApplication" te klikken. De applicatie zou nu moeten
 draaien op http://localhost:8080.
@@ -146,8 +148,8 @@ test > java. Selecteer daarna "Run all tests".
 ## 7. Testgebruikers
 
 De web-API bevat 13 vooraf aangemaakte testgebruikers, zodat alle endpoints efficiënt getest kunnen worden in Postman.
-12 van deze gebruikers zijn hieronder, inclusief bijbehorende inloggegevens, vermeld. Eén account is voor een delete-test
-gereserveerd en is daarom niet opgenomen.
+12 van deze gebruikers zijn hieronder, inclusief bijbehorende inloggegevens, vermeld. Eén account is voor een
+delete-test gereserveerd en is daarom niet opgenomen.
 
 | Role      | Email                      | Password |
 |-----------|----------------------------|----------|

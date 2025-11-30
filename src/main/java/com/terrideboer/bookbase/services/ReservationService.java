@@ -13,7 +13,6 @@ import com.terrideboer.bookbase.repositories.BookCopyRepository;
 import com.terrideboer.bookbase.repositories.ReservationRepository;
 import com.terrideboer.bookbase.repositories.UserRepository;
 import com.terrideboer.bookbase.utils.UserUtils;
-import org.openpdf.text.*;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -28,17 +27,17 @@ public class ReservationService {
     private final BookCopyRepository bookCopyRepository;
     private final UserRepository userRepository;
     private final LoanService loanService;
-    private final ReservationPdfService reservationPdfService;
+    private final PdfService pdfService;
 
     public ReservationService(ReservationRepository reservationRepository,
                               BookCopyRepository bookCopyRepository,
                               UserRepository userRepository,
-                              LoanService loanService, ReservationPdfService reservationPdfService) {
+                              LoanService loanService, PdfService pdfService) {
         this.reservationRepository = reservationRepository;
         this.bookCopyRepository = bookCopyRepository;
         this.userRepository = userRepository;
         this.loanService = loanService;
-        this.reservationPdfService = reservationPdfService;
+        this.pdfService = pdfService;
     }
 
     public List<ReservationDto> getAllReservations(String status) {
@@ -164,6 +163,6 @@ public class ReservationService {
                 .map(ReservationMapper::toDto)
                 .toList();
 
-        return reservationPdfService.generateReservationsPdf(reservations);
+        return pdfService.generateReservationsPdf(reservations);
     }
 }
