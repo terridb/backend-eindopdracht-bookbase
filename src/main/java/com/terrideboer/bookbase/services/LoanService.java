@@ -1,10 +1,8 @@
 package com.terrideboer.bookbase.services;
 
-import com.terrideboer.bookbase.dtos.loans.LoanDto;
-import com.terrideboer.bookbase.dtos.loans.LoanExtendDto;
-import com.terrideboer.bookbase.dtos.loans.LoanInputDto;
-import com.terrideboer.bookbase.dtos.loans.LoanWithFineDto;
+import com.terrideboer.bookbase.dtos.loans.*;
 import com.terrideboer.bookbase.exceptions.ForbiddenException;
+import com.terrideboer.bookbase.exceptions.InvalidInputException;
 import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
 import com.terrideboer.bookbase.mappers.LoanMapper;
 import com.terrideboer.bookbase.models.*;
@@ -76,12 +74,29 @@ public class LoanService {
         return LoanMapper.toDto(savedLoan);
     }
 
-    public LoanDto updateLoan(Long id, LoanInputDto loanInputDto) {
+    public LoanDto updateLoan(Long id, LoanPatchDto loanPatchDto) {
         Loan existingLoan = loanRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Loan with id " + id + " not found"));
 
-        Loan updatedLoan = LoanMapper.toEntity(loanInputDto, existingLoan);
-        Loan savedLoan = loanRepository.save(updatedLoan);
+        if (loanPatchDto.loanPeriodInDays != null) {
+            if (loanPatchDto.loanPeriodInDays <= 0) {
+                throw new InvalidInputException("Loan period in days must be a positive number");
+            }
+            existingLoan.setLoanPeriodInDays(loanPatchDto.loanPeriodInDays);
+        }
+
+        if (loanPatchDto.loanDate != null) {
+            if (loanPatchDto.loanDate.isAfter(LocalDate.now())) {
+                throw new InvalidInputException("Loan date cannot be in the future");
+            }
+            existingLoan.setLoanDate(loanPatchDto.loanDate);
+        }
+
+        if (loanPatchDto.loanStatus != null) {
+            existingLoan.setLoanStatus(loanPatchDto.loanStatus);
+        }
+
+        Loan savedLoan = loanRepository.save(existingLoan);
         return LoanMapper.toDto(savedLoan);
     }
 

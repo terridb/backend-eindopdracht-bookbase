@@ -1,11 +1,13 @@
 package com.terrideboer.bookbase.services;
 
 import com.terrideboer.bookbase.dtos.loans.LoanInputDto;
+import com.terrideboer.bookbase.dtos.loans.LoanPatchDto;
 import com.terrideboer.bookbase.dtos.reservations.ReservationDto;
 import com.terrideboer.bookbase.dtos.reservations.ReservationInputDto;
 import com.terrideboer.bookbase.dtos.reservations.ReservationPatchDto;
 import com.terrideboer.bookbase.exceptions.ForbiddenException;
 import com.terrideboer.bookbase.exceptions.InvalidInputException;
+import com.terrideboer.bookbase.exceptions.PdfGenerationException;
 import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
 import com.terrideboer.bookbase.mappers.ReservationMapper;
 import com.terrideboer.bookbase.models.*;
@@ -93,7 +95,7 @@ public class ReservationService {
         return ReservationMapper.toDto(savedReservation);
     }
 
-    public ReservationDto patchReservation(Long id, ReservationPatchDto reservationPatchDto) {
+    public ReservationDto updateReservation(Long id, ReservationPatchDto reservationPatchDto) {
         Reservation existingReservation = reservationRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Reservation with id " + id + " not found"));
 
@@ -102,6 +104,9 @@ public class ReservationService {
         }
 
         if (reservationPatchDto.collectedDate != null) {
+            if (reservationPatchDto.collectedDate.isAfter(LocalDate.now())) {
+                throw new InvalidInputException("Collected date cannot be in the future");
+            }
             existingReservation.setCollectedDate(reservationPatchDto.collectedDate);
         }
 
@@ -235,7 +240,7 @@ public class ReservationService {
 
             return out.toByteArray();
         } catch (Exception e) {
-            throw new RuntimeException("Error generating PDF", e);
+            throw new PdfGenerationException("Failed to generate PDF", e);
         }
     }
 }

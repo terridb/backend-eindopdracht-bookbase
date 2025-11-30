@@ -126,7 +126,7 @@ public class BookService {
         bookRepository.delete(book);
     }
 
-    public BookDto patchBook(Long id, BookPatchDto bookPatchDto) {
+    public BookDto updateBook(Long id, BookPatchDto bookPatchDto) {
         Book existingBook = bookRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(("Book with id " + id + " not found")));
 

@@ -42,13 +42,16 @@ public class ReservationController {
     }
 
     //    Endpoint to download a pdf file with all to prepare reservations
-    @GetMapping("/to-prepare/pdf")
+    @GetMapping("/pdf")
     public ResponseEntity<byte[]> downloadReservationsPdf() {
         byte[] pdf = reservationService.generateReservationsPdf();
 
+        String filename = "reservations_" + DateUtils.formatDateTime(LocalDateTime.now()) + ".pdf";
+
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=reservations_" + DateUtils.formatDateTime(LocalDateTime.now()) + ".pdf")
                 .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "inline; filename=" + filename)
                 .body(pdf);
     }
 
@@ -62,10 +65,10 @@ public class ReservationController {
         return ResponseEntity.created(uri).body(reservationDto);
     }
 
-    //    Endpoint to adjust certain fields of a reservation by reservation-id (patch)
+    //    Endpoint to adjust a reservation by reservation-id
     @PatchMapping("/{id}")
-    public ResponseEntity<ReservationDto> patchReservation(@PathVariable Long id, @RequestBody ReservationPatchDto reservationPatchDto) {
-        ReservationDto reservationDto = reservationService.patchReservation(id, reservationPatchDto);
+    public ResponseEntity<ReservationDto> updateReservation(@PathVariable Long id, @RequestBody ReservationPatchDto reservationPatchDto) {
+        ReservationDto reservationDto = reservationService.updateReservation(id, reservationPatchDto);
 
         return ResponseEntity.ok(reservationDto);
     }

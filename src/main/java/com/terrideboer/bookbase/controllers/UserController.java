@@ -25,12 +25,14 @@ public class UserController {
         this.userService = userService;
     }
 
+    //       Endpoint to get all users
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers() {
 
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
+    //       Endpoint to get a user by user-id
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
         UserDto userDto = userService.getUserById(id);
@@ -38,6 +40,7 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
+    //       Endpoint to create a user
     @PostMapping
     public ResponseEntity<UserDto> postUser(@Valid @RequestBody UserInputDto userInputDto) {
         UserDto userDto = userService.postUser(userInputDto);
@@ -47,6 +50,7 @@ public class UserController {
         return ResponseEntity.created(uri).body(userDto);
     }
 
+    //       Endpoint to delete a user by user-id
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
@@ -54,28 +58,33 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    //       Endpoint to adjust a user by user-id
     @PatchMapping("/{id}")
-    public ResponseEntity<UserDto> patchUser(@PathVariable Long id, @RequestBody UserPatchDto userPatchDto) {
-        UserDto userDto = userService.patchUser(id, userPatchDto);
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserPatchDto userPatchDto) {
+        UserDto userDto = userService.updateUser(id, userPatchDto);
 
         return ResponseEntity.ok(userDto);
     }
 
+    //       Endpoint to get all loans by user-id
     @GetMapping("{id}/loans")
     public ResponseEntity<List<LoanWithFineDto>> getLoansByUserId(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getLoansByUserId(id));
     }
 
+    //       Endpoint to get all reservations by user-id
     @GetMapping("{id}/reservations")
     public ResponseEntity<List<ReservationDto>> getReservationsByUserId(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getReservationsByUserId(id));
     }
 
+    //       Endpoint to get all fines by user-id
     @GetMapping("{id}/fines")
     public ResponseEntity<List<FineDto>> getFinesByUserId(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getFinesByUserId(id));
     }
 
+    //       Endpoint to assign a new role to an existing user by user-id
     @PostMapping("/{id}/roles/{role}")
     public ResponseEntity<UserDto> addUserRole(@PathVariable Long id, @PathVariable("role") RoleName role) {
         UserDto user = userService.addRole(id, role);
@@ -83,6 +92,7 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    //       Endpoint to delete a role from an existing user by user-id
     @DeleteMapping(value = "/{id}/roles/{role}")
     public ResponseEntity<Void> deleteUserRole(@PathVariable Long id, @PathVariable("role") RoleName role) {
         userService.removeRole(id, role);

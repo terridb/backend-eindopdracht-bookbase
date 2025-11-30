@@ -67,6 +67,10 @@ public class BookCopyService {
         BookCopy existingBookCopy = bookCopyRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Book-copy with id " + id + " not found"));
 
+        if (bookCopyInputDto.trackingNumber == null) {
+            throw new InvalidInputException("trackingNumber is required to update a book copy");
+        }
+
         BookCopy updatedBookCopy = BookCopyMapper.toEntity(bookCopyInputDto, existingBookCopy);
 
         if (bookCopyRepository.existsByTrackingNumber(updatedBookCopy.getTrackingNumber())) {

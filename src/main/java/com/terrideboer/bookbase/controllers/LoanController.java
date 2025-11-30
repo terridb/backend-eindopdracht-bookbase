@@ -2,10 +2,7 @@ package com.terrideboer.bookbase.controllers;
 
 import com.terrideboer.bookbase.dtos.fines.FineDto;
 import com.terrideboer.bookbase.dtos.fines.FineInputDto;
-import com.terrideboer.bookbase.dtos.loans.LoanDto;
-import com.terrideboer.bookbase.dtos.loans.LoanExtendDto;
-import com.terrideboer.bookbase.dtos.loans.LoanInputDto;
-import com.terrideboer.bookbase.dtos.loans.LoanWithFineDto;
+import com.terrideboer.bookbase.dtos.loans.*;
 import com.terrideboer.bookbase.services.FineService;
 import com.terrideboer.bookbase.services.LoanService;
 import jakarta.validation.Valid;
@@ -63,10 +60,10 @@ public class LoanController {
         return ResponseEntity.created(uri).body(fineDto);
     }
 
-    //    Endpoint to adjust a loan by loan-id (put)
-    @PutMapping("/{id}")
-    public ResponseEntity<LoanDto> updateLoan(@PathVariable Long id, @Valid @RequestBody LoanInputDto loanInputDto) {
-        LoanDto loanDto = loanService.updateLoan(id, loanInputDto);
+    //    Endpoint to adjust a loan by loan-id
+    @PatchMapping("/{id}")
+    public ResponseEntity<LoanDto> updateLoan(@PathVariable Long id, @Valid @RequestBody LoanPatchDto loanPatchDto) {
+        LoanDto loanDto = loanService.updateLoan(id, loanPatchDto);
 
         return ResponseEntity.ok(loanDto);
     }

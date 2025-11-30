@@ -63,14 +63,14 @@ public class SecurityConfiguration {
                                         "/book-copies/**"
                                 ).permitAll()
 
-                                .requestMatchers(HttpMethod.POST, "/books/*/book-copies").hasAnyRole("EMPLOYEE", "LIBRARIAN")
-                                .requestMatchers(HttpMethod.PUT, "/book-copies/**").hasAnyRole("EMPLOYEE", "LIBRARIAN")
-                                .requestMatchers("/book-copies/**").hasRole("LIBRARIAN")
+                                .requestMatchers(HttpMethod.POST, "/books/*/book-copies").hasAnyRole("LIBRARIAN")
+                                .requestMatchers(HttpMethod.PATCH, "/book-copies/**").hasAnyRole("LIBRARIAN")
+                                .requestMatchers(HttpMethod.DELETE, "/book-copies/**").hasRole("LIBRARIAN")
 
                                 // Fines
                                 .requestMatchers(HttpMethod.GET, "/fines").hasAnyRole("EMPLOYEE", "LIBRARIAN")
                                 .requestMatchers(HttpMethod.GET, "/fines/**").authenticated()
-                                .requestMatchers(HttpMethod.PUT, "/fines/**").hasAnyRole("EMPLOYEE", "LIBRARIAN")
+                                .requestMatchers(HttpMethod.PATCH, "/fines/**").hasAnyRole("EMPLOYEE", "LIBRARIAN")
                                 .requestMatchers(HttpMethod.PATCH, "/fines/*/pay").authenticated()
                                 .requestMatchers(HttpMethod.DELETE, "/fines/**").hasRole("LIBRARIAN")
 
@@ -83,9 +83,8 @@ public class SecurityConfiguration {
                                         "/loans/*/fines"
                                 ).hasAnyRole("EMPLOYEE", "LIBRARIAN")
 
-                                .requestMatchers(HttpMethod.PUT, "/loans/**").hasAnyRole("EMPLOYEE", "LIBRARIAN")
-
                                 .requestMatchers(HttpMethod.PATCH,
+                                        "/loans/**",
                                         "/loans/*/return",
                                         "/loans/*/extend"
                                 ).hasAnyRole("EMPLOYEE", "LIBRARIAN")
@@ -95,8 +94,7 @@ public class SecurityConfiguration {
                                 // Reservations
                                 .requestMatchers(HttpMethod.GET,
                                         "/reservations",
-                                        "reservations/to-prepare",
-                                        "reservations/to-prepare/pdf"
+                                        "reservations/pdf"
                                 ).hasAnyRole("EMPLOYEE", "LIBRARIAN")
 
                                 .requestMatchers(HttpMethod.GET, "/reservations/**").authenticated()

@@ -20,6 +20,10 @@ public class FineMapper {
             fine.setPaymentStatus(fineInputDto.paymentStatus);
         }
 
+        if (fineInputDto.paymentStatus != null) {
+            fine.setPaymentStatus(fineInputDto.paymentStatus);
+        }
+
         return fine;
     }
 

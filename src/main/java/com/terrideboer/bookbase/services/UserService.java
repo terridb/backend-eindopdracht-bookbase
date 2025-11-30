@@ -87,7 +87,7 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public UserDto patchUser(Long id, UserPatchDto userPatchDto) {
+    public UserDto updateUser(Long id, UserPatchDto userPatchDto) {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("User with id " + id + " not found"));
 

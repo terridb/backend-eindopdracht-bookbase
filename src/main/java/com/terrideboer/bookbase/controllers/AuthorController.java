@@ -53,7 +53,7 @@ public class AuthorController {
         return ResponseEntity.created(uri).body(authorDto);
     }
 
-    //       Endpoint to adjust an author by author-id (put)
+    //       Endpoint to adjust an author by author-id
     @PutMapping("/{id}")
     public ResponseEntity<AuthorDto> updateAuthor(@PathVariable Long id, @Valid @RequestBody AuthorInputDto authorInputDto) {
         AuthorDto authorDto = authorService.updateAuthor(id, authorInputDto);
