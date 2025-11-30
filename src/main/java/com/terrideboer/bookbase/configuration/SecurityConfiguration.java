@@ -101,7 +101,6 @@ public class SecurityConfiguration {
                                 .requestMatchers(HttpMethod.POST, "/reservations").authenticated()
 
                                 .requestMatchers(HttpMethod.PATCH,
-                                        "/reservations/**",
                                         "/reservations/*/ready-for-pickup",
                                         "/reservations/*/collect"
                                 ).hasAnyRole("LIBRARIAN", "EMPLOYEE")

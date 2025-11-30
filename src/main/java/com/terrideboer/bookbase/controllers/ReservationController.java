@@ -2,7 +2,6 @@ package com.terrideboer.bookbase.controllers;
 
 import com.terrideboer.bookbase.dtos.reservations.ReservationDto;
 import com.terrideboer.bookbase.dtos.reservations.ReservationInputDto;
-import com.terrideboer.bookbase.dtos.reservations.ReservationPatchDto;
 import com.terrideboer.bookbase.services.ReservationService;
 import com.terrideboer.bookbase.utils.DateUtils;
 import jakarta.validation.Valid;
@@ -63,14 +62,6 @@ public class ReservationController {
         URI uri = URI.create("/reservations/" + reservationDto.id);
 
         return ResponseEntity.created(uri).body(reservationDto);
-    }
-
-    //    Endpoint to adjust a reservation by reservation-id
-    @PatchMapping("/{id}")
-    public ResponseEntity<ReservationDto> updateReservation(@PathVariable Long id, @RequestBody ReservationPatchDto reservationPatchDto) {
-        ReservationDto reservationDto = reservationService.updateReservation(id, reservationPatchDto);
-
-        return ResponseEntity.ok(reservationDto);
     }
 
     //    Endpoint to delete a reservation by reservation-id
