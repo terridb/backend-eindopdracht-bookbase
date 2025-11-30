@@ -183,6 +183,7 @@ class BookCopyServiceTest {
     @Test
     @DisplayName("updateBookCopy should update copy")
     public void updateBookCopyShouldUpdateExistingBookCopy() {
+        inputDto.trackingNumber = "BB-1-5";
         savedCopy.setId(1L);
 
         Mockito.when(bookCopyRepository.findById(1L)).thenReturn(Optional.of(copy1));
@@ -193,6 +194,16 @@ class BookCopyServiceTest {
         assertEquals(1L, copyDto.id);
         assertEquals(book1.getId(), copyDto.book.id);
         assertEquals("BB-1-5", copyDto.trackingNumber);
+    }
+
+    @Test
+    @DisplayName("updateBookCopy should throw invalid exception when no tracking number is provided")
+    public void updateBookCopyShouldThrowInvalidException() {
+        inputDto.trackingNumber = null;
+
+        Mockito.when(bookCopyRepository.findById(1L)).thenReturn(Optional.of(copy1));
+
+        assertThrows(InvalidInputException.class, () -> bookCopyService.updateBookCopy(1L, inputDto));
     }
 
     @Test
@@ -210,6 +221,7 @@ class BookCopyServiceTest {
 
         Mockito.when(bookCopyRepository.findById(1L)).thenReturn(Optional.of(copy1));
         Mockito.when(bookCopyRepository.existsByTrackingNumber("BB-1-2")).thenReturn(true);
+
 
         assertThrows(InvalidInputException.class, () -> bookCopyService.updateBookCopy(1L, inputDto));
     }

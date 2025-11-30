@@ -51,7 +51,7 @@ public class BookCopyControllerIntegrationTest {
                  }
                 """;
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/book-copies/6")
+        mockMvc.perform(MockMvcRequestBuilders.patch("/book-copies/6")
                         .contentType(APPLICATION_JSON)
                         .content(requestJson))
                 .andDo(MockMvcResultHandlers.print())
