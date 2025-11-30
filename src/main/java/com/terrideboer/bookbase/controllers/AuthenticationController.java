@@ -30,11 +30,13 @@ public class AuthenticationController {
         this.jwtUtil = jwtUtil;
     }
 
+    //    Endpoint to get the currently authenticated user
     @GetMapping(value = "/user")
     public ResponseEntity<Object> authenticated(Principal principal) {
         return ResponseEntity.ok(principal);
     }
 
+    //    Endpoint to login
     @PostMapping(value = "/login")
     public ResponseEntity<?> login(@RequestBody AuthenticationRequest request) throws Exception {
 
@@ -42,8 +44,7 @@ public class AuthenticationController {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.email, request.password)
             );
-        }
-        catch (BadCredentialsException ex) {
+        } catch (BadCredentialsException ex) {
             throw new Exception("Incorrect email or password", ex);
         }
 

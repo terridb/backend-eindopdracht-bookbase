@@ -41,6 +41,10 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Reservation> reservations;
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Long getId() {
         return id;
     }
@@ -112,5 +116,4 @@ public class User {
     public void removeRole(Role role) {
         this.roles.remove(role);
     }
-//    todo get reservations by user
 }

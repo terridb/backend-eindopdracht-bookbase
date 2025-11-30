@@ -51,4 +51,9 @@ public class ExceptionController {
     public ResponseEntity<Object> exception(ForbiddenException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.FORBIDDEN);
     }
+
+    @ExceptionHandler(value = PdfGenerationException.class)
+    public ResponseEntity<Object> exception(PdfGenerationException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

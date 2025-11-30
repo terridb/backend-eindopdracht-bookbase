@@ -20,9 +20,11 @@ public class FineController {
 
     //       Endpoint to get all fines
     @GetMapping
-    public ResponseEntity<List<FineDto>> getAllFines() {
+    public ResponseEntity<List<FineDto>> getAllFines(
+            @RequestParam(required = false) String status
+    ) {
 
-        return ResponseEntity.ok(fineService.getAllFines());
+        return ResponseEntity.ok(fineService.getAllFines(status));
     }
 
     //       Endpoint to get a fine by fine-id
@@ -32,10 +34,10 @@ public class FineController {
         return ResponseEntity.ok(fineService.getFineById(id));
     }
 
-    //       Endpoint to adjust a fine by fine-id (put)
-    @PutMapping("/{id}")
-    public ResponseEntity<FineDto> putFine(@PathVariable Long id, @RequestBody FineInputDto fineInputDto) {
-        FineDto fineDto = fineService.putFine(id, fineInputDto);
+    //       Endpoint to adjust a fine by fine-id
+    @PatchMapping("/{id}")
+    public ResponseEntity<FineDto> updateFine(@PathVariable Long id, @RequestBody FineInputDto fineInputDto) {
+        FineDto fineDto = fineService.updateFine(id, fineInputDto);
 
         return ResponseEntity.ok(fineDto);
     }

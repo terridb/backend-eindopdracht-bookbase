@@ -2,9 +2,7 @@ package com.terrideboer.bookbase.controllers;
 
 import com.terrideboer.bookbase.dtos.fines.FineDto;
 import com.terrideboer.bookbase.dtos.fines.FineInputDto;
-import com.terrideboer.bookbase.dtos.loans.LoanDto;
-import com.terrideboer.bookbase.dtos.loans.LoanInputDto;
-import com.terrideboer.bookbase.dtos.loans.LoanWithFineDto;
+import com.terrideboer.bookbase.dtos.loans.*;
 import com.terrideboer.bookbase.services.FineService;
 import com.terrideboer.bookbase.services.LoanService;
 import jakarta.validation.Valid;
@@ -28,9 +26,11 @@ public class LoanController {
 
     //    Endpoint to get all loans
     @GetMapping
-    public ResponseEntity<List<LoanDto>> getAllLoans() {
+    public ResponseEntity<List<LoanDto>> getAllLoans(
+            @RequestParam(required = false) String status
+    ) {
 
-        return ResponseEntity.ok(loanService.getAllLoans());
+        return ResponseEntity.ok(loanService.getAllLoans(status));
     }
 
     //    Endpoint to get a loan by loan-id
@@ -60,20 +60,28 @@ public class LoanController {
         return ResponseEntity.created(uri).body(fineDto);
     }
 
-    //    Endpoint to adjust a loan by loan-id (put)
-    @PutMapping("/{id}")
-    public ResponseEntity<LoanDto> putLoan(@PathVariable Long id, @Valid @RequestBody LoanInputDto loanInputDto) {
-        LoanDto loanDto = loanService.putLoan(id, loanInputDto);
+    //    Endpoint to adjust a loan by loan-id
+    @PatchMapping("/{id}")
+    public ResponseEntity<LoanDto> updateLoan(@PathVariable Long id, @Valid @RequestBody LoanPatchDto loanPatchDto) {
+        LoanDto loanDto = loanService.updateLoan(id, loanPatchDto);
 
         return ResponseEntity.ok(loanDto);
     }
 
     //    Endpoint to return a book by loan-id
-    @PutMapping("/{id}/return")
+    @PatchMapping("/{id}/return")
     public ResponseEntity<LoanWithFineDto> returnBook(@PathVariable Long id) {
         LoanWithFineDto loanWithFineDto = loanService.returnBook(id);
 
         return ResponseEntity.ok(loanWithFineDto);
+    }
+
+    //    Endpoint to extend a loan by loan-id
+    @PatchMapping("/{id}/extend")
+    public ResponseEntity<LoanDto> extendLoanPeriod(@PathVariable Long id, @Valid @RequestBody LoanExtendDto loanExtendDto) {
+        LoanDto loanDto = loanService.extendLoanPeriod(id, loanExtendDto);
+
+        return ResponseEntity.ok(loanDto);
     }
 
     //    Endpoint to delete a loan by loan-id

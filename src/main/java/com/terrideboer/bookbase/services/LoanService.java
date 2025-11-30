@@ -1,13 +1,13 @@
 package com.terrideboer.bookbase.services;
 
-import com.terrideboer.bookbase.dtos.loans.LoanDto;
-import com.terrideboer.bookbase.dtos.loans.LoanInputDto;
-import com.terrideboer.bookbase.dtos.loans.LoanWithFineDto;
+import com.terrideboer.bookbase.dtos.loans.*;
 import com.terrideboer.bookbase.exceptions.ForbiddenException;
+import com.terrideboer.bookbase.exceptions.InvalidInputException;
 import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
 import com.terrideboer.bookbase.mappers.LoanMapper;
 import com.terrideboer.bookbase.models.*;
 import com.terrideboer.bookbase.models.enums.LoanStatus;
+import com.terrideboer.bookbase.models.enums.ReservationStatus;
 import com.terrideboer.bookbase.repositories.BookCopyRepository;
 import com.terrideboer.bookbase.repositories.LoanRepository;
 import com.terrideboer.bookbase.repositories.UserRepository;
@@ -38,9 +38,16 @@ public class LoanService {
         this.fineService = fineService;
     }
 
-    public List<LoanDto> getAllLoans() {
-        List<Loan> loans = loanRepository.findAll(Sort.by("id").ascending());
+    public List<LoanDto> getAllLoans(String status) {
         List<LoanDto> dtoLoans = new ArrayList<>();
+        List<Loan> loans;
+
+        if (status == null || status.isBlank()) {
+            loans = loanRepository.findAll(Sort.by("id").ascending());
+        } else {
+            LoanStatus enumStatus = LoanStatus.valueOf(status.trim().toUpperCase());
+            loans = loanRepository.findByLoanStatus(enumStatus);
+        }
 
         for (Loan loan : loans) {
             dtoLoans.add(LoanMapper.toDto(loan));
@@ -67,12 +74,29 @@ public class LoanService {
         return LoanMapper.toDto(savedLoan);
     }
 
-    public LoanDto putLoan(Long id, LoanInputDto loanInputDto) {
+    public LoanDto updateLoan(Long id, LoanPatchDto loanPatchDto) {
         Loan existingLoan = loanRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Loan with id " + id + " not found"));
 
-        Loan updatedLoan = LoanMapper.toEntity(loanInputDto, existingLoan);
-        Loan savedLoan = loanRepository.save(updatedLoan);
+        if (loanPatchDto.loanPeriodInDays != null) {
+            if (loanPatchDto.loanPeriodInDays <= 0) {
+                throw new InvalidInputException("Loan period in days must be a positive number");
+            }
+            existingLoan.setLoanPeriodInDays(loanPatchDto.loanPeriodInDays);
+        }
+
+        if (loanPatchDto.loanDate != null) {
+            if (loanPatchDto.loanDate.isAfter(LocalDate.now())) {
+                throw new InvalidInputException("Loan date cannot be in the future");
+            }
+            existingLoan.setLoanDate(loanPatchDto.loanDate);
+        }
+
+        if (loanPatchDto.loanStatus != null) {
+            existingLoan.setLoanStatus(loanPatchDto.loanStatus);
+        }
+
+        Loan savedLoan = loanRepository.save(existingLoan);
         return LoanMapper.toDto(savedLoan);
     }
 
@@ -93,6 +117,10 @@ public class LoanService {
         Loan loan = loanRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Loan with id " + id + " not found"));
 
+        if (loan.getLoanStatus() == LoanStatus.RETURNED) {
+            throw new ForbiddenException("Book has already been returned");
+        }
+
         loan.setReturnDate(LocalDate.now());
         loan.setLoanStatus(LoanStatus.RETURNED);
 
@@ -103,6 +131,35 @@ public class LoanService {
 
         loanRepository.save(loan);
         return LoanMapper.toLoanWithFineDto(loan);
+    }
+
+    public LoanDto extendLoanPeriod(Long id, LoanExtendDto loanExtendDto) {
+        Loan loan = loanRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("Loan with id " + id + " not found"));
+
+        LocalDate dueDate = loan.getLoanDate().plusDays(loan.getLoanPeriodInDays());
+
+        if (LocalDate.now().isAfter(dueDate)) {
+            throw new ForbiddenException("Loan cannot be extended when it's overdue");
+        }
+
+        int newLoanPeriodInDays = loan.getLoanPeriodInDays() + loanExtendDto.extraDays;
+
+        if (newLoanPeriodInDays > 42) {
+            throw new ForbiddenException("Loan duration cannot be more than 42 days. Requested: " + newLoanPeriodInDays);
+        }
+
+        boolean hasPendingReservation = loan.getBookCopy().getReservations()
+                .stream()
+                .anyMatch(r -> r.getReservationStatus() == ReservationStatus.PENDING);
+
+        if (hasPendingReservation) {
+            throw new ForbiddenException("Loan cannot be extended because there are pending reservations");
+        }
+
+        loan.setLoanPeriodInDays(newLoanPeriodInDays);
+        loanRepository.save(loan);
+        return LoanMapper.toDto(loan);
     }
 
     public Loan createLoanEntity(LoanInputDto loanInputDto) {

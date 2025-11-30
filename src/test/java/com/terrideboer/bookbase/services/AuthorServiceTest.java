@@ -85,16 +85,41 @@ class AuthorServiceTest {
     }
 
     @Test
-    @DisplayName("getAllAuthors should show all existing authors")
-    public void getAllAuthorsShouldShowAllAuthors() {
+    @DisplayName("getAllAuthors should show all existing authors when given blank")
+    public void getAllAuthorsShouldShowAllAuthorsWhenBlank() {
         Mockito.when(authorRepository.findAll(Sort.by("id").ascending()))
                 .thenReturn(authors);
 
-        List<AuthorDto> dtos = authorService.getAllAuthors();
+        List<AuthorDto> dtos = authorService.getAllAuthors("");
 
         assertEquals(2, dtos.size());
         assertEquals("Ali Hazelwood", dtos.get(0).displayName);
         assertEquals("Sarah J. Maas", dtos.get(1).displayName);
+    }
+
+    @Test
+    @DisplayName("getAllAuthors should show all existing authors when given null")
+    public void getAllAuthorsShouldShowAllAuthorsWhenNull() {
+        Mockito.when(authorRepository.findAll(Sort.by("id").ascending()))
+                .thenReturn(authors);
+
+        List<AuthorDto> dtos = authorService.getAllAuthors(null);
+
+        assertEquals(2, dtos.size());
+        assertEquals("Ali Hazelwood", dtos.get(0).displayName);
+        assertEquals("Sarah J. Maas", dtos.get(1).displayName);
+    }
+
+    @Test
+    @DisplayName("getAllAuthors should search by displayName")
+    public void getAllAuthorsShouldSearchByDisplayName() {
+        Mockito.when(authorRepository.findByDisplayNameContainingIgnoreCase("ali"))
+                .thenReturn(List.of(authors.getFirst()));
+
+        List<AuthorDto> dtos = authorService.getAllAuthors("ali");
+
+        assertEquals(1, dtos.size());
+        assertEquals("Ali Hazelwood", dtos.getFirst().displayName);
     }
 
     @Test

@@ -2,7 +2,6 @@ package com.terrideboer.bookbase.controllers;
 
 import com.terrideboer.bookbase.dtos.reservations.ReservationDto;
 import com.terrideboer.bookbase.dtos.reservations.ReservationInputDto;
-import com.terrideboer.bookbase.dtos.reservations.ReservationPatchDto;
 import com.terrideboer.bookbase.services.ReservationService;
 import com.terrideboer.bookbase.utils.DateUtils;
 import jakarta.validation.Valid;
@@ -27,9 +26,11 @@ public class ReservationController {
 
     //    Endpoint to get all reservations
     @GetMapping
-    public ResponseEntity<List<ReservationDto>> getAllReservations() {
+    public ResponseEntity<List<ReservationDto>> getAllReservations(
+            @RequestParam(required = false) String status
+    ) {
 
-        return ResponseEntity.ok(reservationService.getAllReservations());
+        return ResponseEntity.ok(reservationService.getAllReservations(status));
     }
 
     //    Endpoint to get a reservation by reservation-id
@@ -39,21 +40,17 @@ public class ReservationController {
         return ResponseEntity.ok(reservationService.getReservationById(id));
     }
 
-    //    Endpoint to get all reservations that need to be prepared
-    @GetMapping("/to-prepare")
-    public ResponseEntity<List<ReservationDto>> getAllToBePreparedReservations() {
-
-        return ResponseEntity.ok(reservationService.getAllToBePreparedReservations());
-    }
-
     //    Endpoint to download a pdf file with all to prepare reservations
-    @GetMapping("/to-prepare/pdf")
+    @GetMapping("/pdf")
     public ResponseEntity<byte[]> downloadReservationsPdf() {
         byte[] pdf = reservationService.generateReservationsPdf();
 
+        String filename = "reservations_" + DateUtils.formatDateTime(LocalDateTime.now()) + ".pdf";
+
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=reservations_" + DateUtils.formatDateTime(LocalDateTime.now()) + ".pdf")
                 .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "inline; filename=" + filename)
                 .body(pdf);
     }
 
@@ -65,14 +62,6 @@ public class ReservationController {
         URI uri = URI.create("/reservations/" + reservationDto.id);
 
         return ResponseEntity.created(uri).body(reservationDto);
-    }
-
-    //    Endpoint to adjust certain fields of a reservation by reservation-id (patch)
-    @PatchMapping("/{id}")
-    public ResponseEntity<ReservationDto> patchReservation(@PathVariable Long id, @RequestBody ReservationPatchDto reservationPatchDto) {
-        ReservationDto reservationDto = reservationService.patchReservation(id, reservationPatchDto);
-
-        return ResponseEntity.ok(reservationDto);
     }
 
     //    Endpoint to delete a reservation by reservation-id

@@ -24,9 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class BookService {
@@ -46,17 +44,30 @@ public class BookService {
         this.bookRepository = bookRepository;
         this.authorRepository = authorRepository;
         this.bookCopyService = bookCopyService;
-
         this.fileStoragePath = Paths.get(fileStorageLocation).toAbsolutePath().normalize();
         Files.createDirectories(this.fileStoragePath);
     }
 
-    public List<BookDto> getAllBooks() {
-        List<Book> books = bookRepository.findAll(Sort.by("id").ascending());
+    public List<BookDto> getAllBooks(String search) {
         List<BookDto> dtoBooks = new ArrayList<>();
 
-        for (Book book : books) {
-            dtoBooks.add(BookMapper.toDto(book));
+        if (search == null || search.isBlank()) {
+            List<Book> books = bookRepository.findAll(Sort.by("id").ascending());
+
+            for (Book book : books) {
+                dtoBooks.add(BookMapper.toDto(book));
+            }
+
+        } else {
+            Set<Book> books = new HashSet<>();
+            books.addAll(bookRepository.findByTitleContainingIgnoreCase(search.trim()));
+            books.addAll(bookRepository.findByIsbnContainingIgnoreCase(search.trim()));
+            books.addAll(bookRepository.findByAuthorsDisplayNameContainingIgnoreCase(search.trim()));
+
+            for (Book book : books) {
+                dtoBooks.add(BookMapper.toDto(book));
+            }
+
         }
 
         return dtoBooks;
@@ -96,8 +107,6 @@ public class BookService {
         return BookMapper.toDto(savedBook);
     }
 
-//    todo kan ik de uploads map automatisch verwijderen bij heropstarten van de applicatie?
-
     public void deleteBook(Long id) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(("Book with id " + id + " not found")));
@@ -117,7 +126,7 @@ public class BookService {
         bookRepository.delete(book);
     }
 
-    public BookDto patchBook(Long id, BookPatchDto bookPatchDto) {
+    public BookDto updateBook(Long id, BookPatchDto bookPatchDto) {
         Book existingBook = bookRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(("Book with id " + id + " not found")));
 

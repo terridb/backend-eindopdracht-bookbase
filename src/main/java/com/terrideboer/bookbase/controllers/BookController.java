@@ -1,6 +1,5 @@
 package com.terrideboer.bookbase.controllers;
 
-import com.terrideboer.bookbase.dtos.IdInputDto;
 import com.terrideboer.bookbase.dtos.bookcopies.BookCopyDto;
 import com.terrideboer.bookbase.dtos.bookcopies.BookCopyInputDto;
 import com.terrideboer.bookbase.dtos.books.BookDto;
@@ -31,9 +30,10 @@ public class BookController {
 
     //       Endpoint to get all books
     @GetMapping
-    public ResponseEntity<List<BookDto>> getAllBooks() {
-
-        return ResponseEntity.ok(bookService.getAllBooks());
+    public ResponseEntity<List<BookDto>> getAllBooks(
+            @RequestParam(required = false) String search
+    ) {
+        return ResponseEntity.ok(bookService.getAllBooks(search));
     }
 
     //       Endpoint to get a book by book-id
@@ -71,10 +71,10 @@ public class BookController {
         return ResponseEntity.noContent().build();
     }
 
-    //       Endpoint to adjust a book by book-id (patch)
+    //       Endpoint to adjust a book by book-id
     @PatchMapping("/{id}")
     public ResponseEntity<BookDto> patchBook(@PathVariable Long id, @RequestBody BookPatchDto bookPatchDto) {
-        BookDto bookDto = bookService.patchBook(id, bookPatchDto);
+        BookDto bookDto = bookService.updateBook(id, bookPatchDto);
 
         return ResponseEntity.ok(bookDto);
     }
@@ -96,11 +96,11 @@ public class BookController {
         return ResponseEntity.created(uri).body(bookCopyDto);
     }
 
-    //    Endpoint to assign an author to a book
-    @PatchMapping("/{id}/author")
-    public ResponseEntity<BookDto> assignAuthorToBook(@PathVariable Long id, @RequestBody IdInputDto authorId) {
+    //    Endpoint to assign an author to an existing book
+    @PatchMapping("/{bookId}/author/{authorId}")
+    public ResponseEntity<BookDto> assignAuthorToBook(@PathVariable Long bookId, @PathVariable Long authorId) {
 
-        BookDto bookDto = bookService.assignAuthorToBook(id, authorId.id);
+        BookDto bookDto = bookService.assignAuthorToBook(bookId, authorId);
         return ResponseEntity.ok(bookDto);
     }
 }

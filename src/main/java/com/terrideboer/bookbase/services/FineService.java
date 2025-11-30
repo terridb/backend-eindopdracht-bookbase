@@ -2,9 +2,9 @@ package com.terrideboer.bookbase.services;
 
 import com.terrideboer.bookbase.dtos.fines.FineDto;
 import com.terrideboer.bookbase.dtos.fines.FineInputDto;
-import com.terrideboer.bookbase.dtos.users.UserDto;
 import com.terrideboer.bookbase.exceptions.AlreadyExistsException;
 import com.terrideboer.bookbase.exceptions.ForbiddenException;
+import com.terrideboer.bookbase.exceptions.InvalidInputException;
 import com.terrideboer.bookbase.exceptions.RecordNotFoundException;
 import com.terrideboer.bookbase.mappers.FineMapper;
 import com.terrideboer.bookbase.models.Fine;
@@ -16,8 +16,6 @@ import com.terrideboer.bookbase.repositories.LoanRepository;
 import com.terrideboer.bookbase.utils.LoanUtils;
 import com.terrideboer.bookbase.utils.UserUtils;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -36,9 +34,16 @@ public class FineService {
         this.loanRepository = loanRepository;
     }
 
-    public List<FineDto> getAllFines() {
-        List<Fine> fines = fineRepository.findAll(Sort.by("id").ascending());
+    public List<FineDto> getAllFines(String status) {
         List<FineDto> dtoFines = new ArrayList<>();
+        List<Fine> fines;
+
+        if (status == null || status.isBlank()) {
+            fines = fineRepository.findAll(Sort.by("id").ascending());
+        } else {
+            PaymentStatus enumStatus = PaymentStatus.valueOf(status.trim().toUpperCase());
+            fines = fineRepository.findByPaymentStatus(enumStatus);
+        }
 
         for (Fine fine : fines) {
             dtoFines.add(FineMapper.toDto(fine));
@@ -67,6 +72,22 @@ public class FineService {
             throw new AlreadyExistsException("This loan already has an existing fine. Manual fine could not be added");
         }
 
+        if (fineInputDto.fineAmount == null) {
+            throw new InvalidInputException("FineAmount is required");
+        }
+
+        if ((fineInputDto.paymentStatus != null
+                && fineInputDto.paymentStatus.equals(PaymentStatus.PAID))
+                && fineInputDto.paymentDate == null) {
+            throw new InvalidInputException("PaymentDate is required when creating a fine with status PAID");
+        }
+
+        if ((fineInputDto.paymentStatus == null
+                || fineInputDto.paymentStatus.equals(PaymentStatus.NOT_PAID))
+                && fineInputDto.paymentDate != null) {
+            throw new InvalidInputException("PaymentStatus cannot be NOT_PAID when a paymentDate is provided");
+        }
+
         Fine fine = FineMapper.toEntity(fineInputDto, null);
         fine.setLoan(existingLoan);
 
@@ -78,13 +99,34 @@ public class FineService {
         return FineMapper.toDto(savedFine);
     }
 
-    public FineDto putFine(Long id, FineInputDto fineInputDto) {
+    public FineDto updateFine(Long id, FineInputDto fineInputDto) {
         Fine existingFine = fineRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(("Fine with id " + id + " not found")));
 
-        Fine updatedFine = FineMapper.toEntity(fineInputDto, existingFine);
+        PaymentStatus newStatus = fineInputDto.paymentStatus != null
+                ? fineInputDto.paymentStatus
+                : existingFine.getPaymentStatus();
 
-        Fine savedFine = fineRepository.save(updatedFine);
+        LocalDate newPaymentDate = fineInputDto.paymentDate != null
+                ? fineInputDto.paymentDate
+                : existingFine.getPaymentDate();
+
+        if (newStatus == PaymentStatus.PAID && newPaymentDate == null) {
+            throw new InvalidInputException("PaymentDate is required when setting status to PAID");
+        }
+
+        if (newPaymentDate != null && newStatus == PaymentStatus.NOT_PAID) {
+            throw new InvalidInputException("PaymentStatus cannot be NOT_PAID when a paymentDate is provided");
+        }
+
+        existingFine.setPaymentStatus(newStatus);
+        existingFine.setPaymentDate(newPaymentDate);
+
+        if (fineInputDto.fineAmount != null) {
+            existingFine.setFineAmount(fineInputDto.fineAmount);
+        }
+
+        Fine savedFine = fineRepository.save(existingFine);
         return FineMapper.toDto(savedFine);
     }
 
@@ -134,6 +176,4 @@ public class FineService {
 
         return fineRepository.save(fine);
     }
-
-//    todo: query parameters
 }
